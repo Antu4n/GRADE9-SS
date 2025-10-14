@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Exploring Senior School Pathways</title>
+<style>
+    /* Font Imports and Keyframes */
+    @font-face {
+        font-family: 'Fredoka';
+        src: url('../assets/Fredoka-VariableFont_wdth\,wght.ttf') format('truetype');
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideIn { from { transform: translateY(30px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+    @keyframes glow-pulse {
+        0%, 100% { box-shadow: 0 0 10px rgba(251, 176, 59, 0.5), 0 0 20px rgba(251, 176, 59, 0.3); transform: scale(1); }
+        50% { box-shadow: 0 0 20px rgba(251, 176, 59, 0.8), 0 0 30px rgba(251, 176, 59, 0.5); transform: scale(1.05); }
+    }
+    @keyframes glow-pulse-white {
+        0%, 100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 255, 255, 0.5); transform: scale(1); }
+        50% { box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 30px rgba(255, 255, 255, 0.7); transform: scale(1.05); }
+    }
+    ::-webkit-scrollbar{
+        display: none;
+    }
+
+    /* Root Variables */
+    :root {
+        --font-xs: 1.1rem;
+        --font-sm: 1.4rem;
+        --font-md: 1.6rem;
+        --font-lg: 2rem;
+        --font-xl: 4rem;
+        --pad-sm: 1rem;
+        --pad-md: 1.6rem;
+        --pad-lg: 2.4rem;
+        --primary-color: #5D04B2;
+        --secondary-color: #fbb03b;
+        --correct-color: #4caf50;
+        --text-color-dark: #333;
+        --text-color-light: #fff;
+        --card-background-light: #ffffff;
+        --shadow-dark: rgba(0, 0, 0, 0.3);
+        --border-radius: 1rem;
+        --header-font: 'Fredoka', sans-serif;
+        /* Pathway specific colors */
+        --arts-color: #f39c12; /* Orange */
+        --social-color: #3498db; /* Blue */
+        --stem-color: #2ecc71;  /* Green */
+    }
+
+    /* Global Reset & Base Styles */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100vh; overflow: hidden; }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f0f4f8;
+        font-family: var(--header-font), sans-serif;
+    }
+
+    #game-wrapper {
+        width: 100%;
+        max-width: 1200px;
+        aspect-ratio: 16 / 9;
+        box-shadow: 0 15px 40px var(--shadow-dark);
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        background: var(--card-background-light);
+    }
+
+    #game-container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .screen {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        transition: opacity 0.5s ease-in-out;
+        overflow: hidden;
+    }
+    .screen.hidden { opacity: 0; pointer-events: none; }
+    
+    #start-screen {
+       background-image: url('images/gamebg.jpg');
+       background-size: cover;
+       background-position: center;
+       justify-content: center;
+       align-items: center;
+       padding: 2rem;
+       text-align: center;
+    }
+    #start-screen h1 {
+      color: var(--text-color-light);
+      font-size: 4rem;
+      font-family: var(--header-font);
+      font-weight: 500;
+    }
+    .start-button {
+        font-family: var(--header-font);
+        background: var(--secondary-color);
+        color: var(--text-color-light);
+        font-weight: 500;
+        font-size: 1.2rem;
+        border: 3px solid #fff;
+        border-radius: 4.8rem;
+        padding: var(--pad-sm) var(--pad-lg);
+        margin-top: 1.6rem;
+        cursor: pointer;
+        text-shadow: 0 0.2rem 0 #b88b2a;
+        transition: all 0.2s;
+    }
+    
+    .start-button:hover { transform: scale(1.06); }
+
+    #game-screen { background: #f8f9ff; justify-content: flex-start; }
+
+    .game-top-section {
+        width: 100%; flex-shrink: 0; display: flex; justify-content: space-between;
+        align-items: center; background-color: var(--primary-color); z-index: 10;
+        color: var(--text-color-light); padding: clamp(0.5rem, 1.5vmin, 0.75rem) clamp(0.75rem, 2vmin, 1.25rem);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2); gap: 1rem;
+    }
+    
+    #game-title {
+        font-size: clamp(1.2rem, 4vmin, 1.8rem); font-weight: 600;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3); flex: 1 1 300px; min-width: 0;
+    }
+
+    .top-right-controls { display: flex; align-items: center; gap: 1rem; }
+    #progress-container {
+        width: clamp(100px, 20vw, 200px); background-color: rgba(255,255,255,0.3);
+        border-radius: 1rem; height: clamp(15px, 2.5vmin, 20px);
+        border: 2px solid #fff; position: relative; overflow: hidden;
+    }
+    #progress-bar {
+        height: 100%; width: 0%; background: #FFFF00;
+        border-radius: 0.8rem; transition: width 0.5s ease;
+    }
+    #progress-text {
+        color: var(--text-color-light); font-weight: 600;
+        font-size: clamp(0.75rem, 2vmin, 1rem); text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+    }
+    
+    .instructions-icon {
+        width: 2.5rem; height: 2.5rem; background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; display: flex;
+        align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease;
+        z-index: 15; flex-shrink: 0;
+        animation: glow-pulse-white 2s infinite;
+    }
+    .instructions-icon:hover { background: rgba(255, 255, 255, 0.3); transform: scale(1.1); }
+    .instructions-icon svg { width: 1.25rem; height: 1.25rem; fill: white;}
+
+    .game-content {
+        flex: 1; display: flex; padding: clamp(1rem, 2vw, 2rem);
+        overflow-y: auto; position: relative;
+        align-items: center; justify-content: center;
+    }
+    
+    /* --- Pathways Styles --- */
+    #pathways-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: clamp(1.5rem, 4vw, 3rem);
+        width: 100%;
+        max-width: 1100px;
+        flex-wrap: wrap;
+    }
+
+    .pathway-card {
+        flex: 1;
+        min-width: 220px;
+        max-width: 280px;
+        aspect-ratio: 4 / 5;
+        background-color: white;
+        border-radius: var(--border-radius);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        padding: 1.5rem;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-bottom: 8px solid; /* color set by JS */
+        position: relative; /* For checkmark positioning */
+        overflow: hidden; /* Hide checkmark overflow if needed */
+    }
+    
+    .pathway-card::after {
+        content: '✔';
+        position: absolute;
+        top: 0.8rem;
+        right: 0.8rem;
+        width: 2rem;
+        height: 2rem;
+        background-color: var(--correct-color);
+        color: white;
+        font-size: 1.4rem;
+        font-weight: bold;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        transform: scale(0);
+        opacity: 0;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+    }
+
+    .pathway-card.completed::after {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    .pathway-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+    }
+
+    .pathway-icon {
+        font-size: clamp(4rem, 10vmin, 6rem);
+        margin-bottom: 1rem;
+        pointer-events: none;
+    }
+
+    .pathway-title {
+        font-size: clamp(1.2rem, 3.5vmin, 1.6rem);
+        font-weight: 600;
+        color: var(--text-color-dark);
+        pointer-events: none;
+    }
+
+    /* Modal Styles */
+    .modal-overlay, .overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(0,0,0,0.4); backdrop-filter: blur(5px);
+        z-index: 1000; display: flex; justify-content: center; align-items: center;
+        animation: fadeIn 0.3s ease;
+    }
+    .modal-overlay.hidden, .overlay.hidden { display: none; }
+    .modal-content, .modal {
+        background: var(--card-background-light); padding: 2.5rem;
+        border-radius: var(--border-radius); text-align: center;
+        width: 90%; max-width: 700px;
+        animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+    }
+    .modal-content h2, .modal h2 {
+      font-size: 2rem; font-weight: 600; margin-bottom: 1.5rem;
+      color: var(--primary-color);
+    }
+    .modal-content p, .modal p { font-size: 1.2rem; line-height: 1.6; color: var(--text-color-dark); }
+     .modal ul {
+        list-style-type: none; text-align: left; margin-top: 1rem; padding: 0;
+    }
+    .modal li { margin-bottom: 0.8rem; font-size: 1.1em; line-height: 1.5; }
+
+    .modal-btn {
+        width: 100%; padding: 1rem; font-size: 1.2rem; font-weight: 700;
+        border: none; border-radius: 0.75rem; cursor: pointer; color: #fff;
+        background-color: var(--primary-color); transition: transform 0.2s, box-shadow 0.2s;
+        margin-top: 1.5rem;
+    }
+    .modal-btn:hover { transform: scale(1.02); }
+
+    #activity-intro-overlay .modal-content, #instructions-modal-overlay .modal-content { border-top: 8px solid var(--primary-color); }
+    #activity-intro-overlay .modal-content p {
+        text-align: center; background: #f8f9fa; padding: 1.5rem;
+        border-radius: 0.75rem; border-left: 4px solid var(--primary-color);
+        line-height: 1.5; font-size: 1.2rem; color: var(--text-color-dark);
+    }
+    #instructions-modal-overlay ul { padding-left: 2rem; }
+    #instructions-modal-overlay li { margin-bottom: 0.8rem; font-size: 1.1em; line-height: 1.5; text-align: left; }
+
+    /* Pathway Modal Specific Styles */
+    #pathway-modal-overlay .modal-content {
+        text-align: left;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    #pathway-modal-overlay .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+    #pathway-modal-icon {
+        font-size: 4rem;
+        flex-shrink: 0;
+    }
+    #pathway-modal-title {
+        font-size: clamp(1.5rem, 4vmin, 2.2rem);
+        margin: 0;
+    }
+    #pathway-modal-summary {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .pathway-details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+    .pathway-details-grid h3 {
+        font-size: 1.3rem;
+        color: var(--text-color-dark);
+        margin-bottom: 1rem;
+    }
+    .pathway-details-grid ul {
+        padding-left: 1.5rem;
+    }
+    .pathway-details-grid li {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        list-style-type: '✓';
+    }
+
+
+    /* Completion Overlay Styles */
+    #completion-overlay { 
+        background-image: url('images/gamebg.jpg'); background-size: cover; background-position: center;
+        flex-direction: column; justify-content: center; align-items: center;
+    }
+    .completion-title-banner { 
+        color: var(--text-color-light);
+        font-size: clamp(2rem, 7vmin, 4rem);
+        text-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
+        text-align: center; font-family: var(--header-font);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+    #completion-overlay .modal {
+        background: transparent; box-shadow: none; padding: 0; overflow: visible;
+        width: auto; max-width: none;margin-bottom: 4rem;
+    }
+    #completion-image { 
+        width: clamp(300px, 70vw, 700px); max-width: 85%; height: auto;
+        border: 3px solid var(--secondary-color); border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-top: 0.5rem;
+    }
+    .completion-buttons {
+        position: absolute; bottom: 1.5rem; width: 100%; display: flex;
+        justify-content: space-between; gap: 1.5rem; padding: 0 2rem; flex-wrap: wrap;
+    }
+    .completion-btn {
+      font-family: var(--header-font); background: var(--secondary-color); color: #fff;
+        font-weight: 500; font-size: clamp(1rem, 2.5vmin, 1.3rem); border: 0.1875rem solid #fff; border-radius: 3rem; 
+        padding: clamp(0.5rem, 1.5vmin, 0.75rem) clamp(1.25rem, 3vmin, 2rem);
+        cursor: pointer; transition: all 0.2s; box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+        text-shadow: 0 0.125rem 0 #b88b2a; text-decoration: none; min-width: 8.75rem;
+    }
+    .completion-btn:hover { transform: scale(1.05); }
+
+    .visually-hidden {
+        position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+        overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;
+    }
+
+    @media (max-width: 1024px) {
+        #game-wrapper { 
+            width: 100vw;
+             height: 100vh;
+              border-radius: 0;
+               aspect-ratio: unset; }
+    }
+    @media (max-width: 768px) {
+        #start-screen h1{
+            font-size: 3rem;
+        }
+        #pathways-container {gap: 1.5rem; }
+        .pathway-card { width: 80%; max-width: 350px; aspect-ratio: 2/1; flex-direction: row; height: 39vh;}
+        .pathway-icon { font-size: 3.5rem; margin-bottom: 0; margin-right: 1.5rem; }
+        #activity-intro-overlay .modal-content{
+            height: 97vh;
+            overflow-y: auto;
+        }
+    }
+</style>
+</head>
+<body>
+<div id="game-wrapper">
+   <div id="game-container">
+        <div id="start-screen" class="screen">
+            <h1>Exploring Senior School Pathways</h1>
+            <button class="start-button">Start Activity</button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+            <div class="game-top-section">
+               <h1 id="game-title">Senior School Pathways</h1>
+               <div class="top-right-controls">
+                   <div id="progress-container"><div id="progress-bar"></div></div>
+                   <div id="progress-text">0 / 3</div>
+                   <div class="instructions-icon" id="instructions-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+                   </div>
+               </div>
+            </div>
+            <div class="game-content">
+                <main id="pathways-container"></main>
+            </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h2>Activity Introduction</h2>
+                <p>Great news! In senior school, you don’t just study, you specialize! You get to choose a pathway based on what you enjoy and where your talents shine. There are three awesome pathways, and each opens the door to exciting careers. Click on each pathway to learn what it is about.</p>
+                <button class="modal-btn" id="intro-continue-btn">Continue</button>
+            </div>
+        </div>
+
+        <div id="instructions-modal-overlay" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h2>Learner Instructions</h2>
+                <ul>
+                    <li>Click on each pathway icon (🎨, 🧠, or 🧪) to explore what it is all about.</li>
+                    <li>Learn the subjects studied and sample careers in that pathway.</li>
+                    <li>Explore all three pathways to complete the activity.</li>
+                </ul>
+                <button class="modal-btn" id="close-instructions-btn">Got It!</button>
+            </div>
+        </div>
+
+        <div id="pathway-modal-overlay" class="modal-overlay hidden">
+           <div class="modal-content">
+               <div class="modal-header">
+                   <div id="pathway-modal-icon"></div>
+                   <h2 id="pathway-modal-title"></h2>
+               </div>
+               <p id="pathway-modal-summary"></p>
+               <div class="pathway-details-grid">
+                   <div>
+                       <h3>Subjects Studied</h3>
+                       <ul id="pathway-modal-subjects"></ul>
+                   </div>
+                   <div>
+                       <h3>Sample Careers</h3>
+                       <ul id="pathway-modal-careers"></ul>
+                   </div>
+               </div>
+               <button class="modal-btn" id="close-pathway-btn">Continue</button>
+           </div>
+        </div>
+       
+        <div id="completion-overlay" class="overlay hidden">
+            <div class="completion-title-banner">Activity Conclusion</div>
+            <div class="modal">
+                <img id="completion-image" src="images/complete.jpg" alt="Activity Complete" onerror="this.style.display='none'">
+            </div>
+            <div class="completion-buttons">
+                <button class="completion-btn btn-restart">Restart Activity</button>
+                <button class="completion-btn btn-next">Next Activity</button>
+            </div>
+        </div>
+        
+        <div id="aria-live-announcer" class="visually-hidden" aria-live="polite"></div>
+        
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="intro-sound" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="outro-sound" src="audio/outro.mp3" preload="auto"></audio>
+   </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- DOM Elements ---
+    const startScreen = document.getElementById('start-screen'), gameScreen = document.getElementById('game-screen');
+    const startBtn = document.querySelector('.start-button');
+    const pathwaysContainer = document.getElementById('pathways-container');
+    const announcer = document.getElementById('aria-live-announcer');
+    const progressBar = document.getElementById('progress-bar'), progressText = document.getElementById('progress-text');
+    const activityIntroOverlay = document.getElementById('activity-intro-overlay'), introContinueBtn = document.getElementById('intro-continue-btn');
+    const instructionsIcon = document.getElementById('instructions-icon'), instructionsModalOverlay = document.getElementById('instructions-modal-overlay'), closeInstructionsBtn = document.getElementById('close-instructions-btn');
+    
+    // Pathway Modal Elements
+    const pathwayModalOverlay = document.getElementById('pathway-modal-overlay');
+    const closePathwayBtn = document.getElementById('close-pathway-btn');
+    const pathwayModalIcon = document.getElementById('pathway-modal-icon');
+    const pathwayModalTitle = document.getElementById('pathway-modal-title');
+    const pathwayModalSummary = document.getElementById('pathway-modal-summary');
+    const pathwayModalSubjects = document.getElementById('pathway-modal-subjects');
+    const pathwayModalCareers = document.getElementById('pathway-modal-careers');
+
+    const completionOverlay = document.getElementById('completion-overlay');
+    const dingSound = document.getElementById('ding-sound'), introSound = document.getElementById('intro-sound'), outroSound = document.getElementById('outro-sound');
+
+    // Game State
+    let isPaused = true;
+    let activityCompleted = false;
+    let exploredPathways = new Set();
+    const totalPathways = 3;
+
+    // --- Data ---
+    const activityData = {
+        pathways: [
+            { 
+                id: 'arts',
+                title: 'Arts & Sports Science',
+                icon: '🎨',
+                color: 'var(--arts-color)',
+                summary: 'Do you love drawing, dancing, acting, or kicking a ball? This pathway is for the creatives and athletes! You will build skills in visual arts, music, drama, or sports.',
+                subjects: ['Music', 'Art & Design', 'Home Science', 'Physical Education'],
+                careers: ['Graphic Designer', 'Musician', 'Chef', 'Coach', 'Performer']
+            },
+            { 
+                id: 'social',
+                title: 'Social Sciences',
+                icon: '🧠',
+                color: 'var(--social-color)',
+                summary: 'Do you enjoy understanding people, solving community problems, or learning about laws and cultures? This pathway is for you!',
+                subjects: ['History', 'Geography', 'Business Studies', 'Religious Education'],
+                careers: ['Teacher', 'Lawyer', 'Counsellor', 'Government Leader']
+            },
+            { 
+                id: 'stem',
+                title: 'STEM',
+                icon: '🧪',
+                color: 'var(--stem-color)',
+                summary: 'If you are curious about how the world works, whether through science, building, coding, or invention, STEM is your match!',
+                subjects: ['Physics', 'Chemistry', 'Biology', 'Computer Science', 'Agriculture'],
+                careers: ['Engineer', 'Doctor', 'Computer Scientist', 'Inventor']
+            }
+        ]
+    };
+
+    // --- Sound ---
+    function playSound(sound) { if(sound) { sound.currentTime = 0; sound.play().catch(e => console.log("Sound play failed:", e)); } }
+    function stopSound(sound) { if(sound) { sound.pause(); } }
+
+    // --- UI Update ---
+    function updateProgress() {
+        const progress = exploredPathways.size;
+        progressBar.style.width = `${(progress / totalPathways) * 100}%`;
+        progressText.textContent = `${progress} / ${totalPathways}`;
+
+        if (progress === totalPathways && !activityCompleted) {
+            activityCompleted = true;
+        }
+    }
+
+    // --- Activity Setup ---
+    function setupActivity() {
+        isPaused = false;
+        activityCompleted = false;
+        exploredPathways.clear();
+        pathwaysContainer.innerHTML = '';
+        updateProgress();
+
+        activityData.pathways.forEach(path => {
+            const card = document.createElement('div');
+            card.className = 'pathway-card';
+            card.dataset.pathwayId = path.id;
+            card.style.borderColor = path.color;
+            card.innerHTML = `
+                <div class="pathway-icon">${path.icon}</div>
+                <h3 class="pathway-title">${path.title}</h3>
+            `;
+            pathwaysContainer.appendChild(card);
+        });
+
+        addEventListeners();
+    }
+    
+    // --- Event Listeners ---
+    function addEventListeners() {
+        document.querySelectorAll('.pathway-card').forEach(card => {
+            card.addEventListener('click', handlePathwayClick);
+        });
+    }
+
+    function handlePathwayClick(event) {
+        if (isPaused || activityCompleted) return;
+        
+        const clickedCard = event.currentTarget;
+        const pathwayId = clickedCard.dataset.pathwayId;
+        const pathData = activityData.pathways.find(p => p.id === pathwayId);
+
+        if (pathData) {
+            isPaused = true;
+            // Populate and show modal
+            pathwayModalOverlay.querySelector('.modal-content').style.borderTop = `8px solid ${pathData.color}`;
+            pathwayModalTitle.textContent = pathData.title;
+            pathwayModalTitle.style.color = pathData.color;
+            pathwayModalIcon.textContent = pathData.icon;
+            pathwayModalSummary.textContent = pathData.summary;
+            pathwayModalSubjects.innerHTML = pathData.subjects.map(s => `<li>${s}</li>`).join('');
+            pathwayModalCareers.innerHTML = pathData.careers.map(c => `<li>${c}</li>`).join('');
+            
+            pathwayModalOverlay.classList.remove('hidden');
+            announce(`${pathData.title} pathway details shown.`);
+
+            if (!exploredPathways.has(pathwayId)) {
+                exploredPathways.add(pathwayId);
+                clickedCard.classList.add('completed'); // Add checkmark
+                playSound(dingSound);
+                updateProgress();
+            }
+
+            if (activityCompleted) {
+                closePathwayBtn.textContent = "Continue";
+                closePathwayBtn.onclick = () => {
+                    pathwayModalOverlay.classList.add('hidden');
+                    completeActivity();
+                };
+            } else {
+                closePathwayBtn.textContent = "Continue";
+                closePathwayBtn.onclick = () => {
+             
+                    pathwayModalOverlay.classList.add('hidden');
+                
+                    isPaused = false;
+
+                };
+            }
+        }
+    }
+
+    function completeActivity() {
+        completionOverlay.classList.remove('hidden');
+        playSound(outroSound);
+    }
+
+    function announce(text) { 
+        announcer.textContent = '';
+        setTimeout(() => { announcer.textContent = text; }, 100);
+    }
+    
+    // --- Main Initialization ---
+    function init() {
+        startBtn.addEventListener('click', () => {
+            startScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            activityIntroOverlay.classList.remove('hidden');
+            isPaused = true;
+            playSound(introSound);
+            setupActivity();
+            // Assuming eventSender.js is present and defines ActivityEvent
+            if (typeof ActivityEvent !== 'undefined') {
+                sendEvent(ActivityEvent.START_ACTIVITY, { activityName: 'Exploring Senior School Pathways' });
+            }
+        });
+
+        introContinueBtn.addEventListener('click', () => {
+            activityIntroOverlay.classList.add('hidden');
+            isPaused = false;
+            stopSound(introSound);
+        });
+
+        instructionsIcon.addEventListener('click', () => {
+            instructionsModalOverlay.classList.remove('hidden');
+            isPaused = true;
+        });
+
+        closeInstructionsBtn.addEventListener('click', () => {
+            instructionsModalOverlay.classList.add('hidden');
+            if (!activityCompleted && !pathwayModalOverlay.classList.contains('hidden')) {
+                 // Do not unpause if pathway modal is open
+            } else if (!activityCompleted) {
+                isPaused = false;
+            }
+        });
+
+        // Completion Buttons
+        completionOverlay.querySelector('.btn-restart').addEventListener('click', () => {
+            stopSound(outroSound);
+            completionOverlay.classList.add('hidden');
+            setupActivity();
+        });
+        
+        completionOverlay.querySelector('.btn-next').addEventListener('click', () => {
+            stopSound(outroSound);
+            if (typeof ActivityEvent !== 'undefined') {
+                sendEvent(ActivityEvent.END_ACTIVITY, { activityName: 'Exploring Senior School Pathways' });
+            }
+            window.location.href = '../ACTIVITY2/index.html';
+        });
+    }
+
+    init();
+});
+</script>
+<script src="../eventSender.js"></script>
+</body>
+</html>

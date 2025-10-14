@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Builder Challenge</title>
+    <style>
+        /* Font Imports */
+        @font-face {
+            font-family: 'fredoka';
+            src: url('../assets/Fredoka-VariableFont_wdth\,wght.ttf') format('truetype');
+        }
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        /* Root Variables */
+        :root {
+             --font-xs: 1.1rem;
+            --font-sm: 1.4rem;
+            --font-md: 1.6rem;
+            --font-lg: 2.4rem;
+            --font-xl: 4.8rem;
+            --pad-sm: 1rem;
+            --pad-md: 1.6rem;
+            --pad-lg: 2.4rem;
+            --primary-color: #5D04B2;
+            --secondary-color: #fbb03b;
+            --progress-color: #ffff00;
+            --correct-color: #5cb85c;
+            --incorrect-color: #d9534f;
+            --text-color-dark: #333;
+            --text-color-light: #fff;
+            --card-background-light: #ffffff;
+            --header-font: 'fredoka', sans-serif;
+            --body-font: var(--header-font);
+        }
+
+        /* Proportional Scaling System Setup */
+        html {
+            font-size: 1.8vmin;
+        }
+
+        /* Global Reset & Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f4f8;
+            font-family: var(--body-font);
+        }
+
+        #game-wrapper {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            max-width: 1200px;
+            margin: auto;
+            position: relative;
+        }
+
+        #game-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            background-color: var(--primary-color);
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            overflow: hidden;
+            padding: 1rem;
+        }
+
+        .screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.95);
+        }
+
+        
+    /* ===== START SCREEN ===== */
+    #start-screen {
+      color: var(--text-color-light);
+      text-align: center;
+      padding: 2rem;
+      background-image: url('images/gamebg.jpg');
+      background-size: cover;
+      background-position: center;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    #start-screen h1 {
+      color: var(--text-color-light);
+      font-size: 3.2rem;
+      font-family: var(--header-font);
+      text-shadow: 0 0.2rem 0.5rem rgba(0,0,0,0.4);
+      font-weight: 500;
+    }
+    
+    .start-button {
+            font-family: var(--header-font);
+        background: var(--secondary-color); color: var(--text-color-light);
+        font-weight: 500;
+        font-size: var(--font-md);
+        border: 3px solid #fff;
+        border-radius: 4.8rem;
+        padding: var(--pad-sm) var(--pad-lg);
+        margin-top: 1.6rem;
+        cursor: pointer;
+        text-shadow: 0 0.2rem 0 #b88b2a;
+            transition: all 0.2s;
+        }
+        .start-button:hover { transform: scale(1.06); }
+
+    
+        /* Game Screen Styles */
+        #game-screen {
+             justify-content: flex-start;
+             padding: 0;
+             display: flex;
+             flex-direction: column;
+        }
+        
+        /* Header / Top Bar */
+        .game-top-section { 
+          width: 100%;
+          background-color: #5D04B2;
+          padding: 0.75rem 1.25rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          color: #fff;
+          z-index: 10;
+          box-shadow: 0 0.1rem 0.5rem rgba(0,0,0,0.2);
+          flex-shrink: 0;
+        }
+        
+        #game-title {
+          font-size: 1.8rem;
+          font-weight: 600;
+          margin: 0;
+        }
+        
+        .progress-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        /* Progress Bar */
+         #progress-container {
+            width: 12.5rem;
+            background-color: rgba(255,255,255,0.3);
+            border-radius: 1rem;
+            height: 1.25rem;
+            border: 2px solid #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #FFFF00;
+            border-radius: 0.8rem;
+            transition: width 0.5s ease;
+        }
+
+        #progress-text {
+            color: var(--text-color-light);
+            font-weight: 700;
+            font-size: 1rem;
+            text-shadow: 0.0625rem 0.0625rem 0.125rem rgba(0,0,0,0.6);
+            white-space: nowrap;
+        }
+            
+        @keyframes glow-pulse-white {
+            0%, 100% { box-shadow: 0 0 1rem rgba(255, 255, 255, 0.7), 0 0 2rem rgba(255, 255, 255, 0.5); transform: scale(1); }
+            50% { box-shadow: 0 0 2rem rgba(255, 255, 255, 1), 0 0 3rem rgba(255, 255, 255, 0.7); transform: scale(1.1); }
+        }
+
+        .instructions-icon {
+            width: 3rem;
+            height: 3rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 0.15rem solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 15;
+            flex-shrink: 0;
+            animation: glow-pulse-white 2s infinite ease-in-out;
+        }
+        .instructions-icon svg { width: 60%; height: 60%; fill: white; }
+        .instructions-icon:hover { 
+            transform: scale(1.1);
+            animation-play-state: paused;
+        }
+        
+        .lab-game-area {
+            width: 100%;
+            flex-grow: 1;
+            position: relative;
+            background-image: url('images/hotspot-img.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: #fafafa;
+        }
+        
+        .hotspot {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 2;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 0, 0.2);
+            border: 0.2rem solid white;
+            transform: translate(-50%, -50%); /* Center the hotspot */
+        }
+
+        @keyframes zone-pulse {
+            0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0rem rgba(255, 255, 255, 0.7); }
+            70% { box-shadow: 0 0 0 1.5rem rgba(255, 255, 255, 0); }
+            100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0rem rgba(255, 255, 255, 0); }
+        }
+        
+        .hotspot.active { animation: zone-pulse 1.5s infinite; }
+        .hotspot.completed::before {
+            content: '✓';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            color: white;
+            font-weight: 700;
+            text-shadow: 0 0.1rem 0.3rem rgba(0,0,0,0.5);
+        }
+        .hotspot.completed { 
+            pointer-events: none; 
+            background-color: rgba(76, 175, 80, 0.3);
+            border-color: rgba(255, 255, 255, 0.5); 
+            animation: none;
+        }
+        
+        /* MODALS */
+        .overlay {
+          position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+          background-color: rgba(0,0,0,0.4);
+          backdrop-filter: blur(0.5rem);
+          z-index: 100;
+          display: flex; justify-content: center; align-items: center;
+          animation: fadeIn 0.3s ease;
+          transition: opacity 0.3s, visibility 0.3s;
+        }
+        .overlay.hidden { display: none; visibility: hidden; opacity: 0;}
+        
+        .modal {
+          background: var(--card-background-light, #fff);
+          padding: 2.5rem;
+          border-radius: 1rem;
+          text-align: center;
+          width: 90%; 
+          max-width: 50rem;
+          animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          position: relative;
+        }
+        
+        .modal .modal-title {
+          font-size: 2.2rem; font-weight: 600; margin-bottom: 1.5rem;
+          color: var(--primary-color);
+        }
+        .modal p { font-size: 1.5rem; line-height: 1.6; color: var(--text-color-dark, #333); }
+
+        #activity-description-overlay .modal { border-top: 0.5rem solid var(--primary-color); }
+        #activity-description-overlay .modal .modal-title { color: var(--primary-color); }
+        #activity-description-overlay .modal p {
+          text-align: left; background: #f8f9fa; padding: 1.5rem;
+          border-radius: 0.75rem; border-left: 0.4rem solid var(--primary-color);
+        }
+        
+        #game-instructions-overlay .modal { border-top: 0.5rem solid var(--primary-color); }
+        #game-instructions-overlay .modal .modal-title { color: var(--primary-color); }
+        #game-instructions-overlay .modal p {
+            text-align: left;
+            background-color: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 1.2rem; line-height: 1.6;
+        }
+        
+        .modal-close-btn {
+          width: 100%; padding: 1.2rem; font-size: 1.5rem; font-weight: 700;
+          border: none; border-radius: 0.75rem; cursor: pointer; color: #fff;
+          background-color: var(--primary-color);
+          transition: transform 0.2s, box-shadow 0.2s;
+          margin-top: 1.5rem;
+        }
+        
+        .modal-close-btn:hover { transform: scale(1.02); }
+
+        /* Quiz Modal */
+        #quiz-overlay .modal { 
+            max-width: 60rem;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            
+        }
+        #quiz-overlay{
+            backdrop-filter: blur(1px);
+        }
+        #quiz-question {
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: var(--text-color-dark);
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        #quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        .option-btn {
+            background: linear-gradient(45deg, #FFD700, #FBB03B);
+            border: 3px solid white;
+            border-radius: 1rem; padding: 1rem; cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem; line-height: 1.4;
+            color: var(--text-color-dark);
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            display: flex; align-items: center; justify-content: flex-start;
+            text-align: left;
+        }
+        .option-label {
+            background-color: rgba(0,0,0,0.1);
+            border-radius: 0.5rem;
+            padding: 0.3rem 0.6rem;
+            margin-right: 0.8rem;
+            font-weight: 700;
+        }
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(251, 176, 59, 0.4);
+        }
+        .option-btn.correct {
+            background: var(--correct-color);
+            color: white; border-color: #fff;
+            transform: scale(1.02);
+            box-shadow: 0 0 15px var(--correct-color);
+        }
+        .option-btn.correct .option-label {
+             background-color: rgba(255,255,255,0.2);
+        }
+        .option-btn.incorrect {
+            background: var(--incorrect-color);
+            color: white; animation: shake 0.5s;
+            box-shadow: 0 0 15px var(--incorrect-color);
+        }
+        .option-btn.incorrect .option-label {
+             background-color: rgba(255,255,255,0.2);
+        }
+        .option-btn:disabled {
+            cursor: not-allowed; opacity: 0.7;
+        }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+
+        /* Feedback Modals */
+        .feedback-modal { max-width: 480px; }
+        .feedback-title {  font-size: 1.8rem; margin-bottom: 2.4rem; display: flex; align-items: center; justify-content: center; gap: 1rem; font-weight: 600;}
+        .feedback-title svg { width: var(--font-lg); height: var(--font-lg); }
+        #feedback-correct-overlay .feedback-title { color: var(--correct-color); }
+        #feedback-incorrect-overlay .feedback-title { color: var(--incorrect-color); }
+        .feedback-btn {
+            width: 100%; padding: 1rem; font-size: 1.2rem; font-weight: 700;
+            border: none; border-radius: 0.75rem; cursor: pointer; color: #fff;
+            transition: transform 0.2s, box-shadow 0.2s; margin-top: 1rem;
+        }
+        .feedback-btn:hover { transform: scale(1.02); }
+        .feedback-modal.correct-feedback .feedback-btn { background: var(--correct-color); }
+        .feedback-modal.incorrect-feedback .feedback-btn { background: var(--incorrect-color); }
+        .feedback-modal.correct-feedback { border-top: 5px solid var(--correct-color); }
+        .feedback-modal.incorrect-feedback { border-top: 5px solid var(--incorrect-color); }
+        #skill-info-overlay .modal { border-top: 5px solid var(--primary-color); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(3rem) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+       
+        /* ===== COMPLETION OVERLAY ===== */
+        #completion-overlay {
+            background-image: url('images/gamebg.jpg');
+            background-size: cover; background-position: center; color: #fff;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            gap: 1rem; padding: 1rem;
+        }
+        .completion-title-banner {
+            font-size: clamp(2.5rem, 8vmin, 4rem);
+            text-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
+            text-align: center; font-family: var(--header-font);
+            padding: 0 1rem;
+            font-weight: 600;
+        }
+        .completion-text {
+            font-size: clamp(1.6rem, 4vmin, 2rem);
+            text-align: center;
+            max-width: 80ch;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            margin: -1rem 0 1rem 0;
+            line-height: 1.4;
+        }
+        #completion-overlay .modal {
+            background: transparent; box-shadow: none; width: auto; max-width: none;
+            margin-bottom: 2.5rem;
+            display: flex; justify-content: center; align-items: center; padding: 0; overflow: visible;
+        }
+        #completion-image {
+            width: 100%;
+            max-width: 700px;
+            height: auto;
+            border: 3px solid var(--secondary-color);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-top: 0.5rem;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .completion-buttons {
+            position: static;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0 2rem 2rem 2rem;
+            box-sizing: border-box;
+            align-items: flex-end;
+            margin-top: 0;
+        }
+        .completion-btn {
+            font-family: var(--header-font); background: var(--secondary-color); color: #fff;
+            font-weight: 500; 
+            font-size: 1.5rem;
+            border: 0.1875rem solid #fff; border-radius: 3rem; 
+            padding: clamp(0.5rem, 1.5vmin, 0.75rem) clamp(1.25rem, 3vmin, 2rem);
+            cursor: pointer; transition: all 0.2s;
+            box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+            text-shadow: 0 0.125rem 0 #b88b2a; text-decoration: none;
+            min-width: 8.75rem; /* 140px */
+        }
+        .completion-btn:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 0.5rem 1.25rem rgba(0,0,0,0.2);
+        }
+        
+        /* ===== TAKEAWAYS OVERLAY ===== */
+        #takeaways-overlay {
+            background-image: url(images/gamebg.jpg); flex-direction: column; justify-content: center;
+        }
+        .takeaways-main-header {
+            font-family: var(--header-font); color: white; font-size: 2.5rem;
+            position: absolute; top: 5%; text-align: center; width: 100%;
+            text-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.3);
+        }
+        #takeaways-overlay .modal { max-width: 800px; padding: 2rem; display: flex; flex-direction: column; align-items: center; height: 45vh;
+            overflow-y: auto; margin-top: 3rem; border-top: 5px solid var(--secondary-color);
+        }
+        .takeaways-header { color:var(--primary-color); display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; }
+        .takeaways-header h3 { font-family: var(--header-font); font-size: 1.8rem; color: var(--primary-color); }
+        #takeaways-list { list-style-type: none; padding: 0; width: 100%; }
+        #takeaways-list li {
+            background: none;
+            border-left: none;
+            margin-bottom: 0rem;
+            padding: 1rem 1rem 1rem 2.5rem;
+            border-radius: 0.5rem;
+            font-size: 1.1rem;
+            text-align: left;
+            position: relative;
+        }
+        #takeaways-list li::before {
+            content: '';
+            display: inline-block;
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1.2rem;
+            height: 1.2rem;
+            background: none;
+            /* SVG checkmark as background-image */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%235cb85c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 10.8 17 4 10.8"/></svg>');
+            background-size: 1.2rem 1.2rem;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        
+        .end-lesson-btn
+        {
+            background: var(--secondary-color);
+            font-family: var(--header-font);
+            color: #fff;
+            font-weight: 500;
+            font-size: 1.3rem;
+            border: 3px solid #fff;
+            border-radius: 3rem;
+            padding: clamp(0.5rem, 1.5vmin, 0.75rem) clamp(1.25rem, 3vmin, 2rem);
+            text-shadow: 0 2px 0 #b88b2a;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: auto;
+            min-width: 180px;
+            margin-top: 2rem;
+        }
+        .end-lesson-btn:hover { transform: scale(1.06); box-shadow: 0 6px 24px rgba(0,0,0,0.18); }
+
+        
+        /* MEDIA QUERIES */
+        @media (max-aspect-ratio: 16/9) {
+            #game-wrapper {
+                max-height: 100%;
+                max-width: calc(100vh * 16 / 9);
+            }
+        }
+        @media (max-width: 1200px) {
+            html {
+                font-size: 2.2vmin;
+            }
+        }
+        
+        @media (max-width: 1000px) {
+            html{
+                font-size: 3vmin;
+            }
+            #game-wrapper {
+                width: 100vw; height: 100vh; min-width: 100vw; min-height: 100vh;
+                border-radius: 0; max-width: none; aspect-ratio: unset;
+            }
+            #activity-description-overlay .modal{
+                height: 98vh;
+                overflow-y: auto;
+            }
+            #completion-image {
+                width: 63%;
+            }
+            #takeaways-overlay .modal{
+                height:60vh;
+                overflow-y: auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+             html {
+                font-size: 3.3vmin;
+            }
+            .modal {
+                padding: 1.5rem;
+                width: 95%;
+            }
+            #quiz-question { font-size: 1.5rem; }
+            .option-btn { font-size: 1.1rem; padding: 1rem; }
+            .completion-header { font-size: 3rem; }
+            .completion-message { font-size: 1.2rem; padding: 0 1.5rem; }
+            .completion-buttons { gap: 0.75rem; position: static; padding: 1rem; }
+             #completion-image {
+                width: 56%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-wrapper">
+        <div id="game-container">
+            <div id="start-screen" class="screen">
+                <h1>Skill Builder Challenge</h1>
+                <button class="start-button" onclick="startGame(); sendEvent(ActivityEvent.START_ACTIVITY, { activityName: 'Skill Builder Challenge' });">Start Activity</button>
+            </div>
+
+            <div id="game-screen" class="screen hidden">
+                <div class="game-top-section">
+                    <h1 id="game-title">Skills in Action!</h1>
+                    <div class="progress-wrapper">
+                         <div id="progress-container">
+                            <div id="progress-bar"></div>
+                        </div>
+                        <div id="progress-text">0 / 6</div>
+                        <div class="instructions-icon" onclick="showGameInstructions()">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="lab-game-area" id="lab-game-area">
+                    </div>
+            </div>
+
+            <div id="activity-description-overlay" class="overlay hidden">
+                <div class="modal">
+                    <h2 class="modal-title">Activity Introduction</h2>
+                    <p>Great grades are just part of the story! Careers in the Social Sciences also need real-world skills, like speaking clearly, solving problems, and working with others. In this challenge, you will meet a ‘Social Scientist at Work.’ Click different parts of their work scene to uncover key skills, then use those skills to match the right one to real-life job situations.</p>
+                    <button class="modal-close-btn" onclick="closeModal('activity-description-overlay');">Continue</button>
+                </div>
+            </div>
+            
+            <div id="game-instructions-overlay" class="overlay hidden">
+                <div class="modal">
+                    <h2 class="modal-title">Learner Instructions</h2>
+                    <p>
+                        <b>Step 1:</b> Explore the scene. Click all 6 hotspots to learn about different skills.<br>
+                        <b>Step 2:</b> Once you have seen them all, the Skill Match Challenge will start.<br>
+                        <b>Step 3:</b> Read or listen to each job scenario.<br>
+                        <b>Step 4:</b> Choose the skill that best matches what the person is doing.<br>
+                        <b>Step 5:</b> Get instant feedback after each try and aim for a perfect score!
+                    </p>
+                    <button class="modal-close-btn" onclick="closeModal('game-instructions-overlay')">Got It!</button>
+                </div>
+            </div>
+
+            <div id="skill-info-overlay" class="overlay hidden">
+                <div class="modal">
+                    <h2 id="skill-title" class="modal-title"></h2>
+                    <p id="skill-description"></p>
+                    <button class="modal-close-btn" onclick="closeModal('skill-info-overlay')">Continue</button>
+                </div>
+            </div>
+            
+            <div id="quiz-overlay" class="overlay hidden">
+                 <div class="modal">
+                    <h2 id="quiz-question"></h2>
+                    <div id="quiz-options"></div>
+                </div>
+            </div>
+
+            <div id="feedback-correct-overlay" class="overlay hidden">
+                <div class="modal feedback-modal">
+                    <div class="feedback-title" id="feedback-title"></div>
+                    <p id="correct-feedback-text"></p>
+                    <button class="feedback-btn correct" onclick="closeModal('feedback-correct-overlay')">Continue</button>
+                </div>
+            </div>
+            
+            <div id="feedback-incorrect-overlay" class="overlay hidden">
+                <div class="modal feedback-modal">
+                    <div class="feedback-title" id="feedback-title-incorrect"></div>
+                    <p id="incorrect-feedback-text"></p>
+                    <button class="feedback-btn incorrect" onclick="handleTryAgain()">Try Again</button>
+                </div>
+            </div>
+
+            <div id="completion-overlay" class="screen hidden">
+                <h2 class="completion-title-banner">Activity Conclusion</h2>
+                <p class="completion-text"></p>
+                <div class="modal">
+                    <img id="completion-image" src="images/complete.jpg" alt="Activity summary showing social science subjects." onerror="this.src='https://placehold.co/600x400/5D04B2/ffffff?text=Well+Done!'; this.onerror=null;">
+                </div>
+                <div class="completion-buttons">
+                    <button class="completion-btn" id="previous-activity-btn">Previous Activity</button>
+                    <button class="completion-btn" id="restart-activity-btn" onclick="restartActivity();">Restart Activity</button>
+                    <button class="completion-btn" id="takeaways-btn" onclick="showTakeaways()">Key Takeaways</button>
+                </div>
+            </div>
+
+            <div id="takeaways-overlay" class="overlay hidden">
+                <h2 class="takeaways-main-header">Lesson Complete</h2>
+                <div class="modal">
+                    <div class="takeaways-header">
+                        <h3>Key Takeaways</h3>
+                    </div>
+                    <ul id="takeaways-list"></ul>
+                </div>
+                <button class="end-lesson-btn" onclick="sendEvent(LessonEvent.END_LESSON, {lessonName: 'Sharing Goals for Self-Improvement in Social Life: Lesson 2'})">Brain Power Checkpoint </button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="buzz-sound" src="audio/buzz.mp3" preload="auto"></audio>
+    <audio id="intro-audio"src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="outro-audio" src="audio/outro.mp3" preload="auto"></audio>
+    
+    <script>
+        // --- DATA ---
+        const hotspotData = [
+            {
+                id: 'chart',
+                title: 'Data Analysis',
+                description: 'Understanding numbers, surveys, and patterns to make informed decisions.',
+                coords: { top: '15%', left: '23%', width: '15%', height: '25%' }
+            },
+            {
+                id: 'group-talk',
+                title: 'Interpersonal Skills',
+                description: 'The ability to work well with others, solve conflicts, and build relationships.',
+                coords: { top: '20%', left: '60%', width: '25%', height: '35%' }
+            },
+            {
+                id: 'computer',
+                title: 'Digital Literacy',
+                description: 'Using tech tools to research, write, and present information.',
+                coords: { top: '60%', left: '25%', width: '15%', height: '15%' }
+            },
+            {
+                id: 'notebook',
+                title: 'Writing & Communication',
+                description: 'A key skill for preparing reports, writing proposals, and keeping clear records.',
+                coords: { top: '95%', left: '15%', width: '15%', height: '10%' }
+            },
+            {
+                id: 'phone',
+                title: 'Verbal Communication',
+                description: 'Explaining ideas clearly through speech, whether in meetings or calls.',
+                coords: { top: '75%', left: '43%', width: '8%', height: '8%' }
+            },
+            {
+                id: 'filing-cabinet',
+                title: 'Organization & Record Keeping',
+                description: 'Keeping documents safe, accurate, and easy to find later.',
+                coords: { top: '45%', left: '90%', width: '12%', height: '40%' }
+            }
+        ];
+
+        const scenarioData = [
+            {
+                scenario: 'Imagine a community development officer is drafting a proposal to get funds for a youth program. Which skill are they using?',
+                correctAnswer: 'Writing & Communication',
+                feedback: {
+                    correct: 'Spot on! Writing and communication help turn ideas into plans people can read and act on.',
+                    incorrect: 'Hmm… writing is the main action here. Think again, what skill do you use to write clearly and persuasively?'
+                }
+            },
+            {
+                scenario: 'A mediator is helping two parents resolve a disagreement during a school meeting. Which skill does this show?',
+                correctAnswer: 'Interpersonal Skills',
+                feedback: {
+                    correct: 'Exactly! Interpersonal skills help people connect, collaborate, and find common ground.',
+                    incorrect: 'Close, but think about the emotions and relationships involved. What skill helps in handling people’s feelings and views?'
+                }
+            },
+            {
+                scenario: 'A student is creating a report using a word processor and a spreadsheet. Which skill are they using?',
+                correctAnswer: 'Digital Literacy',
+                feedback: {
+                    correct: 'Perfect! Digital literacy helps us use technology effectively in our daily work.',
+                    incorrect: 'Not quite, this is about using digital tools. What skill helps with working on a computer or online platform?'
+                }
+            },
+            {
+                scenario: 'Imagine a researcher is reviewing community health survey results to decide where to build a new clinic. Which skill are they using?',
+                correctAnswer: 'Data Analysis',
+                feedback: {
+                    correct: 'Exactly! Analysing data helps social scientists make smart, evidence-based decisions.',
+                    incorrect: 'Not quite, think about how information from charts or surveys is studied. What skill helps you make sense of data?'
+                }
+            },
+            {
+                scenario: 'A youth officer is calling community members to explain how to join a training program. Which skill are they using?',
+                correctAnswer: 'Verbal Communication',
+                feedback: {
+                    correct: 'Great choice! Verbal communication helps get the message across quickly and clearly.',
+                    incorrect: 'Hmm… this is about speaking, not writing. What skill helps when you are explaining something out loud?'
+                }
+            },
+            {
+                scenario: 'A case worker is storing files and notes from client meetings to use in future visits. Which skill does that show?',
+                correctAnswer: 'Organization & Record Keeping',
+                feedback: {
+                    correct: 'Exactly! Keeping good records is key in Social Sciences, it helps track progress and support people over time.',
+                    incorrect: 'Not quite, this is not about talking or analysing data. What skill keeps your work tidy, safe, and accessible?'
+                }
+            }
+        ];
+
+        const takeawaysData = [
+            "The Social Sciences pathway splits into 'Languages and Literature' and 'Humanities and Business Studies'.",
+            "All learners must take Community Service Learning, Physical Education, and ICT.",
+            "You choose a minimum of 3 (and up to 5) subjects from your chosen track.",
+            "Success in this pathway requires strong Communication & Collaboration, Creativity & Innovation, and Critical Thinking & Problem-Solving skills."
+        ];
+
+        const skillOptions = hotspotData.map(h => h.title);
+        const TOTAL_HOTSPOTS = hotspotData.length;
+        const TOTAL_SCENARIOS = scenarioData.length;
+
+        // --- STATE ---
+        let exploredHotspots = new Set();
+        let activeHotspot = null;
+        let currentScenarioIndex = 0;
+        let gamePhase = 'exploration'; // 'exploration' or 'challenge'
+
+        // --- DOM ELEMENTS ---
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const completionOverlay = document.getElementById('completion-overlay');
+        const labGameArea = document.getElementById('lab-game-area');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const overlays = {
+            activityDescription: document.getElementById('activity-description-overlay'),
+            gameInstructions: document.getElementById('game-instructions-overlay'),
+            skillInfo: document.getElementById('skill-info-overlay'),
+            quiz: document.getElementById('quiz-overlay'),
+            feedbackCorrect: document.getElementById('feedback-correct-overlay'),
+            feedbackIncorrect: document.getElementById('feedback-incorrect-overlay'),
+            takeaways: document.getElementById('takeaways-overlay')
+        };
+        const sounds = {
+            ding: document.getElementById('ding-sound'),
+            buzz: document.getElementById('buzz-sound'),
+            intro: document.getElementById('intro-audio'),
+            outro: document.getElementById('outro-audio'),
+        };
+        const quizElements = {
+            question: document.getElementById('quiz-question'),
+            options: document.getElementById('quiz-options'),
+            modal: document.querySelector('#quiz-overlay .modal'),
+        };
+        const feedbackElements = {
+            correctTitle: document.getElementById('feedback-title'),
+            incorrectTitle: document.getElementById('feedback-title-incorrect'),
+        };
+        const skillInfoElements = {
+            title: document.getElementById('skill-title'),
+            description: document.getElementById('skill-description')
+        };
+        
+        const icons = {
+            correct: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+            incorrect: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`
+        };
+        
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', initializeGame);
+
+        function initializeGame() {
+            labGameArea.innerHTML = ''; 
+            hotspotData.forEach((item, index) => {
+                const hotspot = document.createElement('div');
+                hotspot.className = 'hotspot active';
+                hotspot.id = item.id;
+                hotspot.dataset.index = index;
+                Object.assign(hotspot.style, item.coords);
+                labGameArea.appendChild(hotspot);
+            });
+            updateHotspotStates();
+            updateProgress();
+            labGameArea.addEventListener('click', handleHotspotClick);
+        }
+
+        // --- GAME FLOW ---
+        function startGame() {
+            startScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            setTimeout(() => {
+                overlays.activityDescription.classList.remove('hidden');
+                playSound(sounds.intro);
+            }, 500);
+        }
+        
+        function handleHotspotClick(event) {
+            if (gamePhase !== 'exploration') return;
+            const clickedHotspot = event.target.closest('.hotspot');
+            if (!clickedHotspot || clickedHotspot.classList.contains('completed')) return;
+            
+            const hotspotIndex = parseInt(clickedHotspot.dataset.index);
+            activeHotspot = hotspotData[hotspotIndex];
+            
+            skillInfoElements.title.textContent = activeHotspot.title;
+            skillInfoElements.description.textContent = activeHotspot.description;
+            overlays.skillInfo.classList.remove('hidden');
+            playSound(sounds.ding);
+        }
+
+        function startSkillMatchChallenge() {
+            gamePhase = 'challenge';
+            currentScenarioIndex = 0;
+            updateProgress(); // Reset progress bar for the challenge phase
+            loadScenario(true);
+        }
+        
+        function loadScenario(isFirst = false) {
+             if (currentScenarioIndex >= TOTAL_SCENARIOS) {
+                setTimeout(() => {
+                     gameScreen.classList.add('hidden');
+                     overlays.quiz.classList.add('hidden');
+                     completionOverlay.classList.remove('hidden');
+                     playSound(sounds.outro); 
+                 }, 800);
+                return;
+            }
+
+            const currentScenario = scenarioData[currentScenarioIndex];
+            quizElements.question.textContent = `${currentScenarioIndex + 1}. ${currentScenario.scenario}`;
+            quizElements.options.innerHTML = '';
+            
+            const shuffledOptions = [...skillOptions].sort(() => Math.random() - 0.5);
+
+            shuffledOptions.forEach((optionText, index) => {
+                const button = document.createElement('button');
+                const letter = String.fromCharCode(65 + index);
+                button.className = 'option-btn';
+                button.innerHTML = `<span class="option-label">${letter}</span><span class="option-text">${optionText}</span>`;
+                button.onclick = () => selectAnswer(optionText, button);
+                quizElements.options.appendChild(button);
+            });
+            
+            if (isFirst) {
+                overlays.quiz.classList.remove('hidden');
+            } else {
+                quizElements.modal.style.opacity = '1';
+                quizElements.modal.style.transform = 'scale(1)';
+            }
+        }
+
+        function selectAnswer(selectedOptionText, buttonElement) {
+            const buttons = quizElements.options.querySelectorAll('.option-btn');
+            buttons.forEach(btn => btn.disabled = true);
+
+            const currentScenario = scenarioData[currentScenarioIndex];
+
+            if (selectedOptionText === currentScenario.correctAnswer) {
+                playSound(sounds.ding);
+                buttonElement.classList.add('correct');
+                setTimeout(() => showFeedback('correct', currentScenario.feedback.correct), 500);
+            } else {
+                playSound(sounds.buzz);
+                buttonElement.classList.add('incorrect');
+                setTimeout(() => showFeedback('incorrect', currentScenario.feedback.incorrect), 500);
+            }
+        }
+        
+        function showFeedback(type, message) {
+            const overlay = overlays[`feedback${type.charAt(0).toUpperCase() + type.slice(1)}`];
+            const modal = overlay.querySelector('.modal');
+            
+            overlay.querySelector('p').textContent = message;
+            
+            const titleText = type === 'correct' ? 'Correct!' : 'Try Again...';
+            const titleElement = type === 'correct' ? feedbackElements.correctTitle : feedbackElements.incorrectTitle;
+            titleElement.innerHTML = `${type === 'correct' ? icons.correct : icons.incorrect} ${titleText}`;
+            
+            modal.className = 'modal feedback-modal';
+            modal.classList.add(type === 'correct' ? 'correct-feedback' : 'incorrect-feedback');
+            
+            overlay.classList.remove('hidden');
+        }
+
+        function handleTryAgain() {
+            closeModal('feedback-incorrect-overlay');
+            const buttons = quizElements.options.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('incorrect');
+            });
+        }
+
+        function proceedToNextStep() {
+            quizElements.modal.style.opacity = '0';
+            quizElements.modal.style.transform = 'scale(0.95)';
+
+            setTimeout(() => {
+                currentScenarioIndex++;
+                updateProgress();
+                loadScenario(false);
+            }, 300);
+        }
+        
+        function restartActivity() {
+            stopSound(sounds.outro);
+            exploredHotspots.clear();
+            activeHotspot = null;
+            currentScenarioIndex = 0;
+            gamePhase = 'exploration';
+            completionOverlay.classList.add('hidden');
+            overlays.takeaways.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            startScreen.classList.add('hidden');
+            initializeGame();
+        }
+        document.getElementById('previous-activity-btn').onclick = () => {
+             stopSound(sounds.outro); 
+             window.location.href = "../ACTIVITY1/index.html";
+             sendEvent(ActivityEvent.END_ACTIVITY, { activityName: 'Skill Builder Challenge' });
+            }
+        ;
+        
+        // --- UI & FEEDBACK ---
+        function updateProgress() {
+            let current = 0;
+            let total = 0;
+
+            if (gamePhase === 'exploration') {
+                current = exploredHotspots.size;
+                total = TOTAL_HOTSPOTS;
+            } else {
+                current = currentScenarioIndex;
+                total = TOTAL_SCENARIOS;
+            }
+            
+            const progress = total > 0 ? (current / total) * 100 : 0;
+            progressBar.style.width = `${progress}%`;
+            progressText.textContent = `${current} / ${total}`;
+        }
+        
+        function updateHotspotStates() {
+            document.querySelectorAll('.hotspot').forEach((hotspot) => {
+                const hotspotId = hotspot.id;
+                hotspot.classList.remove('completed', 'active'); 
+
+                if (exploredHotspots.has(hotspotId)) {
+                    hotspot.classList.add('completed');
+                } else {
+                    hotspot.classList.add('active');
+                }
+            });
+        }
+
+        function showTakeaways() {
+            stopSound(sounds.outro);
+            completionOverlay.classList.add('hidden');
+            const takeawaysList = document.getElementById('takeaways-list');
+            takeawaysList.innerHTML = '';
+            takeawaysData.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                takeawaysList.appendChild(li);
+            });
+            overlays.takeaways.classList.remove('hidden');
+            sendEvent(ActivityEvent.END_ACTIVITY, { activityName: 'Skill Builder Challenge' });
+        }
+
+        // --- MODAL CONTROLS ---
+        function showGameInstructions() { overlays.gameInstructions.classList.remove('hidden'); }
+        
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+            
+            if (id === 'activity-description-overlay') { 
+                stopSound(sounds.intro); 
+            }
+            if (id === 'skill-info-overlay' && activeHotspot) {
+                if (!exploredHotspots.has(activeHotspot.id)) {
+                    exploredHotspots.add(activeHotspot.id);
+                    updateProgress();
+                    updateHotspotStates();
+                }
+                activeHotspot = null;
+                if (exploredHotspots.size === TOTAL_HOTSPOTS) {
+                    setTimeout(startSkillMatchChallenge, 500);
+                }
+            }
+            if (id === 'feedback-correct-overlay') { 
+                proceedToNextStep();
+            }
+        }
+        
+        // --- UTILITIES ---
+        function playSound(audioEl) {
+            if (audioEl) {
+                audioEl.currentTime = 0;
+                audioEl.play().catch(e => console.error('Audio play failed:', e));
+            }
+        }
+
+        function stopSound(audioEl) {
+            if(audioEl) {
+                audioEl.pause();
+                audioEl.currentTime = 0;
+            }
+        }
+    </script>
+     <script src ="../eventSender.js"></script>
+</body>
+</html>

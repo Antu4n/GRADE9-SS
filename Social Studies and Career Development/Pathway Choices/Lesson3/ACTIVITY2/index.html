@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Find Your Fit!</title>
+<style>
+    /* Font Imports and Keyframes */
+    @font-face {
+        font-family: 'Fredoka';
+        src: url('../assets/Fredoka-VariableFont_wdth\,wght.ttf') format('truetype');
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideIn { from { transform: translateY(30px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+    @keyframes cardEnter {
+        from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.98);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    @keyframes glow-pulse-white {
+        0%, 100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 255, 255, 0.5); transform: scale(1); }
+        50% { box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 30px rgba(255, 255, 255, 0.7); transform: scale(1.05); }
+    }
+    ::-webkit-scrollbar{
+        display: none;
+    }
+
+    /* Root Variables */
+    :root {
+        --font-xs: 1.1rem;
+        --font-sm: 1.4rem;
+        --font-md: 1.6rem;
+        --font-lg: 2rem;
+        --font-xl: 4rem;
+        --pad-sm: 1rem;
+        --pad-md: 1.6rem;
+        --pad-lg: 2.4rem;
+        --primary-color: #5D04B2;
+        --secondary-color: #fbb03b;
+        --correct-color: #4caf50;
+        --text-color-dark: #333;
+        --text-color-light: #fff;
+        --card-background-light: #ffffff;
+        --shadow-dark: rgba(0, 0, 0, 0.3);
+        --border-radius: 1rem;
+        --header-font: 'Fredoka', sans-serif;
+    }
+
+    /* Global Reset & Base Styles */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100vh; overflow: hidden; }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f0f4f8;
+        font-family: var(--header-font), sans-serif;
+    }
+
+    #game-wrapper {
+        width: 100%;
+        max-width: 1200px;
+        aspect-ratio: 16 / 9;
+        box-shadow: 0 15px 40px var(--shadow-dark);
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        background: var(--card-background-light);
+    }
+
+    #game-container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .screen {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        transition: opacity 0.5s ease-in-out;
+        overflow: hidden;
+    }
+    .screen.hidden { opacity: 0; pointer-events: none; }
+    
+    #start-screen {
+       background-image: url('images/gamebg.jpg');
+       background-size: cover;
+       background-position: center;
+       justify-content: center;
+       align-items: center;
+       padding: 2rem;
+       text-align: center;
+    }
+    #start-screen h1 {
+      color: var(--text-color-light);
+      font-size: 4rem;
+      font-family: var(--header-font);
+      font-weight: 500;
+    }
+    .start-button {
+        font-family: var(--header-font);
+        background: var(--secondary-color);
+        color: var(--text-color-light);
+        font-weight: 500;
+        font-size: 1.2rem;
+        border: 3px solid #fff;
+        border-radius: 4.8rem;
+        padding: var(--pad-sm) var(--pad-lg);
+        margin-top: 1.6rem;
+        cursor: pointer;
+        text-shadow: 0 0.2rem 0 #b88b2a;
+        transition: all 0.2s;
+    }
+    
+    .start-button:hover { transform: scale(1.06); }
+
+    #game-screen { background: #f8f9ff; justify-content: flex-start; }
+
+    .game-top-section {
+        width: 100%; flex-shrink: 0; display: flex; justify-content: space-between;
+        align-items: center; background-color: var(--primary-color); z-index: 10;
+        color: var(--text-color-light); padding: clamp(0.5rem, 1.5vmin, 0.75rem) clamp(0.75rem, 2vmin, 1.25rem);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2); gap: 1rem;
+    }
+    
+    #game-title {
+        font-size: clamp(1.2rem, 4vmin, 1.8rem); font-weight: 600;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3); flex: 1 1 300px; min-width: 0;
+    }
+
+    .top-right-controls { display: flex; align-items: center; gap: 1rem; }
+    #progress-container {
+        width: clamp(100px, 20vw, 200px); background-color: rgba(255,255,255,0.3);
+        border-radius: 1rem; height: clamp(15px, 2.5vmin, 20px);
+        border: 2px solid #fff; position: relative; overflow: hidden;
+    }
+    #progress-bar {
+        height: 100%; width: 0%; background: #FFFF00;
+        border-radius: 0.8rem; transition: width 0.5s ease;
+    }
+    #progress-text {
+        color: var(--text-color-light); font-weight: 600;
+        font-size: clamp(0.75rem, 2vmin, 1rem); text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+    }
+    
+    .instructions-icon {
+        width: 2.5rem; height: 2.5rem; background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; display: flex;
+        align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease;
+        z-index: 15; flex-shrink: 0;
+        animation: glow-pulse-white 2s infinite;
+    }
+    .instructions-icon:hover { background: rgba(255, 255, 255, 0.3); transform: scale(1.1); }
+    .instructions-icon svg { width: 1.25rem; height: 1.25rem; fill: white;}
+
+    .game-content {
+        flex: 1; display: flex; flex-direction: column; padding: clamp(1rem, 4vh, 2rem);
+        overflow-y: auto; position: relative;
+        align-items: center; justify-content: flex-start; gap: clamp(1rem, 4vh, 2rem);
+    }
+
+    /* --- Decision Tree Styles --- */
+    #decision-tree-container {
+        width: 100%;
+        max-width: 1000px;
+        text-align: center;
+    }
+    .step-question {
+        font-size: clamp(1.5rem, 5vmin, 2.2rem);
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: clamp(1rem, 4vh, 2rem);
+        animation: fadeIn 0.5s ease-out;
+    }
+    .choices-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: clamp(1rem, 2.5vw, 2rem);
+    }
+    .choice-card {
+        background: #fff;
+        border-radius: var(--border-radius);
+        padding: clamp(1rem, 2vw, 1.5rem);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        cursor: pointer;
+        border-bottom: 6px solid var(--secondary-color);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        font-size: clamp(1rem, 2.5vmin, 1.2rem);
+        font-weight: 500;
+        color: var(--text-color-dark);
+        animation: cardEnter 0.5s ease-out forwards;
+        opacity: 0;
+    }
+    .choice-card:nth-child(2) { animation-delay: 0.1s; }
+    .choice-card:nth-child(3) { animation-delay: 0.2s; }
+    .choice-card:nth-child(4) { animation-delay: 0.3s; }
+
+    .choice-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(93, 4, 178, 0.15);
+    }
+
+    /* Modal Styles */
+    .modal-overlay, .overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(0,0,0,0.4); backdrop-filter: blur(5px);
+        z-index: 1000; display: flex; justify-content: center; align-items: center;
+        animation: fadeIn 0.3s ease;
+    }
+    .modal-overlay.hidden, .overlay.hidden { display: none; }
+    .modal-content, .modal {
+        background: var(--card-background-light); padding: 2.5rem;
+        border-radius: var(--border-radius); text-align: center;
+        width: 90%; max-width: 600px;
+        animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+    }
+    .modal-content h2, .modal h2 {
+      font-size: 2rem; font-weight: 600; margin-bottom: 1.5rem;
+      color: var(--primary-color);
+    }
+    .modal-content p, .modal p { font-size: 1.2rem; line-height: 1.6; color: var(--text-color-dark); }
+     .modal ul {
+        list-style-position: inside; text-align: left; margin-top: 1rem; padding-left: 1rem;
+    }
+    .modal li { margin-bottom: 0.8rem; font-size: 1.1em; line-height: 1.5; }
+
+    .modal-btn {
+        width: 100%; padding: 1rem; font-size: 1.2rem; font-weight: 700;
+        border: none; border-radius: 0.75rem; cursor: pointer; color: #fff;
+        background-color: var(--primary-color); transition: transform 0.2s, box-shadow 0.2s;
+        margin-top: 1.5rem;
+    }
+    .modal-btn:hover { transform: scale(1.02); }
+
+    #activity-intro-overlay .modal-content, #instructions-modal-overlay .modal-content { border-top: 8px solid var(--primary-color); }
+    #activity-intro-overlay .modal-content p {
+        text-align: center; background: #f8f9fa; padding: 1.5rem;
+        border-radius: 0.75rem; border-left: 4px solid var(--primary-color);
+        line-height: 1.5; font-size: 1.2rem; color: var(--text-color-dark);
+    }
+
+    /* Result Overlay Styles */
+    #result-overlay { 
+        background-image: url('images/gamebg.jpg'); background-size: cover; background-position: center;
+        flex-direction: column; justify-content: center; align-items: center;
+        padding: 2rem;
+    }
+    .result-modal {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: clamp(1.5rem, 4vw, 3rem);
+        max-width: 800px;
+        width: 95%;
+        border-top: 10px solid var(--secondary-color);
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    #result-overlay h2 {
+        font-size: clamp(1.2rem, 3.5vmin, 1.8rem);
+        font-weight: 500; color: var(--primary-color); text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    #result-pathway-track {
+        font-size: clamp(2rem, 6vmin, 3.5rem);
+        font-weight: 700; color: var(--primary-color);
+        margin: 0.5rem 0 1.5rem 0;
+    }
+    #result-feedback {
+        font-size: clamp(1.1rem, 3vmin, 1.4rem);
+        background: #f0f4f8; padding: 1.5rem;
+        border-left: 5px solid var(--primary-color);
+        margin-bottom: 2rem; color: var(--text-color-dark);
+        line-height: 1.6;
+    }
+    #result-careers h3 {
+        font-size: clamp(1.2rem, 3.5vmin, 1.6rem);
+        font-weight: 600; color: var(--text-color-dark);
+        margin-bottom: 1rem;
+    }
+    .careers-list {
+        display: flex; flex-wrap: wrap; justify-content: center;
+        gap: 1rem; padding: 0; list-style: none;
+    }
+    .careers-list li {
+        background: var(--secondary-color); color: white;
+        padding: 0.5rem 1.5rem; border-radius: 2rem;
+        font-size: clamp(0.9rem, 2.5vmin, 1.1rem); font-weight: 500;
+    }
+
+    .result-buttons {
+        position: absolute; bottom: 1.5rem; width: 100%; display: flex;
+        justify-content: center; gap: 1.5rem; padding: 0 2rem; flex-wrap: wrap;
+    }
+    .result-btn {
+        font-family: var(--header-font); background: var(--secondary-color); color: #fff;
+        font-weight: 500; font-size: clamp(1rem, 2.5vmin, 1.3rem); border: 0.1875rem solid #fff; border-radius: 3rem; 
+        padding: clamp(0.5rem, 1.5vmin, 0.75rem) clamp(1.25rem, 3vmin, 2rem);
+        cursor: pointer; transition: all 0.2s; box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+        text-shadow: 0 0.125rem 0 #b88b2a; text-decoration: none; min-width: 8.75rem;
+    }
+    .result-btn:hover { transform: scale(1.05); }
+
+    /* ===== TAKEAWAYS OVERLAY ===== */
+    #takeaways-overlay {
+        background-image: url(images/gamebg.jpg); flex-direction: column; justify-content: center;
+    }
+    .takeaways-main-header {
+        font-family: var(--header-font); color: white; font-size: 2.5rem;
+        position: absolute; top: 5%; text-align: center; width: 100%;
+        text-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.3);
+    }
+    #takeaways-overlay .modal { max-width: 800px; padding: 2rem; display: flex; flex-direction: column; align-items: center; height: 50vh;
+        overflow-y: auto; margin-top: 3rem;
+    }
+    .takeaways-header { color:var(--primary-color); display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; }
+    .takeaways-header h3 { font-family: var(--header-font); font-size: 1.8rem; color: var(--primary-color); }
+    #takeaways-list { list-style-type: none; padding: 0; width: 100%; }
+    #takeaways-list li {
+        background: none;
+        border-left: none;
+        margin-bottom: 0rem;
+        padding: 1rem 1rem 1rem 2.5rem;
+        border-radius: 0.5rem;
+        font-size: 1.1rem;
+        text-align: left;
+        position: relative;
+    }
+    #takeaways-list li::before {
+        content: '';
+        display: inline-block;
+        position: absolute;
+        left: 0.8rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1.2rem;
+        height: 1.2rem;
+        background: none;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%235cb85c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 10.8 17 4 10.8"/></svg>');
+        background-size: 1.2rem 1.2rem;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    
+    .end-lesson-btn {
+        background: var(--secondary-color);
+        font-family: var(--header-font);
+        color: #fff;
+        font-weight: 500;
+        font-size: 1.3rem;
+        border: 3px solid #fff;
+        border-radius: 3rem;
+        padding: clamp(0.5rem, 1.5vmin, 0.75rem) clamp(1.25rem, 3vmin, 2rem);
+        text-shadow: 0 2px 0 #b88b2a;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: auto;
+        min-width: 180px;
+        margin-top: 2rem;
+    }
+    .end-lesson-btn:hover { transform: scale(1.06); box-shadow: 0 6px 24px rgba(0,0,0,0.18); }
+    
+    .visually-hidden {
+        position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+        overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;
+    }
+
+    @media (max-width: 1024px) {
+        #game-wrapper { 
+            width: 100vw;
+             height: 100vh;
+              border-radius: 0;
+               aspect-ratio: unset; }
+        }
+        @media (max-width: 900px) {
+            #takeaways-overlay .modal {
+                max-width: 70vw;
+                height: 60vh;
+                margin-top: 5rem;
+            }
+            .takeaways-header{
+                margin-bottom: 0rem;
+            }
+        }
+    @media (max-width: 768px) {
+        body { padding: 0; }
+        #takeaways-overlay .modal { height: 60vh; max-width: 100%;}
+    }
+</style>
+</head>
+<body>
+<div id="game-wrapper">
+   <div id="game-container">
+        <div id="start-screen" class="screen">
+            <h1>Find Your Fit!</h1>
+            <button class="start-button">Start Your Journey</button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+            <div class="game-top-section">
+               <h1 id="game-title">Find Your Fit!</h1>
+               <div class="top-right-controls">
+                   <div id="progress-container"><div id="progress-bar"></div></div>
+                   <div id="progress-text">Step 1 of 3</div>
+                   <div class="instructions-icon" id="instructions-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+                   </div>
+               </div>
+            </div>
+            <div class="game-content">
+                <main id="decision-tree-container"></main>
+            </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h2>Let us find your fit! 🎯</h2>
+                <p>This decision tree will help you explore your passions and strengths, and guide you to a track that suits your future goals. Just click your way through a few simple choices. Ready to discover your match? Let us go!</p>
+                <button class="modal-btn" id="intro-continue-btn">Continue</button>
+            </div>
+        </div>
+
+        <div id="instructions-modal-overlay" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h2>Instructions</h2>
+                <ul>
+                    <li><b>Start your journey:</b> Listen to or read each question carefully, there are only three steps.</li>
+                    <li><b>Make your choices:</b> For each step, click the option that best matches your interests, abilities, and career goals.</li>
+                    <li><b>Follow your path:</b> Your answers will guide you through the decision tree toward your recommended pathway and track.</li>
+                    <li><b>Explore your match:</b> At the end, you will see your Pathway and Track, why it fits, and sample careers.</li>
+                    <li><b>Try again if you wish:</b> Want to explore other possibilities? Click “Retry” to start over.</li>
+                </ul>
+                <button class="modal-btn" id="close-instructions-btn">Got It!</button>
+            </div>
+        </div>
+
+        <div id="result-overlay" class="overlay hidden">
+            <div class="modal result-modal">
+                <h2>Your Recommended Fit:</h2>
+                <h1 id="result-pathway-track">Pathway & Track</h1>
+                <p id="result-feedback">Feedback on why this is a good fit for you.</p>
+                <div id="result-careers">
+                    <h3>💼 Sample Careers You Might Enjoy:</h3>
+                    <ul class="careers-list"></ul>
+                </div>
+            </div>
+            <div class="result-buttons">
+                <button class="result-btn btn-restart">Retry</button>
+                <button class="result-btn btn-takeaways">Key Takeaways</button>
+            </div>
+        </div>
+        
+        <div id="takeaways-overlay" class="overlay hidden">
+            <h2 class="takeaways-main-header">Lesson Complete</h2>
+            <div class="modal">
+                <div class="takeaways-header">
+                    <h3>Key Takeaways</h3>
+                </div>
+                <ul id="takeaways-list"></ul>
+            </div>
+            <button class="end-lesson-btn" onclick="sendEvent(LessonEvent.END_LESSON, {lessonName: 'Find Your Fit!'})">Exit Lesson</button>
+        </div>
+
+        <div id="aria-live-announcer" class="visually-hidden" aria-live="polite"></div>
+        
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="intro-sound" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="outro-sound" src="audio/outro.mp3" preload="auto"></audio>
+   </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- DOM Elements ---
+    const startScreen = document.getElementById('start-screen');
+    const gameScreen = document.getElementById('game-screen');
+    const startBtn = document.querySelector('.start-button');
+    const decisionTreeContainer = document.getElementById('decision-tree-container');
+    const announcer = document.getElementById('aria-live-announcer');
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+    const activityIntroOverlay = document.getElementById('activity-intro-overlay');
+    const introContinueBtn = document.getElementById('intro-continue-btn');
+    const instructionsIcon = document.getElementById('instructions-icon');
+    const instructionsModalOverlay = document.getElementById('instructions-modal-overlay');
+    const closeInstructionsBtn = document.getElementById('close-instructions-btn');
+    const resultOverlay = document.getElementById('result-overlay');
+    const takeawaysOverlay = document.getElementById('takeaways-overlay');
+    const dingSound = document.getElementById('ding-sound');
+    const introSound = document.getElementById('intro-sound');
+    const outroSound = document.getElementById('outro-sound');
+
+    // Game State
+    let isPaused = true;
+    let currentStep = 0;
+    const totalSteps = 3;
+    let userChoices = [];
+
+    // --- Data ---
+    const activityData = {
+        steps: [
+            {
+                question: "What do you enjoy most?",
+                choices: [
+                    "Creating things like art, music, or dance",
+                    "Solving real-world problems using numbers or experiments",
+                    "Talking to people, helping others, or exploring cultures",
+                    "Planning, organizing, or working with information"
+                ]
+            },
+            {
+                question: "What are you naturally good at?",
+                choices: [
+                    "Expressing myself in writing, drawing, or performance",
+                    "Doing math, coding, or science activities",
+                    "Explaining things clearly and understanding people’s needs",
+                    "Collecting, sorting, or analysing information"
+                ]
+            },
+            {
+                question: "Where do you want to make a difference?",
+                choices: [
+                    "On the stage or in the field, expressing or competing",
+                    "In a lab, clinic, or tech company",
+                    "In schools, courts, or communities",
+                    "In offices, businesses, or public service"
+                ]
+            }
+        ],
+        results: {
+            "1,1,1": { pathway: "Arts & Sports", track: "Performing Arts", feedback: "You are a natural on stage or in the field! The Performing Arts track in the Arts & Sports pathway is a great fit. You shine when you express yourself physically or creatively.", careers: ["Actor", "Dancer", "Sports Coach"] },
+            "1,1,3": { pathway: "Social Sciences", track: "Languages & Literature", feedback: "You are creative and expressive, but also love connecting with others. The Languages and Literature track lets you use your voice to inspire, inform, and lead.", careers: ["Writer", "Journalist", "Speaker"] },
+            "1,1,2": { pathway: "STEM", track: "Applied Sciences", feedback: "You love creativity and solving problems. The Applied Sciences track helps you use imagination in tech and science projects.", careers: ["Designer", "Technician", "Innovator"] },
+            "1,4,1": { pathway: "Arts & Sports", track: "Visual Arts", feedback: "You are observant and detail-oriented with a love for visuals. The Visual Arts track is perfect for creators who think and design with purpose.", careers: ["Illustrator", "Animator", "Fashion Designer"] },
+            "2,2,2": { pathway: "STEM", track: "Pure Sciences", feedback: "You are a born problem-solver! 🧪 The Pure Sciences track is perfect for deep thinkers who love Chemistry, Physics, and exploring how the world works.", careers: ["Chemist", "Engineer", "Researcher"] },
+            "2,2,3": { pathway: "Social Sciences", track: "Humanities & Business", feedback: "You are logical and social, a rare combo! Humanities and Business lets you apply your analytical mind to real-world human needs.", careers: ["Economist", "Civic Planner", "Policy Advisor"] },
+            "2,2,4": { pathway: "STEM", track: "Applied Sciences", feedback: "Looks like you enjoy structure, systems, and solving. The Applied Sciences track is ideal for planners, coders, and inventors.", careers: ["Data Analyst", "Technician", "IT Expert"] },
+            "2,1,1": { pathway: "Arts & Sports", track: "Visual Arts", feedback: "A mix of logic and creativity! You could use both in Visual Arts, designing, planning, and creating with structure and beauty.", careers: ["Architect", "Multimedia Designer"] },
+            "3,3,3": { pathway: "Social Sciences", track: "Humanities & Business", feedback: "You've got a heart for people and the power to support them. The Humanities and Business track will equip you to make a difference in lives and communities.", careers: ["Social Worker", "Counsellor", "Teacher"] },
+            "3,1,2": { pathway: "STEM", track: "Applied Sciences", feedback: "You love people and creativity but enjoy solving problems too. The Applied Sciences track may help you work in areas like health or education technology.", careers: ["Health Technologist", "Instructional Designer"] },
+            "3,3,1": { pathway: "Arts & Sports", track: "Performing Arts", feedback: "You enjoy connecting through performance. Performing Arts gives you a platform to express yourself and inspire others!", careers: ["Actor", "Music Educator", "Choreographer"] },
+            "3,3,4": { pathway: "Social Sciences", track: "Humanities & Business", feedback: "You care deeply about people and systems. Humanities and Business is your bridge to roles that build a better society.", careers: ["Public Administrator", "NGO Officer"] },
+            "4,4,2": { pathway: "STEM", track: "Applied Sciences", feedback: "You are methodical and organized. The Applied Sciences track will help you apply logic and order to science and tech tasks.", careers: ["Statistician", "Lab Tech", "Process Analyst"] },
+            "4,4,4": { pathway: "Social Sciences", track: "Humanities & Business", feedback: "You are precise and process-oriented. Humanities and Business prepares you for systems-based roles in planning or admin.", careers: ["Records Officer", "HR Specialist", "Urban Planner"] },
+            "4,1,1": { pathway: "Arts & Sports", track: "Visual Arts", feedback: "A planner with a creative flair! The Visual Arts track blends imagination with structure in design and crafts.", careers: ["Set Designer", "Graphic Artist"] },
+            "1,3,3": { pathway: "Social Sciences", track: "Languages & Literature", feedback: "You connect through stories and words. The Languages & Literature track gives you the tools to express and inspire.", careers: ["Poet", "Language Teacher", "Author"] },
+            "default": { pathway: "Multi-Talented Explorer", track: "Flexible Pathway", feedback: "Hmm… your interests are wide, and that’s great! Your unique combination of skills means you can blend talents from different fields. Consider looking at interdisciplinary tracks like Environmental Planning or Data for Social Change that combine STEM, Social Sciences, and creativity.", careers: ["Innovator", "Consultant", "Entrepreneur"] }
+        },
+        takeaways: [
+            "Your interests, abilities, and goals are key clues to finding a fulfilling career path.",
+            "There is no single 'perfect' career; many different paths can lead to success and happiness.",
+            "It's okay to have diverse interests! Many modern careers blend skills from different fields like tech, arts, and social sciences.",
+            "This decision tree is a starting point. Continue exploring, talking to people, and learning about different tracks to find your best fit."
+        ]
+    };
+
+    // --- Sound ---
+    function playSound(sound) { if(sound) { sound.currentTime = 0; sound.play().catch(e => console.log("Sound play failed:", e)); } }
+    function stopSound(sound) { if(sound) { sound.pause(); } }
+
+    // --- UI Update ---
+    function updateProgress() {
+        progressBar.style.width = `${(currentStep / totalSteps) * 100}%`;
+        if (currentStep < totalSteps) {
+            progressText.textContent = `Step ${currentStep + 1} of ${totalSteps}`;
+        } else {
+            progressText.textContent = `Done!`;
+        }
+    }
+    
+    function displayStep(stepIndex) {
+        const stepData = activityData.steps[stepIndex];
+        decisionTreeContainer.innerHTML = `
+            <h2 class="step-question">${stepData.question}</h2>
+            <div class="choices-grid">
+                ${stepData.choices.map((choice, index) => `
+                    <div class="choice-card" data-choice-index="${index + 1}">
+                        ${choice}
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        document.querySelectorAll('.choice-card').forEach(card => {
+            card.addEventListener('click', handleChoiceClick);
+        });
+    }
+    
+    function handleChoiceClick(event) {
+        if (isPaused) return;
+        const selectedChoiceIndex = parseInt(event.currentTarget.dataset.choiceIndex);
+        userChoices.push(selectedChoiceIndex);
+        playSound(dingSound);
+        
+        currentStep++;
+        updateProgress();
+
+        if (currentStep < totalSteps) {
+            displayStep(currentStep);
+        } else {
+            isPaused = true;
+            setTimeout(showResult, 500);
+        }
+    }
+    
+    function showResult() {
+        const resultKey = userChoices.join(',');
+        const result = activityData.results[resultKey] || activityData.results['default'];
+
+        document.getElementById('result-pathway-track').textContent = `${result.pathway}: ${result.track}`;
+        document.getElementById('result-feedback').textContent = result.feedback;
+        const careersList = resultOverlay.querySelector('.careers-list');
+        careersList.innerHTML = result.careers.map(career => `<li>${career}</li>`).join('');
+
+        resultOverlay.classList.remove('hidden');
+        announce(`Your result is: ${result.pathway}, ${result.track}.`);
+        playSound(outroSound);
+    }
+    
+    function setupTakeaways() {
+        const list = document.getElementById('takeaways-list');
+        list.innerHTML = activityData.takeaways.map(item => `<li>${item}</li>`).join('');
+    }
+
+    // --- Activity Setup ---
+    function setupActivity() {
+        isPaused = false;
+        currentStep = 0;
+        userChoices = [];
+        updateProgress();
+        displayStep(0);
+    }
+    
+    function announce(text) { 
+        announcer.textContent = '';
+        setTimeout(() => { announcer.textContent = text; }, 100);
+    }
+    
+    // --- Main Initialization ---
+    function init() {
+        startBtn.addEventListener('click', () => {
+            startScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            activityIntroOverlay.classList.remove('hidden');
+            isPaused = true;
+            playSound(introSound);
+            sendEvent(ActivityEvent.START_ACTIVITY, { activityName: 'Find Your Fit!' });
+        });
+
+        introContinueBtn.addEventListener('click', () => {
+            activityIntroOverlay.classList.add('hidden');
+            setupActivity();
+            stopSound(introSound);
+        });
+
+        instructionsIcon.addEventListener('click', () => {
+            instructionsModalOverlay.classList.remove('hidden');
+            isPaused = true;
+        });
+
+        closeInstructionsBtn.addEventListener('click', () => {
+            instructionsModalOverlay.classList.add('hidden');
+             if (currentStep < totalSteps) {
+                isPaused = false;
+            }
+        });
+        
+        resultOverlay.querySelector('.btn-restart').addEventListener('click', () => {
+            stopSound(outroSound);
+            resultOverlay.classList.add('hidden');
+            setupActivity();
+        });
+        
+        resultOverlay.querySelector('.btn-takeaways').addEventListener('click', () => {
+            stopSound(outroSound);
+            resultOverlay.classList.add('hidden');
+            takeawaysOverlay.classList.remove('hidden');
+            setupTakeaways();
+            sendEvent(ActivityEvent.END_ACTIVITY, { activityName: 'Find Your Fit!' });
+        });
+    }
+
+    init();
+});
+</script>
+<script src="../eventSender.js"></script>
+</body>
+</html>
