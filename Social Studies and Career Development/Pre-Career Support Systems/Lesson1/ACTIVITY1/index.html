@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Systems Quest – Hotspot Explorer</title>
+    <style>
+        /* Font Imports */
+        @font-face {
+            font-family: 'Fredoka';
+            src: url('../assets/Fredoka-VariableFont_wdth\,wght.ttf') format('truetype');
+        }
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        /* Root Variables */
+        :root {
+             --font-xs: 1.1rem;
+            --font-sm: 1.4rem;
+            --font-md: 1.4rem;
+            --font-lg: 2rem;
+            --font-xl: 4rem;
+            --pad-sm: 1rem;
+            --pad-md: 1.6rem;
+            --pad-lg: 2.4rem;
+            --primary-color: #5D04B2;
+            --secondary-color: #fbb03b;
+            --progress-color: #ffff00;
+            --correct-color: #4caf50;
+            --text-color-dark: #333;
+            --text-color-light: #fff;
+            --card-background-light: #ffffff;
+            --header-font: 'Fredoka', sans-serif;
+            --body-font: var(--header-font);
+        }
+
+        /* Proportional Scaling System Setup */
+        html {
+            font-size: 1.8vmin;
+        }
+
+        /* Global Reset & Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f4f8;
+            font-family: var(--body-font);
+        }
+
+        #game-wrapper {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            max-width: 1200px;
+            margin: auto;
+            position: relative;
+        }
+
+        #game-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            background-color: var(--primary-color);
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            overflow: hidden;
+            padding: 1rem;
+        }
+
+        .screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.95);
+        }
+
+
+    /* ===== START SCREEN ===== */
+    #start-screen {
+      color: var(--text-color-light);
+      text-align: center;
+      padding: 2rem;
+      background-image: url('images/gamebg.jpg');
+      background-size: cover;
+      background-position: center;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    #start-screen::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    #start-screen h1, #start-screen .start-button {
+        position: relative;
+        z-index: 1;
+    }
+
+    #start-screen h1 {
+      color: var(--text-color-light);
+      font-size: 4rem;
+      font-family: var(--header-font);
+      text-shadow: 0 0.2rem 0.5rem rgba(0,0,0,0.4);
+      font-weight: 500;
+    }
+
+    .start-button {
+       font-family: var(--header-font);
+        background: var(--secondary-color);
+        color: var(--text-color-light);
+        font-weight: 500;
+        font-size: 1.2rem;
+        border: 3px solid #fff;
+        border-radius: 4.8rem;
+        padding: var(--pad-sm) var(--pad-lg);
+        margin-top: 1.6rem;
+        cursor: pointer;
+        text-shadow: 0 0.2rem 0 #b88b2a;
+        transition: all 0.2s;
+    }
+
+    .start-button:hover {
+      transform: scale(1.06);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+    }
+
+        /* Game Screen Styles */
+        #game-screen {
+             justify-content: flex-start;
+             padding: 0;
+             display: flex;
+             flex-direction: column;
+        }
+
+        /* Header / Top Bar */
+        .game-top-section {
+          width: 100%;
+          background-color: #5D04B2;
+          padding: 0.75rem 1.25rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          color: #fff;
+          z-index: 10;
+          box-shadow: 0 0.1rem 0.5rem rgba(0,0,0,0.2);
+          flex-shrink: 0;
+        }
+
+        #game-title {
+          font-size: 1.8rem;
+          font-weight: 600;
+          margin: 0;
+        }
+
+        .progress-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        /* Progress Bar */
+         #progress-container {
+            width: 12.5rem;
+            background-color: rgba(255,255,255,0.3);
+            border-radius: 1rem;
+            height: 1.25rem;
+            border: 2px solid #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #FFFF00;
+            border-radius: 0.8rem;
+            transition: width 0.5s ease;
+        }
+
+        #progress-text {
+            color: var(--text-color-light);
+            font-weight: 700;
+            font-size: 1rem;
+            text-shadow: 0.0625rem 0.0625rem 0.125rem rgba(0,0,0,0.6);
+            white-space: nowrap;
+        }
+
+        @keyframes glow-pulse-white {
+            0%, 100% { box-shadow: 0 0 1rem rgba(255, 255, 255, 0.7), 0 0 2rem rgba(255, 255, 255, 0.5); transform: scale(1); }
+            50% { box-shadow: 0 0 2rem rgba(255, 255, 255, 1), 0 0 3rem rgba(255, 255, 255, 0.7); transform: scale(1.1); }
+        }
+
+        .instructions-icon {
+            width: 3rem;
+            height: 3rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 0.15rem solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 15;
+            flex-shrink: 0;
+            animation: glow-pulse-white 2s infinite ease-in-out;
+        }
+        .instructions-icon svg { width: 60%; height: 60%; fill: white; }
+        .instructions-icon:hover {
+            transform: scale(1.1);
+            animation-play-state: paused;
+        }
+
+        .lab-game-area {
+            width: 100%;
+            flex-grow: 1;
+            position: relative;
+            background-color: #333;
+            overflow: hidden;
+        }
+
+        .game-background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .hotspot {
+            position: absolute;
+            cursor: pointer;
+            z-index: 2;
+            width: 7rem;
+            height: 7rem;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 0.3rem solid white;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+            box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            line-height: 1;
+            text-align: center;
+        }
+        
+        .hotspot:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .hotspot.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @keyframes float-and-glow {
+            0%, 100% {
+                transform: translate(-50%, -50%) translateY(0) scale(1);
+                box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.2), 0 0 0 0rem rgba(255, 255, 255, 0.7);
+            }
+            50% {
+                transform: translate(-50%, -50%) translateY(-1rem) scale(1.05);
+                box-shadow: 0 0.8rem 2rem rgba(0,0,0,0.3), 0 0 0 1rem rgba(255, 255, 255, 0);
+            }
+        }
+
+
+        .hotspot.active { animation: float-and-glow 2.5s infinite ease-in-out; }
+        .hotspot.completed {
+            pointer-events: none;
+            background-color: var(--correct-color);
+            border-color: white;
+            animation: none;
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+
+        /* MODALS */
+        .overlay {
+          position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+          background-color: rgba(0,0,0,0.4);
+          backdrop-filter: blur(0.5rem);
+          z-index: 100;
+          display: flex; justify-content: center; align-items: center;
+          animation: fadeIn 0.3s ease;
+        }
+        .overlay.hidden { display: none; }
+
+        .modal {
+          background: var(--card-background-light, #fff);
+          padding: 2.5rem;
+          border-radius: 1rem;
+          text-align: center;
+          width: 90%;
+          max-width: 50rem;
+          animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          position: relative;
+        }
+
+        .modal .modal-title {
+          font-size: 2.5rem; font-weight: 600; margin-bottom: 1.5rem;
+          color: var(--primary-color);
+        }
+        .modal p { font-size: 1.5rem; line-height: 1.6; color: var(--text-color-dark, #333); }
+
+        #activity-description-overlay .modal { border-top: 0.5rem solid var(--primary-color); }
+        #activity-description-overlay .modal .modal-title { color: var(--primary-color); }
+        #activity-description-overlay .modal p {
+          text-align: left; background: #f8f9fa; padding: 1.5rem;
+          border-radius: 0.75rem; border-left: 0.4rem solid var(--primary-color);
+          
+        }
+
+        #game-instructions-overlay .modal { border-top: 0.5rem solid var(--primary-color); }
+        #game-instructions-overlay .modal .modal-title { color: var(--primary-color); }
+        #game-instructions-overlay .modal ul {
+            text-align: left;
+            padding-left: 2rem;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            list-style: none;
+        }
+        #game-instructions-overlay .modal li {
+            padding-left: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-close-btn {
+          width: 100%; padding: 1.2rem; font-size: 1.5rem; font-weight: 700;
+          border: none; border-radius: 0.75rem; cursor: pointer; color: #fff;
+          background-color: var(--primary-color);
+          transition: transform 0.2s, box-shadow 0.2s;
+          margin-top: 1.5rem;
+        }
+
+        .modal-close-btn:hover { transform: scale(1.02); }
+
+        /* Scenario Info Modal */
+        .scenario-modal {
+            background: var(--card-background-light);
+            width: 90%;
+            max-width: 55rem;
+            max-height: 90vh;
+            border-radius: 1rem;
+            overflow: hidden;
+            animation: slideIn 0.6s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .scenario-content {
+            padding: 2.5rem;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        #scenario-title {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            font-family: var(--header-font);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        #scenario-info p {
+            font-size: 1.6rem;
+            line-height: 1.7;
+            color: #333;
+        }
+        
+        #scenario-tip {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #e9f7ef;
+            border-left: 5px solid #28a745;
+            border-radius: 0.5rem;
+            font-size: 1.4rem;
+        }
+        #scenario-tip.hidden {
+            display: none;
+        }
+
+         #scenario-tip-icon {
+            font-weight: bold;
+            color: #28a745;
+            margin-right: 0.5rem;
+         }
+
+        #scenario-close-btn {
+           margin: 0rem 2.5rem 2.5rem;
+           width: calc(100% - 5rem);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(3rem) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+
+        /* Completion Overlay Styles */
+        #completion-overlay { 
+            background-image: url('images/gamebg.jpg'); background-size: cover; background-position: center;
+            flex-direction: column; justify-content: center; align-items: center;
+        }
+        #completion-overlay::before {
+            content: '';
+            position: absolute; top:0; left:0; right:0; bottom:0;
+            background-color: rgba(93, 4, 178, 0.7);
+        }
+
+        .completion-title-banner { 
+            position: relative;
+            z-index: 1;
+            color: var(--text-color-light);
+            font-size: clamp(2rem, 8vmin, 3.5rem);
+            text-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
+            text-align: center; font-family: var(--header-font);
+            font-weight: 500;
+            margin-bottom: 2rem;
+            padding: 0 2rem;
+        }
+        #completion-overlay .modal {
+            background: transparent; box-shadow: none; padding: 0; overflow: visible;
+            width: auto; max-width: none;margin-bottom: 4rem;
+        }
+        .completion-message {
+            position: relative;
+            z-index: 1;
+            color: var(--text-color-light);
+            font-size: clamp(1.2rem, 2.5vmin, 1.5rem);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            text-align: center;
+            max-width: 60rem;
+            line-height: 1.6;
+            padding: 0 2rem;
+        }
+        .completion-buttons {
+            position: absolute; bottom: 1.5rem; width: 100%; display: flex;
+            justify-content: center; gap: 1.5rem; padding: 0 2rem;
+        }
+        .completion-btn {
+        font-family: var(--header-font); background: var(--secondary-color); color: #fff;
+            font-weight: 500; font-size: 1.3rem; border: 0.1875rem solid #fff; border-radius: 3rem; 
+            padding: clamp(0.5rem, 1.5vmin, 0.75rem) clamp(1.25rem, 3vmin, 2rem);
+            cursor: pointer; transition: all 0.2s; box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+            text-shadow: 0 0.125rem 0 #b88b2a; text-decoration: none; min-width: 8.75rem;
+        }
+        .completion-btn:hover { transform: scale(1.05); }
+
+        /* MEDIA QUERIES */
+        @media (max-aspect-ratio: 16/9) {
+            #game-wrapper {
+                max-height: 100%;
+                max-width: calc(100vh * 16 / 9);
+            }
+        }
+        @media (max-width: 1200px) {
+            html {
+                font-size: 2.2vmin;
+            }
+        }
+        @media (max-width:1024px) {
+               #game-wrapper {
+                width: 100vw; height: 100vh; min-width: 100vw; min-height: 100vh;
+                border-radius: 0; max-width: none; aspect-ratio: unset;
+            }
+        }
+
+        @media (max-width: 1000px) {
+            html{
+                font-size: 3vmin;
+            }
+            #activity-description-overlay .modal{
+                height: 95vh;
+                overflow-y: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+             html {
+                font-size: 3vmin;
+            }
+            .completion-buttons {
+                gap: 1rem;
+                align-items: center;
+                flex-direction: column;
+            }
+            .scenario-content {
+                padding: 1.5rem;
+            }
+            #scenario-close-btn {
+                margin: 1.5rem;
+                width: calc(100% - 3rem);
+            }
+            #scenario-title { font-size: 1.8rem; }
+            #scenario-info p { font-size: 1.3rem; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-wrapper">
+        <div id="game-container">
+            <div id="start-screen" class="screen">
+                <h1>Support Systems Quest</h1>
+                <button class="start-button" onclick="startGame();">Start Your Journey!</button>
+            </div>
+
+            <div id="game-screen" class="screen hidden">
+                <div class="game-top-section">
+                    <h1 id="game-title">Support Systems Quest</h1>
+                    <div class="progress-wrapper">
+                         <div id="progress-container">
+                            <div id="progress-bar"></div>
+                        </div>
+                        <div id="progress-text">0 / 6</div>
+                        <div class="instructions-icon" onclick="showGameInstructions()">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="lab-game-area" id="lab-game-area">
+                    <img src="images/hotspot-img.jpg" alt="A map of a school and community with support systems" class="game-background-image">
+                </div>
+            </div>
+
+            <div id="activity-description-overlay" class="overlay hidden">
+                <div class="modal">
+                    <h2 class="modal-title">Activity Introduction</h2>
+                    <p>Welcome to your Support Systems Quest! Today, you are going on a virtual adventure across your school and neighbourhood. As you explore, you will visit places where learners get help, emotionally, physically, spiritually, and academically. Explore each location to unlock its benefits and discover the support it provides. Try to collect all six badges, each one represents a kind of support you can use as you grow. Ready? Let us start your journey!</p>
+                    <button class="modal-close-btn" onclick="closeActivityDescription();">Continue</button>
+                </div>
+            </div>
+
+            <div id="game-instructions-overlay" class="overlay hidden">
+                <div class="modal">
+                    <h2 class="modal-title">Learner Instructions</h2>
+                    <ul>
+                        <li>Click on the interactive hotspots located around the school and community map.</li>
+                        <li>Each click will reveal a pop-up card with a summary of the support system.</li>
+                        <li>Read the text to understand the benefits each location provides.</li>
+                        <li>Explore all six locations to collect all the support badges and complete the quest!</li>
+                    </ul>
+                    <button class="modal-close-btn" onclick="closeGameInstructions()">Got It!</button>
+                </div>
+            </div>
+
+            <div id="scenario-overlay" class="overlay hidden">
+                 <div class="scenario-modal">
+                    <div class="scenario-content">
+                        <h2 id="scenario-title"></h2>
+                        <div id="scenario-info"></div>
+                    </div>
+                    <button id="scenario-close-btn" class="modal-close-btn" onclick="closeScenario()">Continue</button>
+                </div>
+            </div>
+
+            <div id="completion-overlay" class="overlay hidden">
+                <div class="completion-title-banner">Great work, explorer! 🗺️ You're a Support Star! 🌟</div>
+                <div class="modal">
+                    <p class="completion-message">You've unlocked all the support system badges! Remember, support is not just for when things go wrong; it's there to guide, encourage, and strengthen you every step of the way. The more you use your support systems, the more confident and capable you become. Keep using your voice, asking questions, and connecting with those who care. You've got this!</p>
+                </div>
+                <div class="completion-buttons">
+                    <button class="completion-btn" onclick="restartGame()">Restart Activity</button>
+                    <button class="completion-btn" onclick="goToNextActivity()">Next Activity</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="outro-audio" src="audio/outro.mp3" preload="auto"></audio>
+
+    <script>
+        // --- DATA ---
+        const activityData = [
+            {
+                id: 'counselling',
+                title: 'Guidance & Counselling Office',
+                explanation: 'Feeling overwhelmed, confused, or unsure about your career path? This is your go-to place. School counsellors are trained to help you feel heard, supported, and focused on your next steps.',
+                coords: { top: '75%', left: '15%' },
+                icon: '🎯'
+            },
+            {
+                id: 'nurse',
+                title: 'School Nurse’s Office',
+                explanation: 'If you are feeling sick or get injured, the nurse is here to take care of you. Your health is key to your success in school.',
+                coords: { top: '30%', left: '45%' },
+                icon: '💉'
+            },
+            {
+                id: 'library',
+                title: 'Library/Learner Resource Centre',
+                explanation: 'Need help with assignments or curious about new careers? The library is full of books, computers, and career exploration materials just for you.',
+                coords: { top: '50%', left: '40%' },
+                icon: '📚'
+            },
+            {
+                id: 'conference',
+                title: 'Parent-Teacher Conference',
+                explanation: 'Your learning journey is a team effort. These meetings allow your teachers and parents to work together to support you better.',
+                coords: { top: '70%', left: '60%' },
+                icon: '👨‍👩‍👧'
+            },
+            {
+                id: 'youth-centre',
+                title: 'Community Youth Centre',
+                explanation: 'This is where fun meets learning! From mentorship programs to life skills and sports, youth centres are perfect for personal growth outside school.',
+                coords: { top: '80%', left: '85%' },
+                icon: '🧒'
+            },
+            {
+                id: 'religious-centre',
+                title: 'Religious Centre',
+                explanation: 'Looking for spiritual guidance or values-based advice? Religious leaders and centres are always ready to support you respectfully.',
+                coords: { top: '35%', left: '88%' },
+                icon: '⛪'
+            }
+        ];
+        const TOTAL_ACTIVITIES = activityData.length;
+
+        // --- STATE ---
+        let completedActivities = new Set();
+        let activeActivity = null;
+        let hotspotTimeouts = [];
+
+        // --- DOM ELEMENTS ---
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const completionOverlay = document.getElementById('completion-overlay');
+        const labGameArea = document.getElementById('lab-game-area');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const overlays = {
+            activityDescription: document.getElementById('activity-description-overlay'),
+            gameInstructions: document.getElementById('game-instructions-overlay'),
+            scenario: document.getElementById('scenario-overlay'),
+        };
+        const sounds = {
+            ding: document.getElementById('ding-sound'),
+            intro: document.getElementById('intro-audio'),
+            outro: document.getElementById('outro-audio'),
+        };
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            setupGame();
+        });
+
+        function setupGame() {
+            const existingHotspots = labGameArea.querySelectorAll('.hotspot');
+            existingHotspots.forEach(hs => hs.remove());
+
+            hotspotTimeouts.forEach(clearTimeout);
+            hotspotTimeouts = [];
+
+            activityData.forEach((item, index) => {
+                const hotspot = document.createElement('div');
+                hotspot.className = 'hotspot';
+                hotspot.id = item.id;
+                hotspot.textContent = item.icon;
+                hotspot.dataset.index = index;
+                Object.assign(hotspot.style, item.coords);
+                labGameArea.appendChild(hotspot);
+            });
+            updateHotspotStates();
+            updateProgress();
+            
+            labGameArea.removeEventListener('click', handleHotspotClick);
+            labGameArea.addEventListener('click', handleHotspotClick);
+        }
+
+        // --- GAME FLOW ---
+        function startGame() {
+            sendEvent(ActivityEvent.START_ACTIVITY, { activityName: 'Support Systems Quest' });
+            startScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            setTimeout(() => {
+                overlays.activityDescription.classList.remove('hidden');
+                playSound(sounds.intro);
+            }, 500);
+        }
+
+        function closeActivityDescription() {
+            overlays.activityDescription.classList.add('hidden');
+            if (sounds.intro) sounds.intro.pause();
+            showHotspotsSequentially();
+        }
+
+        function showHotspotsSequentially() {
+            const hotspots = document.querySelectorAll('.hotspot');
+            hotspots.forEach((hotspot, index) => {
+                const timeoutId = setTimeout(() => {
+                    if(!hotspot.classList.contains('completed')) {
+                       hotspot.classList.add('visible', 'active');
+                    }
+                }, (index) * 700); 
+                hotspotTimeouts.push(timeoutId);
+            });
+        }
+
+        function handleHotspotClick(event) {
+            const clickedHotspot = event.target.closest('.hotspot');
+            if (!clickedHotspot || clickedHotspot.classList.contains('completed')) return;
+
+            activeActivity = activityData[parseInt(clickedHotspot.dataset.index)];
+            showScenarioInfo(activeActivity);
+        }
+
+        function showScenarioInfo(activity) {
+            document.getElementById('scenario-title').textContent = activity.title;
+            const infoContainer = document.getElementById('scenario-info');
+            infoContainer.innerHTML = `<p>${activity.explanation}</p>`;
+            overlays.scenario.classList.remove('hidden');
+        }
+
+        function closeScenario() {
+            overlays.scenario.classList.add('hidden');
+
+            if (activeActivity && !completedActivities.has(activeActivity.id)) {
+                playSound(sounds.ding);
+                completedActivities.add(activeActivity.id);
+                updateProgress();
+                updateHotspotStates();
+            }
+
+            activeActivity = null;
+
+            if (completedActivities.size === TOTAL_ACTIVITIES) {
+                 setTimeout(() => {
+                     gameScreen.classList.add('hidden');
+                     completionOverlay.classList.remove('hidden');
+                     playSound(sounds.outro);
+                 }, 800);
+            }
+        }
+
+        function restartGame() {
+            if (sounds.outro) sounds.outro.pause();
+            
+            completedActivities.clear();
+            activeActivity = null;
+            hotspotTimeouts.forEach(clearTimeout);
+            hotspotTimeouts = [];
+
+            completionOverlay.classList.add('hidden');
+            overlays.scenario.classList.add('hidden');
+
+            startScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+
+            setupGame();
+            
+            overlays.activityDescription.classList.add('hidden');
+
+            setTimeout(() => {
+                showHotspotsSequentially();
+            }, 250);
+        }
+        function goToNextActivity() {
+            if (sounds.outro) sounds.outro.pause();
+            sendEvent(ActivityEvent.END_ACTIVITY, { activityName: 'Support Systems Quest' });
+            window.location.href = "../ACTIVITY4/index.html"
+        }
+        
+        // --- UI & FEEDBACK ---
+        function updateProgress() {
+            const progress = (completedActivities.size / TOTAL_ACTIVITIES) * 100;
+            progressBar.style.width = `${progress}%`;
+            progressText.textContent = `${completedActivities.size} / ${TOTAL_ACTIVITIES}`;
+        }
+
+        function updateHotspotStates() {
+            document.querySelectorAll('.hotspot').forEach((hotspot) => {
+                const activityId = hotspot.id;
+                
+                if (completedActivities.has(activityId)) {
+                    hotspot.classList.add('completed');
+                    hotspot.classList.remove('active');
+                } else if (hotspot.classList.contains('visible')) {
+                    hotspot.classList.add('active');
+                }
+            });
+        }
+
+        // --- MODAL CONTROLS ---
+        function showGameInstructions() { overlays.gameInstructions.classList.remove('hidden'); }
+        function closeGameInstructions() { overlays.gameInstructions.classList.add('hidden'); }
+
+        // --- UTILITIES ---
+        function playSound(audioEl) {
+            if (audioEl) {
+                audioEl.currentTime = 0;
+                audioEl.play().catch(e => console.error('Audio play failed:', e));
+            }
+        }
+    </script>
+<script src ="../eventSender.js"></script>
+</body>
+</html>

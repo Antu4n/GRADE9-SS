@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>The Pathway Advantage</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+<style>
+    /* Font Imports and Keyframes */
+    @font-face {
+        font-family: 'Fredoka';
+        src: url('../assets/Fredoka-VariableFont_wdth\,wght.ttf') format('truetype');
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideIn { from { transform: translateY(30px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(251, 176, 59, 0.3); }
+        50% { transform: scale(1.03); box-shadow: 0 0 30px rgba(251, 176, 59, 0.6); }
+    }
+    @keyframes glow-pulse-white {
+        0%, 100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 255, 255, 0.5); transform: scale(1); }
+        50% { box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 30px rgba(255, 255, 255, 0.7); transform: scale(1.05); }
+    }
+    @keyframes wobble {
+        0%, 100% { transform: translateX(0) rotate(0); }
+        25% { transform: translateX(-5px) rotate(-2deg); }
+        75% { transform: translateX(5px) rotate(2deg); }
+    }
+    
+    ::-webkit-scrollbar{ display: inline; }
+
+    /* Root Variables */
+    :root {
+        --primary-color: #5D04B2;
+        --secondary-color: #fbb03b;
+        --text-color-dark: #333;
+        --text-color-light: #fff;
+        --card-background-light: #ffffff;
+        --shadow-dark: rgba(0, 0, 0, 0.3);
+        --border-radius: 1.5rem;
+        --header-font: 'Fredoka', sans-serif;
+        --wood-color: #DEB887;
+        --wood-dark-color: #A0522D;
+    }
+
+    /* Global Reset & Base Styles */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100vh; overflow: hidden; }
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f0f4f8;
+        font-family: var(--header-font), sans-serif;
+        touch-action: none; /* Prevents scrolling on mobile */
+    }
+    #game-wrapper {
+        width: 100%;
+        max-width: 1200px;
+        aspect-ratio: 16 / 9;
+        box-shadow: 0 15px 40px var(--shadow-dark);
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        background: #d3e8ff;
+    }
+    #game-container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    .screen {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        transition: opacity 0.5s ease-in-out;
+        overflow: hidden;
+    }
+    .screen.hidden { opacity: 0; pointer-events: none; }
+    
+    #start-screen {
+       background-image: url('images/gamebg.jpg');
+       background-size: cover;
+       background-position: center;
+       justify-content: center;
+       align-items: center;
+       padding: 2rem;
+       text-align: center;
+    }
+    #start-screen h1 {
+      color: var(--text-color-light);
+      font-size: clamp(2.5rem, 8vmin, 4rem);
+      font-family: var(--header-font);
+      font-weight: 500;
+    }
+    .start-button {
+        font-family: var(--header-font);
+        background: var(--secondary-color);
+        color: var(--text-color-light);
+        font-weight: 500;
+        font-size: 1.2rem;
+        border: 3px solid #fff;
+        border-radius: 4.8rem;
+        padding: 1rem 2.4rem;
+        margin-top: 1.6rem;
+        cursor: pointer;
+        text-shadow: 0 0.2rem 0 #b88b2a;
+        transition: all 0.2s;
+    }
+    .start-button:hover { transform: scale(1.06); }
+    #game-screen { background: linear-gradient(to bottom, #87CEEB 0%, #d3e8ff 100%); justify-content: flex-start; }
+
+    .game-top-section {
+        width: 100%; flex-shrink: 0; display: flex; justify-content: space-between;
+        align-items: center; background-color: var(--primary-color); z-index: 10;
+        color: var(--text-color-light); padding: clamp(0.5rem, 1.5vmin, 0.75rem) clamp(0.75rem, 2vmin, 1.25rem);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2); gap: 1rem;
+    }
+    #game-title {
+        font-size: clamp(1.2rem, 4vmin, 1.8rem); font-weight: 600;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3); flex: 1 1 300px; min-width: 0;
+    }
+    .top-right-controls { display: flex; align-items: center; gap: 1rem; }
+    
+    #progress-container {
+        width: clamp(100px, 20vw, 200px); background-color: rgba(255,255,255,0.3);
+        border-radius: 1rem; height: clamp(15px, 2.5vmin, 20px);
+        border: 2px solid #fff; position: relative; overflow: hidden;
+    }
+    #progress-bar {
+        height: 100%; width: 0%; background: #FFFF00;
+        border-radius: 0.8rem; transition: width 0.5s ease;
+    }
+    #progress-text {
+        color: var(--text-color-light); font-weight: 600;
+        font-size: clamp(0.75rem, 2vmin, 1rem); text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+    }
+
+    #stability-container {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
+        display: none;
+    }
+    #stability-label {
+        font-weight: 600;
+        font-size: clamp(0.8rem, 2.2vmin, 1.1rem);
+    }
+    #stability-score {
+        font-size: clamp(1rem, 3vmin, 1.4rem);
+        font-weight: 700;
+        min-width: 40px;
+        text-align: center;
+    }
+    .tower-icon {
+        width: 2rem; height: 2rem;
+        stroke: var(--primary-color);
+    }
+
+    .instructions-icon {
+        width: 2.5rem; height: 2.5rem; background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; display: flex;
+        align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease;
+        z-index: 15; flex-shrink: 0;
+        animation: glow-pulse-white 2s infinite;
+    }
+    .instructions-icon:hover { background: rgba(255, 255, 255, 0.3); transform: scale(1.1); }
+    .instructions-icon svg { width: 1.25rem; height: 1.25rem; fill: white;}
+
+    .game-content {
+        flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative;
+    }
+    #tower-area {
+        flex-grow: 1;
+        position: relative;
+    }
+    #blocks-container {
+        flex-shrink: 0;
+        width: 100%;
+        background: rgba(0,0,0,0.1);
+        padding: clamp(0.5rem, 2vmin, 1rem);
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: clamp(0.5rem, 2vmin, 1rem);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .statement-block {
+        background: linear-gradient(to right, #e0c4a0, #c6a77f);
+        border: 1px solid #a08461;
+        border-radius: 8px;
+        padding: 0.75rem 1.25rem;
+        box-shadow: 0 4px 0 #a08461, 0 6px 10px rgba(0,0,0,0.2);
+        color: #5d4037;
+        font-weight: 600;
+        font-size: clamp(0.8rem, 2.2vmin, 1rem);
+        cursor: grab;
+        flex-shrink: 0;
+        width: 200px;
+        text-align: center;
+        user-select: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .statement-block:active {
+        cursor: grabbing;
+        transform: scale(1.05);
+        box-shadow: 0 6px 0 #a08461, 0 8px 15px rgba(0,0,0,0.3);
+    }
+    .statement-block.dragging {
+        position: fixed; /* To overlay on top of everything */
+        opacity: 0.8;
+        z-index: 10000;
+        pointer-events: none; /* Let events pass through to canvas */
+    }
+
+    /* --- Jenga Tower Styles --- */
+    canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    
+    /* --- In-Game Controls (e.g. Reset Button) --- */
+    .game-control-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 15;
+        width: 2.75rem;
+        height: 2.75rem;
+        background-color: rgba(255, 255, 255, 0.8);
+        border: 2px solid var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        padding: 0;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .game-control-btn:hover {
+        background-color: #fff;
+        transform: scale(1.1);
+    }
+    .game-control-btn svg {
+        width: 1.5rem;
+        height: 1.5rem;
+        fill: var(--primary-color);
+    }
+
+    /* Modal Styles */
+    .modal-overlay, .overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(0,0,0,0.4); backdrop-filter: blur(5px);
+        z-index: 1000; display: flex; justify-content: center; align-items: center;
+        animation: fadeIn 0.3s ease;
+    }
+    .modal-overlay.hidden, .overlay.hidden { display: none; }
+    .modal-content, .modal {
+        background: var(--card-background-light); padding: 2.5rem;
+        border-radius: var(--border-radius); text-align: center;
+        width: 90%; max-width: 600px;
+        animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+    }
+    .modal-content h2, .modal h2 {
+      font-size: clamp(1.5rem, 4vmin, 2rem); font-weight: 600; margin-bottom: 1.5rem;
+      color: var(--primary-color);
+    }
+    .modal-content p, .modal p { font-size: clamp(1rem, 2.5vmin, 1.2rem); line-height: 1.6; color: var(--text-color-dark); }
+     .modal ul {
+        list-style-position: inside; text-align: left; margin-top: 1rem; padding-left: 1rem;
+    }
+    .modal li { margin-bottom: 0.8rem; font-size: clamp(0.9rem, 2vmin, 1.1em); line-height: 1.5; }
+    .modal-btn, .modal button {
+        width: 100%; padding: 1rem; font-size: 1.2rem; font-weight: 600;
+        border: none; border-radius: 0.75rem; cursor: pointer; color: #fff;
+        background-color: var(--primary-color); transition: transform 0.2s, box-shadow 0.2s;
+        margin-top: 1.5rem;
+        font-family: var(--header-font);
+    }
+    .modal-btn:hover, .modal button:hover { transform: scale(1.02); }
+    #activity-intro-overlay .modal-content, #instructions-modal-overlay .modal-content { border-top: 8px solid var(--primary-color); }
+    #activity-intro-overlay .modal-content p {
+        text-align: left; background: #f8f9fa; padding: 1.5rem;
+        border-radius: 0.75rem; border-left: 4px solid var(--primary-color);
+        line-height: 1.5; font-size: clamp(1rem, 2.5vmin, 1.2rem); color: var(--text-color-dark);
+    }
+    #instructions-modal-overlay .modal-content ul{
+        text-align: left;
+        padding-left: 2.5rem; /* Adjusted for standard bullets */
+        list-style-type: disc;
+    }
+
+    /* Feedback Modal Styling */
+    #feedback-overlay .modal { 
+        max-width: 500px; 
+    }
+    #feedback-overlay .modal.correct { border-top: 8px solid #2ecc71; }
+    #feedback-overlay .modal.correct h2 { color: #2ecc71; }
+    #feedback-overlay .modal.correct button { background-color: #2ecc71; }
+    #feedback-overlay .modal.incorrect { border-top: 8px solid #e74c3c; }
+    #feedback-overlay .modal.incorrect h2 { color: #e74c3c; }
+    #feedback-overlay .modal.incorrect button { background-color: #e74c3c; }
+
+
+    /* ===== COMPLETION SCREEN ===== */
+    #completion-overlay { 
+        background-image: url('images/gamebg.jpg'); background-size: cover; background-position: center;
+        color: #fff; flex-direction: column; justify-content: center;
+        align-items: center; gap: 1rem; padding: 1rem; text-align: center;
+    }
+     .completion-title-banner {
+        font-size: clamp(2.5rem, 10vmin, 4rem);
+        text-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
+        text-align: center; font-family: var(--header-font);
+        padding: 0 1rem;
+        font-weight: 600;
+    }
+    #completion-image {
+        width: clamp(40vw, 53%, 58vw);
+        max-width: 100%;
+        height: auto;
+        border: 3px solid #FBB03B;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        margin-top: 2rem;
+    }
+    .completion-buttons {
+        display: flex;
+        justify-content: space-between;
+        gap: 1.5rem;
+        width: 100%;
+        padding: 1rem 2rem;
+        flex-wrap: wrap;
+    }
+    .completion-btn {
+        font-family: var(--header-font); background: var(--secondary-color); color: #fff;
+        font-weight: 500; 
+        font-size: 1.3rem;
+        border: 0.1875rem solid #fff; border-radius: 3rem; 
+        padding: clamp(0.5rem, 1.5vmin, 0.75rem) clamp(1.25rem, 3vmin, 2rem);
+        cursor: pointer; transition: all 0.2s;
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+        text-shadow: 0 0.125rem 0 #b88b2a; text-decoration: none;
+        min-width: 8.75rem; /* 140px */
+    }
+    .completion-btn:hover { 
+        transform: scale(1.05); 
+        box-shadow: 0 0.5rem 1.25rem rgba(0,0,0,0.2);
+    }
+    
+    .visually-hidden {
+        position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+        overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;
+    }
+
+    @media (max-width: 1024px) {
+        #game-wrapper { 
+            width: 100vw; height: 100vh;
+            border-radius: 0; aspect-ratio: unset; 
+        }
+    }
+     @media (max-width: 768px) {
+        #blocks-container {
+            justify-content: flex-start; /* Allow horizontal scrolling */
+        }
+        .statement-block {
+            width: 180px;
+        }
+        .completion-btn { min-width: 140px; font-size: 1rem;}
+    }
+
+</style>
+</head>
+<body>
+<div id="game-wrapper">
+   <div id="game-container">
+        <div id="start-screen" class="screen">
+            <h1>The Pathway Advantage</h1>
+            <button class="start-button">Start Activity</button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+            <div class="game-top-section">
+               <h1 id="game-title">Build Your Tower of Success!</h1>
+               <div class="top-right-controls">
+                   <div id="progress-container"><div id="progress-bar"></div></div>
+                   <div id="progress-text">0 / 8</div>
+                   <div class="instructions-icon" id="instructions-icon">
+                        <svg viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+                   </div>
+               </div>
+            </div>
+            <div class="game-content">
+                <button id="reset-btn" class="game-control-btn" aria-label="Restart Activity">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 4c-4.41 0-8 3.59-8 8s3.59 8 8 8c2.21 0 4.21-.9 5.65-2.35l-1.42-1.42C15.21 17.27 13.71 18 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.16.67 4.24 1.76L13 11h7V4l-2.35 2.35C16.21 4.9 14.21 4 12 4z"/>
+                    </svg>
+                </button>
+                <div id="stability-container">
+                   <svg class="tower-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2H2v20h20V2zM12 18V6M6 18V6m12 12V6"/></svg>
+                   <span id="stability-label">Stability:</span>
+                   <span id="stability-score">100</span>
+                </div>
+                <div id="tower-area">
+                    </div>
+                <div id="blocks-container">
+                    </div>
+            </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h2>Build Your Tower of Success!</h2>
+                <p>Ready to build your future? Each block you place represents a benefit of choosing the right learning pathway. But choose wisely. If the statement is not true, your tower might shake or even tumble! Let's stack up those advantages and build a solid future together!</p>
+                <button class="modal-btn" id="intro-continue-btn">Continue</button>
+            </div>
+        </div>
+
+        <div id="instructions-modal-overlay" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h2>Learner Instructions</h2>
+                <ul>
+                    <li>Read each block statement at the bottom of the screen.</li>
+                    <li>Decide if it is a <strong>true benefit</strong> of choosing a pathway.</li>
+                    <li>If it's <strong>true</strong>, drag it to your tower to stack it up.</li>
+                    <li>If it's <strong>false</strong>, adding it will make your tower wobble and lose stability!</li>
+                    <li>Watch your <strong>Stability Score</strong>. The more correct blocks you place, the stronger your tower becomes.</li>
+                    <li>Win by stacking all the correct benefit blocks to complete your tower!</li>
+                </ul>
+                <button class="modal-btn" id="close-instructions-btn">Got It!</button>
+            </div>
+        </div>
+
+        <div id="feedback-overlay" class="overlay hidden">
+            <div class="modal">
+                <h2 id="feedback-title">Feedback</h2>
+                <p id="feedback-text">Here is some feedback.</p>
+                <button id="close-feedback-btn">Continue</button>
+            </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+            <div>
+                 <h2 class="completion-title-banner">Activity Conclusion</h2>
+                 <img id="completion-image" src="images/complete.jpg" alt="Activity Complete Summary">
+                 <div class="completion-buttons">
+                    <button class="completion-btn btn-previous">Previous Activity</button>
+                    <button class="completion-btn btn-restart">Restart Activity</button>
+                    <button class="completion-btn btn-next">Next Activity</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="aria-live-announcer" class="visually-hidden" aria-live="polite"></div>
+        
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="intro-sound" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="outro-sound" src="audio/outro.mp3" preload="auto"></audio>
+    <audio id="wobble-sound" src="audio/buzz.mp3" preload="auto"></audio>
+   </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // --- Matter.js Aliases ---
+    const { Engine, Render, Runner, World, Bodies, Composite, Events } = Matter;
+
+    // --- DOM Elements ---
+    const startScreen = document.getElementById('start-screen');
+    const gameScreen = document.getElementById('game-screen');
+    const startBtn = document.querySelector('.start-button');
+    const towerArea = document.getElementById('tower-area');
+    const blocksContainer = document.getElementById('blocks-container');
+    const stabilityScoreEl = document.getElementById('stability-score');
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+    const resetBtn = document.getElementById('reset-btn');
+    
+    // Modals
+    const activityIntroOverlay = document.getElementById('activity-intro-overlay');
+    const introContinueBtn = document.getElementById('intro-continue-btn');
+    const instructionsIcon = document.getElementById('instructions-icon');
+    const instructionsModalOverlay = document.getElementById('instructions-modal-overlay');
+    const closeInstructionsBtn = document.getElementById('close-instructions-btn');
+    const feedbackOverlay = document.getElementById('feedback-overlay');
+    const feedbackTitle = document.getElementById('feedback-title');
+    const feedbackText = document.getElementById('feedback-text');
+    const closeFeedbackBtn = document.getElementById('close-feedback-btn');
+    const completionOverlay = document.getElementById('completion-overlay');
+    const announcer = document.getElementById('aria-live-announcer');
+
+    // Sounds
+    const dingSound = document.getElementById('ding-sound');
+    const introSound = document.getElementById('intro-sound');
+    const outroSound = document.getElementById('outro-sound');
+    const wobbleSound = document.getElementById('wobble-sound');
+
+    // --- Game State & Physics Engine ---
+    let engine, render, runner;
+    let ground;
+    let isPaused = true;
+    let stabilityScore = 100;
+    let towerBlocks = [];
+    let placedCorrectBlocks = 0;
+    let totalCorrectBlocks = 0;
+    let activeStatementBlock = null;
+    let pendingCompletion = false; // when true, the next Continue on feedback will show completion
+
+    // --- Game Data ---
+    const blockData = [
+        { text: "Gain specialized knowledge", isCorrect: true, feedback: "Well done! Choosing a pathway helps you dive deeper into subjects you're passionate about." },
+        { text: "Prepares for future careers", isCorrect: true, feedback: "Awesome! A clear pathway connects school subjects directly to future jobs or fields." },
+        { text: "Sets clear learning goals", isCorrect: true, feedback: "Great choice! When you know your direction, your goals become clearer too." },
+        { text: "Builds confidence in subject strengths", isCorrect: true, feedback: "Exactly! Focusing on your strengths boosts your confidence and motivation." },
+        { text: "Supports better academic choices", isCorrect: true, feedback: "Perfect! Pathways guide you in selecting subjects that match your interests and abilities." },
+        { text: "Helps learners stay focused", isCorrect: true, feedback: "Yes! A good pathway helps you avoid distractions and stay on track." },
+        { text: "Makes learning more purposeful", isCorrect: true, feedback: "Correct! With a goal in mind, every subject and lesson feels more meaningful." },
+        { text: "Leads to skill building for life", isCorrect: true, feedback: "Right again! Pathways equip you with practical, lifelong skills." },
+        { text: "Wastes time", isCorrect: false, feedback: "Oops! Not quite, choosing a pathway actually helps you save time by focusing on what matters." },
+        { text: "Makes studying harder", isCorrect: false, feedback: "Hmm… That’s not true. Choosing the right path usually makes studying easier and more focused." },
+        { text: "Guides you to lose your way", isCorrect: false, feedback: "Yikes! A pathway does the opposite; it gives you direction, not confusion." },
+        { text: "Blocks you from changing careers", isCorrect: false, feedback: "Nope! Your pathway prepares you but doesn’t trap you. You can always grow or shift your interests." },
+        { text: "Forces you into one subject forever", isCorrect: false, feedback: "Not true, choosing a pathway doesn’t mean you're stuck. It just helps you build a strong start." }
+    ];
+    totalCorrectBlocks = blockData.filter(b => b.isCorrect).length;
+
+
+    // --- Sound Functions ---
+    function playSound(sound) { if (sound) { sound.currentTime = 0; sound.play().catch(e => {}); } }
+    function stopSound(sound) { if (sound) { sound.pause(); sound.currentTime = 0; } }
+
+    // --- UI Update Functions ---
+    function updateProgress() {
+        const progress = totalCorrectBlocks > 0 ? (placedCorrectBlocks / totalCorrectBlocks) : 0;
+        progressBar.style.width = `${progress * 100}%`;
+        progressText.textContent = `${placedCorrectBlocks} / ${totalCorrectBlocks}`;
+    }
+
+    function updateStabilityScore(newScore) {
+        stabilityScore = Math.max(0, Math.min(100, newScore));
+        stabilityScoreEl.textContent = stabilityScore;
+    }
+
+    function createStatementBlocks() {
+        blocksContainer.innerHTML = '';
+        const shuffledBlocks = [...blockData].sort(() => Math.random() - 0.5);
+        shuffledBlocks.forEach(data => {
+            const blockEl = document.createElement('div');
+            blockEl.className = 'statement-block';
+            blockEl.textContent = data.text;
+            blockEl.dataset.correct = data.isCorrect;
+            blockEl.dataset.feedback = data.feedback;
+            blocksContainer.appendChild(blockEl);
+        });
+    }
+    
+    function showFeedback(isCorrect, text) {
+        isPaused = true;
+        const modal = feedbackOverlay.querySelector('.modal');
+        modal.className = isCorrect ? 'modal correct' : 'modal incorrect';
+        feedbackTitle.textContent = isCorrect ? 'Well Done!' : 'Not Quite!';
+        feedbackText.textContent = text;
+        feedbackOverlay.classList.remove('hidden');
+        announce(`${feedbackTitle.textContent}. ${text}`);
+    }
+
+    // --- Physics & Game Logic ---
+    function initPhysics() {
+        // Cleanup previous instance if any
+        if (engine) {
+            World.clear(engine.world);
+            Engine.clear(engine);
+            if (render) {
+                render.canvas.remove();
+                render.textures = {};
+            }
+        }
+
+        engine = Engine.create({ gravity: { y: 1 } });
+        const towerRect = towerArea.getBoundingClientRect();
+        
+        render = Render.create({
+            element: towerArea,
+            engine: engine,
+            options: {
+                width: towerRect.width,
+                height: towerRect.height,
+                wireframes: false,
+                background: 'transparent'
+            }
+        });
+
+        const wallThickness = 50;
+        ground = Bodies.rectangle(towerRect.width / 2, towerRect.height - 10, towerRect.width, 20, { isStatic: true, render: {fillStyle: '#a08461'} });
+        const leftWall = Bodies.rectangle(0 - wallThickness / 2, towerRect.height / 2, wallThickness, towerRect.height, { isStatic: true, render: { visible: false } });
+        const rightWall = Bodies.rectangle(towerRect.width + wallThickness / 2, towerRect.height / 2, wallThickness, towerRect.height, { isStatic: true, render: { visible: false } });
+
+        Composite.add(engine.world, [ground, leftWall, rightWall]);
+        
+        Render.run(render);
+        runner = Runner.create();
+        Runner.run(runner, engine);
+    }
+    
+    function addBlockToTower(x, y, isCorrect) {
+        const blockWidth = 120;
+        const blockHeight = 30;
+        const newBlock = Bodies.rectangle(x, y - 50, blockWidth, blockHeight, {
+            friction: 0.9,
+            restitution: 0.1,
+            density: 0.005,
+            render: {
+                fillStyle: isCorrect ? '#DEB887' : '#b0946d',
+                strokeStyle: '#5d4037',
+                lineWidth: 2,
+            }
+        });
+        towerBlocks.push(newBlock);
+        Composite.add(engine.world, newBlock);
+    }
+
+    function handleBlockPlacement(blockEl, dropX, dropY) {
+        const isCorrect = blockEl.dataset.correct === 'true';
+        const feedback = blockEl.dataset.feedback;
+
+        addBlockToTower(dropX, dropY, isCorrect);
+        blockEl.remove();
+
+        setTimeout(() => {
+            showFeedback(isCorrect, feedback);
+        }, 800);
+
+        if (isCorrect) {
+            playSound(dingSound);
+            updateStabilityScore(stabilityScore + 5);
+            placedCorrectBlocks++;
+            updateProgress();
+            if (placedCorrectBlocks >= totalCorrectBlocks) {
+                // Instead of auto-showing completion, wait for the user to click Continue on the feedback modal
+                pendingCompletion = true;
+            }
+        } else {
+            playSound(wobbleSound);
+            updateStabilityScore(stabilityScore - 20);
+        }
+    }
+
+    function showCompletion() {
+        feedbackOverlay.classList.add('hidden');
+        completionOverlay.classList.remove('hidden');
+        announce("Activity Complete. You have built a strong, stable Tower of Success.");
+        playSound(outroSound);
+        isPaused = true;
+        if(runner) Runner.stop(runner);
+    }
+
+    function restartGame() {
+        stopSound(outroSound);
+        completionOverlay.classList.add('hidden');
+        feedbackOverlay.classList.add('hidden');
+        setupActivity();
+    }
+
+    function setupActivity() {
+        isPaused = false;
+        placedCorrectBlocks = 0;
+        towerBlocks = [];
+        updateStabilityScore(100);
+        updateProgress();
+        createStatementBlocks();
+        initPhysics();
+        if(runner) Runner.start(runner);
+    }
+    
+    function announce(text) { announcer.textContent = text; }
+
+    function handleDragStart(e) {
+        const target = e.target.closest('.statement-block');
+        if (!target || isPaused) return;
+
+        activeStatementBlock = target.cloneNode(true);
+        activeStatementBlock.classList.add('dragging');
+        document.body.appendChild(activeStatementBlock);
+        
+        positionDraggingBlock(e);
+        
+        document.addEventListener('mousemove', handleDragMove);
+        document.addEventListener('touchmove', handleDragMove);
+        document.addEventListener('mouseup', handleDragEnd);
+        document.addEventListener('touchend', handleDragEnd);
+    }
+
+    function positionDraggingBlock(e) {
+        if (!activeStatementBlock) return;
+        const clientX = e.clientX || e.touches[0].clientX;
+        const clientY = e.clientY || e.touches[0].clientY;
+        activeStatementBlock.style.left = `${clientX - activeStatementBlock.offsetWidth / 2}px`;
+        activeStatementBlock.style.top = `${clientY - activeStatementBlock.offsetHeight / 2}px`;
+    }
+
+    function handleDragMove(e) {
+        if (!activeStatementBlock) return;
+        e.preventDefault();
+        positionDraggingBlock(e);
+    }
+
+    function handleDragEnd(e) {
+        if (!activeStatementBlock) return;
+        
+        const towerRect = towerArea.getBoundingClientRect();
+        const clientX = e.clientX || e.changedTouches[0].clientX;
+        const clientY = e.clientY || e.changedTouches[0].clientY;
+
+        // Check if dropped within the tower area
+        if (clientY < towerRect.bottom && clientY > towerRect.top && clientX > towerRect.left && clientX < towerRect.right) {
+            const originalBlock = Array.from(blocksContainer.children).find(child => child.textContent === activeStatementBlock.textContent);
+            if (originalBlock) {
+                 handleBlockPlacement(originalBlock, clientX - towerRect.left, clientY - towerRect.top);
+            }
+        }
+
+        activeStatementBlock.remove();
+        activeStatementBlock = null;
+
+        document.removeEventListener('mousemove', handleDragMove);
+        document.removeEventListener('touchmove', handleDragMove);
+        document.removeEventListener('mouseup', handleDragEnd);
+        document.removeEventListener('touchend', handleDragEnd);
+    }
+    
+    function init() {
+        startBtn.addEventListener('click', () => {
+            startScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            activityIntroOverlay.classList.remove('hidden');
+            playSound(introSound);
+            sendEvent(ActivityEvent.START_ACTIVITY, { activityName: 'The Pathway Advantage' });
+        });
+
+        introContinueBtn.addEventListener('click', () => {
+            activityIntroOverlay.classList.add('hidden');
+            setupActivity();
+            stopSound(introSound);
+        });
+        
+        instructionsIcon.addEventListener('click', () => { isPaused = true; instructionsModalOverlay.classList.remove('hidden'); });
+        closeInstructionsBtn.addEventListener('click', () => { instructionsModalOverlay.classList.add('hidden'); isPaused = false; });
+        
+        resetBtn.addEventListener('click', restartGame);
+
+        closeFeedbackBtn.addEventListener('click', () => {
+            feedbackOverlay.classList.add('hidden');
+            if (pendingCompletion) {
+                // finalize completion only after the user confirms via the feedback modal
+                pendingCompletion = false;
+                showCompletion();
+            } else {
+                isPaused = false;
+            }
+        });
+        
+        completionOverlay.querySelector('.btn-restart').addEventListener('click', restartGame);
+        completionOverlay.querySelector('.btn-previous').addEventListener('click', () => {
+             sendEvent(ActivityEvent.END_ACTIVITY, { activityName: 'The Pathway Advantage' });
+             window.location.href = "../ACTIVITY1/index.html";
+        });
+        completionOverlay.querySelector('.btn-next').addEventListener('click', () => {
+             sendEvent(ActivityEvent.END_ACTIVITY, { activityName: 'The Pathway Advantage' });
+             window.location.href = "../ACTIVITY3/index.html";
+        });
+
+        blocksContainer.addEventListener('mousedown', handleDragStart);
+        blocksContainer.addEventListener('touchstart', handleDragStart, { passive: true });
+    }
+
+    init();
+});
+</script>
+<script src="../eventSender.js"></script>
+</body>
+</html>
