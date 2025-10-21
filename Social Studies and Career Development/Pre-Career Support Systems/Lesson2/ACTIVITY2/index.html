@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity: Barrier Buster</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        html {
+            font-size: 1.5vmin; /* Increased for better base readability */
+        }
+        ::-webkit-scrollbar{
+            display: none;
+        }
+        :root {
+            --font-xs: 1.1rem;
+            --font-sm: 1.4rem;
+            --font-md: 1.6rem;
+            --font-lg: 2.4rem;
+            --font-xl: 4.8rem;
+            --pad-sm: 1rem;
+            --pad-md: 1.6rem;
+            --pad-lg: 2.4rem;
+            --primary-color: #5D04B2;
+            --secondary-color: #FBB03B;
+            --progress-color: #FFFF00;
+            --correct-color: #5cb85c;
+            --incorrect-color: #d9534f;
+            --text-color-dark: #333;
+            --text-color-light: #fff;
+            --card-background-light: #ffffff;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --shadow-dark: rgba(0, 0, 0, 0.3);
+            --header-font: 'Fredoka', 'Poppins', sans-serif;
+            --body-font: 'Fredoka', 'Nunito', sans-serif;
+            --border-radius: 1.4rem;
+            /* Category Colors */
+            --cat-challenge-color: #d9534f; /* Red for Challenge */
+            --cat-not-challenge-color: #5cb85c; /* Green for Not a Challenge */
+        }
+
+        @font-face {
+            font-family: 'Fredoka';
+            src: url('../assets/Fredoka-VariableFont_wdth\,wght.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f4f8;
+            font-family: var(--body-font);
+            font-size: var(--font-md);
+        }
+
+        #game-wrapper {
+            width: 100%;
+            max-width: 1200px;
+            aspect-ratio: 16 / 9;
+            box-shadow: 0 1.5rem 4rem var(--shadow-dark);
+            overflow: hidden;
+            position: relative;
+            background: #fff;
+        }
+
+        #game-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0; left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: var(--pad-lg);
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        .screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.95);
+        }
+
+        /* --- HEADER --- */
+        .game-header {
+            width: 100%;
+            background-color: var(--primary-color);
+            padding: var(--pad-sm) var(--pad-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: absolute;
+            top: 0; left: 0; z-index: 10;
+            box-shadow: 0 0.2rem 1rem rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .game-header.visible { opacity: 1; }
+        .game-header h1 { font-size: var(--font-lg); font-weight: 800; margin: 0; }
+
+        /* --- PROGRESS BAR STYLING --- */
+        .header-progress {
+            display: flex;
+            align-items: center;
+            gap: var(--pad-md);
+        }
+        #header-progress-container {
+            width: 20rem;
+            background-color: rgba(255,255,255,0.3);
+            border-radius: 1.6rem;
+            height: 2rem;
+            border: 0.2rem solid white;
+            position: relative;
+            overflow: hidden;
+        }
+        #header-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--progress-color);
+            border-radius: 1.3rem;
+            transition: width 0.5s ease;
+        }
+        #header-progress-text {
+            font-weight: 700;
+            font-size: var(--font-sm);
+        }
+
+        /* --- START SCREEN --- */
+        #start-screen {
+            background-image: url('images/gamebg.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        #start-screen h1 {
+            font-size: var(--font-xl);
+            color: var(--text-color-light);
+            margin-bottom: 1.9rem;
+            text-align: center;
+            font-weight: 900;
+            text-shadow: 0 0.4rem 1rem rgba(0,0,0,0.3);
+        }
+        .start-button {
+            font-family: var(--header-font);
+            background: var(--secondary-color); color: var(--text-color-light);
+            font-weight: 900;
+            font-size: var(--font-md);
+            border: 3px solid #fff;
+            border-radius: 4.8rem;
+            padding: var(--pad-sm) var(--pad-lg);
+            margin-top: 1.6rem;
+            cursor: pointer;
+            text-shadow: 0 0.2rem 0 #b88b2a;
+            transition: all 0.2s;
+        }
+        .start-button:hover { transform: scale(1.06); }
+
+        /* ===== COMPLETION OVERLAY ===== */
+        #completion-overlay {
+            background-image: url('images/gamebg.jpg');
+            background-size: cover; background-position: center; color: #fff;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            gap: 1rem; padding: 1rem;
+        }
+        .completion-title-banner {
+            font-size: clamp(2.5rem, 10vmin, 4rem);
+            text-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
+            text-align: center; font-family: var(--header-font);
+            padding: 0 1rem;
+        }
+        #completion-overlay .modal {
+            background: transparent; box-shadow: none; width: auto; max-width: none;
+            margin-bottom: 2.5rem;
+            display: flex; justify-content: center; align-items: center; padding: 0; overflow: visible;
+        }
+        #completion-image {
+            width: 100%;
+            max-width: 700px;
+            height: auto;
+            border: 3px solid var(--secondary-color);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-top: 0.5rem;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .completion-buttons {
+            position: static;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0 2rem 2rem 2rem;
+            box-sizing: border-box;
+            align-items: flex-end;
+            margin-top: 0;
+        }
+        .completion-btn {
+            font-family: var(--header-font); background: var(--secondary-color); color: #fff;
+            font-weight: 500; 
+            font-size: 1.5rem;
+            border: 0.1875rem solid #fff; border-radius: 3rem; 
+            padding: clamp(0.5rem, 1.5vmin, 0.75rem) clamp(1.25rem, 3vmin, 2rem);
+            cursor: pointer; transition: all 0.2s;
+            box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+            text-shadow: 0 0.125rem 0 #b88b2a; text-decoration: none;
+            min-width: 8.75rem; /* 140px */
+        }
+        .completion-btn:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 0.5rem 1.25rem rgba(0,0,0,0.2);
+        }
+        
+        /* --- GAME SCREEN & LAYOUT --- */
+        #game-screen {
+            justify-content: flex-start;
+            padding: 0;
+            overflow: hidden;
+            background-color: #e9eef2;
+        }
+        .game-content {
+            width: 100%;
+            height: 100%;
+            padding: 6.8rem var(--pad-md) var(--pad-md) var(--pad-md);
+            display: flex;
+            flex-direction: column;
+            gap: var(--pad-md);
+        }
+        
+        /* --- CONTAINER FOR DROP ZONES (CAROUSEL) --- */
+        #drop-zones-container {
+            width: 100%;
+            flex-grow: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+        #drop-zones-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.6s ease-in-out;
+        }
+        .drop-zone-page {
+            display: flex;
+            height: 100%;
+            gap: var(--pad-md);
+            padding: 0 0.2rem; /* small padding to avoid box-shadow clipping */
+            flex-shrink: 0; /* Prevent pages from shrinking */
+        }
+        
+        #drag-items-container {
+            width: 100%;
+            height: 25%;
+            background: #dcdde1;
+            border-radius: var(--border-radius);
+            box-shadow: inset 0 5px 15px -5px rgba(0,0,0,0.15);
+            padding: var(--pad-sm);
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--pad-sm);
+            justify-content: center;
+            align-content: flex-start;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        
+        /* --- IMPROVED DRAG & DROP STYLING --- */
+        .drag-item {
+            background-color: #fff;
+            padding: 0.7rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 8px var(--shadow-light);
+            cursor: grab;
+            transition: all 0.2s ease;
+            font-size: var(--font-md);
+            font-weight: 700;
+            color: var(--text-color-dark);
+            border: 3px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 18rem;
+            min-height: 7rem;
+        }
+        .drag-item:active { cursor: grabbing; }
+        .drag-item.dragging {
+            opacity: 0.5;
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px var(--shadow-dark);
+        }
+
+        .drop-zone {
+            flex: 1; /* Each zone will take up equal space */
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            background: #fdfdff;
+            border-radius: var(--border-radius);
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .drop-zone-header {
+            font-size: var(--font-lg);
+            font-weight: 800;
+            color: white;
+            padding: var(--pad-sm);
+            text-align: center;
+            border-bottom: 4px solid rgba(0,0,0,0.1);
+            border-top-left-radius: calc(var(--border-radius) - 4px);
+            border-top-right-radius: calc(var(--border-radius) - 4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .drop-zone-header svg {
+            width: 2.2rem;
+            height: 2.2rem;
+            fill: white;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+        }
+        .drop-zone[data-category="Challenge"] .drop-zone-header { background-color: var(--cat-challenge-color); }
+        .drop-zone[data-category="Not a Challenge"] .drop-zone-header { background-color: var(--cat-not-challenge-color); }
+
+        .drop-zone.drag-over {
+            transform: scale(1.02);
+            border-style: solid;
+        }
+        .drop-zone[data-category="Challenge"].drag-over { border-color: var(--cat-challenge-color); box-shadow: 0 0 20px var(--cat-challenge-color); }
+        .drop-zone[data-category="Not a Challenge"].drag-over { border-color: var(--cat-not-challenge-color); box-shadow: 0 0 20px var(--cat-not-challenge-color); }
+
+        .items-landed-container {
+            flex-grow: 1;
+            padding: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            align-content: flex-start;
+            overflow-y: auto;
+        }
+       .items-landed-container .drag-item {
+            cursor: default;
+            background-color: #e8f5e9;
+            border-color: var(--correct-color);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: auto;
+            flex-grow: 1;
+            font-size: 1.5rem;
+            min-height: 10vh;
+        }
+        @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* --- BUTTONS & MODALS --- */
+        #help-button { animation: glow-pulse-white 2.5s infinite ease-in-out; }
+        #help-button {
+            width: 4rem; height: 4rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 0.2rem solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; padding: 0; color: white; }
+        #help-button svg { width: 50%; height: 50%; fill: white; }
+        #help-button:hover { transform: scale(1.1); animation: none; }
+
+        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); backdrop-filter: blur(0.5rem); z-index: 1000; display: flex; justify-content: center; align-items: center; animation: fadeIn 0.3s ease; }
+        .modal-overlay.hidden { display: none; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        #narration-modal, #help-modal, #feedback-modal { background: var(--card-background-light); padding: var(--pad-lg); border-radius: var(--border-radius); text-align: center; width: 55%; max-width: 60rem; border-top: 0.8rem solid var(--primary-color); animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #narration-title, #help-title, .feedback-title { color: var(--primary-color); font-size: 1.8rem; margin-bottom: 2.4rem; display: flex; align-items: center; justify-content: center; gap: 1rem; font-weight: 600;}
+        #narration-text, #help-modal-text, #feedback-modal-text { font-size: var(--font-md); line-height: 1.6; color: var(--text-color-dark); margin-bottom: 3.2rem; }
+        #narration-text p, #help-modal-text p, #help-modal-text ul { margin-bottom: 1rem; list-style: none;}
+        #help-modal-text { text-align: left; }
+        #narration-text { text-align: left; background: #f8f9fa; padding: 1.5rem; border-radius: 0.75rem; border-left: 4px solid var(--primary-color); line-height: 1.5; color: var(--text-color-dark); }
+        #continue-narration-btn, #help-modal-btn, #feedback-modal-btn { width: 100%; padding: 1.6rem; font-size: 1.8rem; font-weight: 700; border: none; border-radius: 1.2rem; cursor: pointer; color: #ffffff; transition: transform 0.2s, box-shadow 0.2s; }
+        #continue-narration-btn:hover, #help-modal-btn:hover, #feedback-modal-btn:hover { transform: scale(1.03); }
+        #continue-narration-btn, #help-modal-btn { background: var(--primary-color); }
+        
+        @keyframes slideIn { from { transform: translateY(3rem) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+        
+        #feedback-modal.correct-feedback { border-color: var(--correct-color); }
+        #feedback-modal.incorrect-feedback { border-color: var(--incorrect-color); }
+        #feedback-modal.correct-feedback .feedback-title { color: var(--correct-color); }
+        #feedback-modal.incorrect-feedback .feedback-title { color: var(--incorrect-color); }
+        .feedback-title svg { width: var(--font-lg); height: var(--font-lg); }
+        #feedback-modal.correct-feedback #feedback-modal-btn { background: var(--correct-color); }
+        #feedback-modal.incorrect-feedback #feedback-modal-btn { background: var(--incorrect-color); }
+        
+        .shake { animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+        
+        @keyframes glow-pulse-white {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 255, 255, 0.5); transform: scale(1); }
+            50% { box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 30px rgba(255, 255, 255, 0.7); transform: scale(1.1); }
+        }
+
+        /* --- Media Query for smaller screens --- */
+        @media (max-width: 991px) {
+            #completion-image { max-width: 50vw; width: 100%; }
+            #narration-modal{
+                height: 95vh;
+                overflow-y: auto;
+            }
+            #completion-overlay .modal{
+                margin-bottom: 0rem;
+            }
+            #completion-image {
+                max-width: 56vw !important;
+                width: 100%;
+            }
+
+       
+            .items-landed-container {
+                align-content: center; /* Center the dropped items nicely */
+            }
+            .items-landed-container .drag-item {
+                font-size: 1.6rem;
+                padding: 1rem;
+                max-width: 85%; /* Prevent a single item from stretching too wide */
+            }
+        }
+        @media (max-width: 768px), (max-height: 500px) {
+            body { padding: 0; }
+            #game-wrapper { aspect-ratio: unset; width: 100vw; height: 100vh; border-radius: 0; box-shadow: none; }
+            html { font-size: 2.8vmin; } /* Adjusted for better mobile scaling */
+            .game-content { flex-direction: column; padding: 7rem var(--pad-sm) var(--pad-sm) var(--pad-sm); }
+            #drag-items-container {
+                height: 31%;
+                padding: 0.3rem;
+            }
+            .drag-item {
+                font-size: var(--font-sm);
+                width: 14rem;
+                min-height: 4rem;
+                padding: 0.5rem;
+            }    
+            .completion-buttons { gap: 0.75rem; position: static; padding: 1rem; }
+            
+            #completion-image {
+                max-width: 55vw;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-wrapper">
+        <div id="game-container">
+            <div class="game-header">
+                <h1>Barrier Buster</h1>
+                <div class="header-progress">
+                    <div id="header-progress-container">
+                        <div id="header-progress-bar"></div>
+                    </div>
+                    <div id="header-progress-text">0 / 8</div>
+                    <button id="help-button" title="Help">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div id="start-screen" class="screen">
+                <h1>Barrier Buster</h1>
+                <button class="start-button">Start Activity</button>
+            </div>
+
+            <div id="game-screen" class="screen hidden">
+                <div class="game-content">
+                    <div id="drop-zones-container">
+                        <div id="drop-zones-track"></div>
+                    </div>
+                    <div id="drag-items-container"></div>
+                </div>
+            </div>
+
+            <div id="completion-overlay" class="screen hidden">
+                <h2 class="completion-title-banner">Activity Conclusion</h2>
+                <div class="modal">
+                    <img id="completion-image" src="images/complete.jpg" alt="Activity summary showing benefits of overcoming barriers." onerror="this.src='https://placehold.co/600x400/5D04B2/ffffff?text=Barrier+Busted!'; this.onerror=null;">
+                </div>
+                <div class="completion-buttons">
+                    <button class="completion-btn" id="prev-activity-btn">Previous Activity</button>
+                    <button class="completion-btn" id="restart-activity-btn">Restart Activity</button>
+                    <button class="completion-btn" id="next-activity-btn">Next Activity</button>
+                </div>
+            </div>
+
+            <div id="feedback-modal-overlay" class="modal-overlay hidden">
+                <div id="feedback-modal">
+                    <div class="feedback-title" id="feedback-title"></div>
+                    <div id="feedback-modal-text"></div>
+                    <button id="feedback-modal-btn">Continue</button>
+                </div>
+            </div>
+
+            <div id="narration-modal-overlay" class="modal-overlay hidden">
+                <div id="narration-modal">
+                    <h2 id="narration-title">Activity Introduction</h2>
+                    <div id="narration-text"></div>
+                    <button id="continue-narration-btn">Continue</button>
+                </div>
+            </div>
+
+            <div id="help-modal-overlay" class="modal-overlay hidden">
+                <div id="help-modal">
+                    <h2 id="help-title">Learner Instructions</h2>
+                    <div id="help-modal-text"></div>
+                    <button id="help-modal-btn">Got It!</button>
+                </div>
+            </div>
+            
+            <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+            <audio id="outro-audio" src="audio/outro.mp3" preload="auto"></audio>
+            <audio id="correct-audio" src="audio/ding.mp3" preload="auto"></audio>
+            <audio id="incorrect-audio" src="audio/buzz.mp3" preload="auto"></audio>
+
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // --- CONSTANTS ---
+    const endScreenDelay = 500;
+    
+    // --- DOM ELEMENTS ---
+    const startScreen = document.getElementById('start-screen');
+    const gameScreen = document.getElementById('game-screen');
+    const completionOverlay = document.getElementById('completion-overlay');
+    const gameHeader = document.querySelector('.game-header');
+    const startBtn = document.querySelector('.start-button');
+    const narrationModalOverlay = document.getElementById('narration-modal-overlay');
+    const narrationText = document.getElementById('narration-text');
+    const continueNarrationBtn = document.getElementById('continue-narration-btn');
+    const modalOverlay = document.getElementById('feedback-modal-overlay');
+    const modal = document.getElementById('feedback-modal');
+    const feedbackTitle = document.getElementById('feedback-title');
+    const feedbackText = document.getElementById('feedback-modal-text');
+    const feedbackModalBtn = document.getElementById('feedback-modal-btn');
+    const dragItemsContainer = document.getElementById('drag-items-container');
+    const dropZonesContainer = document.getElementById('drop-zones-container');
+    const dropZonesTrack = document.getElementById('drop-zones-track');
+    const helpButton = document.getElementById('help-button');
+    const helpModalOverlay = document.getElementById('help-modal-overlay');
+    const helpModalText = document.getElementById('help-modal-text');
+    const helpModalBtn = document.getElementById('help-modal-btn');
+    const progressBar = document.getElementById('header-progress-bar');
+    const progressText = document.getElementById('header-progress-text');
+    const restartActivityBtn = document.getElementById('restart-activity-btn');
+    const nextActivityBtn = document.getElementById('next-activity-btn');
+    const prevActivityBtn = document.getElementById('prev-activity-btn');
+    const introAudio = document.getElementById('intro-audio');
+    const outroAudio = document.getElementById('outro-audio');
+    const correctAudio = document.getElementById('correct-audio');
+    const incorrectAudio = document.getElementById('incorrect-audio');
+
+    // --- GAME CONTENT ---
+    const gameContent = {
+        intro: "Welcome to Barrier Buster! In this activity, you will decide what really stands in the way of getting support, and what is just a misunderstanding. Sort each card into the right box: Is it a real Challenge or Not a Challenge? Let's see how many barriers you can bust!",
+        instructions: `<ul>
+                <li>Drag each scenario card into one of two bins: <strong>Challenge</strong> or <strong>Not a Challenge</strong>.</li>
+                <li>A challenge is anything that blocks access to support—this could be emotional, social, cultural, or physical.</li>
+                <li>Not every difficulty is a barrier.</li>
+                <li>Check your feedback after each sort!</li>
+            </ul>`,
+        outro: "Nice work, Barrier Buster! You now know how to spot real challenges that can stop people from asking for help, and how to tell them apart from myths or excuses. Keep using this skill to create more open, helpful spaces for yourself and others."
+    };
+
+    const gameData = [
+        { id: 'mentor', text: '“My mentor is often too busy to meet me.”', category: 'Challenge', feedback: { correct: 'Correct! A busy mentor is a real barrier; it limits access to helpful guidance.', incorrect: 'Actually, this is a common challenge. Sometimes support is not always available when needed.' } },
+        { id: 'opinions', text: '“There are different opinions from my parents and teacher.”', category: 'Challenge', feedback: { correct: 'Yes! Conflicting advice can make career choices confusing and stressful.', incorrect: 'Look again. Multiple opinions can cause real pressure and confusion.' } },
+        { id: 'weak', text: '“Asking for help makes me look weak.”', category: 'Challenge', feedback: { correct: 'Good job! Fear of judgment is one of the top emotional barriers to seeking help.', incorrect: 'Actually, many learners feel this way, even if it is not true. Try again' } },
+        { id: 'homework', text: '“I can’t talk to my teacher because I haven’t done homework.”', category: 'Not a Challenge', feedback: { correct: 'Right! Not doing homework is not a barrier, it is a choice that can be changed with responsibility.', incorrect: 'Think again, is this really a systemic challenge, or a personal decision?' } },
+        { id: 'problems', text: '“Support systems are only for students with problems.”', category: 'Challenge', feedback: { correct: 'Yes! This is a common misconception. Thinking support is only for crises creates a barrier.', incorrect: 'Careful, this mindset discourages learners from asking for help early.' } },
+        { id: 'counsellor', text: '“My school has a counsellor available every day.”', category: 'Not a Challenge', feedback: { correct: 'Great! That’s a positive resource, not a barrier.', incorrect: 'Not quite. Having access to support is actually a good thing.' } },
+        { id: 'parents', text: '“My parents say I should be a doctor, but I want to be an artist.”', category: 'Challenge', feedback: { correct: 'Correct. Pressure from family to choose a specific path can make it hard to pursue your real goals.', incorrect: 'This is a real conflict. Think about how it might affect decision, making.' } },
+        { id: 'never', text: '“I’ve never needed help before, so I won’t need it now.”', category: 'Challenge', feedback: { correct: 'Right. This belief can prevent learners from seeking help when they actually need it.', incorrect: 'Even if you have never needed help, this thinking can block future access to support.' } }
+    ];
+
+    const categories = [
+        { id: "Challenge", title: "Challenge" },
+        { id: "Not a Challenge", title: "Not a Challenge" }
+    ];
+
+    const icons = {
+        correct: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+        incorrect: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`
+    };
+    
+    // --- State variables for dynamic paging ---
+    const isSmallScreen = window.matchMedia('(max-width: 991px)');
+    let pagedItems = [];
+    let numPages = 0;
+    
+    // --- Game State ---
+    let score = 0;
+    const totalQuestions = gameData.length;
+    let draggedItem = null;
+    let currentDropZone = null;
+    let ghostElement = null;
+    let touchOffsetX = 0;
+    let touchOffsetY = 0;
+    let currentPage = 0;
+    
+    const shuffleArray = array => array.sort(() => Math.random() - 0.5);
+
+    function initializeGame() {
+        score = 0;
+        currentPage = 0;
+        updateProgressBar();
+        
+        narrationText.innerHTML = gameContent.intro;
+        helpModalText.innerHTML = gameContent.instructions;
+
+        dragItemsContainer.innerHTML = '';
+        dropZonesTrack.innerHTML = '';
+        dropZonesTrack.style.transform = 'translateX(0%)';
+
+        const shuffledData = shuffleArray([...gameData]);
+        
+        if (isSmallScreen.matches) {
+            const itemsPerPage = 2; 
+            pagedItems = [];
+            for (let i = 0; i < shuffledData.length; i += itemsPerPage) {
+                pagedItems.push(shuffledData.slice(i, i + itemsPerPage));
+            }
+        } else {
+            const itemsPerPage = 4;
+            pagedItems = [];
+            for (let i = 0; i < shuffledData.length; i += itemsPerPage) {
+                pagedItems.push(shuffledData.slice(i, i + itemsPerPage));
+            }
+        }
+        
+        numPages = pagedItems.length;
+        dropZonesTrack.style.width = `${numPages * 100}%`;
+
+        for (let i = 0; i < numPages; i++) {
+            const pageEl = document.createElement('div');
+            pageEl.className = 'drop-zone-page';
+            pageEl.style.width = `${100 / numPages}%`;
+            categories.forEach(cat => {
+                const zoneEl = document.createElement('div');
+                zoneEl.className = 'drop-zone';
+                zoneEl.dataset.category = cat.id;
+                zoneEl.innerHTML = `
+                    <div class="drop-zone-header">${cat.title}</div>
+                    <div class="items-landed-container"></div>
+                `;
+                pageEl.appendChild(zoneEl);
+            });
+            dropZonesTrack.appendChild(pageEl);
+        }
+
+        addDropZoneListeners();
+        renderDragItems(pagedItems[currentPage]);
+    }
+    
+    function renderDragItems(items) {
+        dragItemsContainer.innerHTML = '';
+        items.forEach(itemData => {
+            const itemEl = document.createElement('div');
+            itemEl.className = 'drag-item';
+            itemEl.innerHTML = itemData.text;
+            itemEl.draggable = true;
+            itemEl.dataset.id = itemData.id;
+            dragItemsContainer.appendChild(itemEl);
+        });
+        addDragItemListeners();
+    }
+
+    function addDropZoneListeners() {
+        const dropZones = document.querySelectorAll('.drop-zone');
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', e => {
+                e.preventDefault();
+                zone.classList.add('drag-over');
+            });
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('drag-over');
+            });
+            zone.addEventListener('drop', e => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                if (draggedItem) {
+                    handleDrop(zone);
+                }
+            });
+        });
+    }
+
+    function addDragItemListeners() {
+        const draggables = document.querySelectorAll('.drag-item');
+        draggables.forEach(draggable => {
+            draggable.addEventListener('dragstart', () => {
+                draggedItem = draggable;
+                setTimeout(() => draggable.classList.add('dragging'), 0);
+            });
+            draggable.addEventListener('dragend', () => {
+                if (draggedItem) {
+                    draggedItem.classList.remove('dragging');
+                }
+                draggedItem = null;
+            });
+            
+            draggable.addEventListener('touchstart', (e) => {
+                if (draggable.closest('.drop-zone')) return;
+                e.preventDefault();
+                draggedItem = draggable;
+                const touch = e.touches[0];
+                const rect = draggedItem.getBoundingClientRect();
+                touchOffsetX = touch.clientX - rect.left;
+                touchOffsetY = touch.clientY - rect.top;
+                ghostElement = draggedItem.cloneNode(true);
+                ghostElement.classList.add('dragging');
+                ghostElement.style.position = 'fixed';
+                ghostElement.style.zIndex = '10000';
+                ghostElement.style.pointerEvents = 'none';
+                ghostElement.style.width = `${rect.width}px`;
+                ghostElement.style.height = `${rect.height}px`;
+                ghostElement.style.left = `${touch.clientX - touchOffsetX}px`;
+                ghostElement.style.top = `${touch.clientY - touchOffsetY}px`;
+                document.body.appendChild(ghostElement);
+                draggedItem.classList.add('dragging');
+            }, { passive: false });
+        });
+    }
+
+    document.addEventListener('touchmove', (e) => {
+        if (!ghostElement) return;
+        e.preventDefault();
+        const touch = e.touches[0];
+        ghostElement.style.left = `${touch.clientX - touchOffsetX}px`;
+        ghostElement.style.top = `${touch.clientY - touchOffsetY}px`;
+        const elementUnder = document.elementFromPoint(touch.clientX, touch.clientY);
+        const targetZone = elementUnder ? elementUnder.closest('.drop-zone') : null;
+        if (currentDropZone !== targetZone) {
+            if (currentDropZone) currentDropZone.classList.remove('drag-over');
+            if (targetZone) targetZone.classList.add('drag-over');
+            currentDropZone = targetZone;
+        }
+    }, { passive: false });
+
+    document.addEventListener('touchend', () => {
+        if (!draggedItem || !ghostElement) return;
+        document.body.removeChild(ghostElement);
+        ghostElement = null;
+        if (currentDropZone) {
+            handleDrop(currentDropZone);
+            currentDropZone.classList.remove('drag-over');
+        }
+        draggedItem.classList.remove('dragging');
+        draggedItem = null;
+        currentDropZone = null;
+    });
+
+    function handleDrop(dropZone) {
+        if (!draggedItem) return;
+    
+        const itemId = draggedItem.dataset.id;
+        const itemData = gameData.find(d => d.id === itemId);
+        const correctCategory = itemData.category;
+        const droppedCategory = dropZone.dataset.category;
+    
+        if (correctCategory === droppedCategory) {
+            score++;
+            updateProgressBar();
+            const landedContainer = dropZone.querySelector('.items-landed-container');
+            draggedItem.draggable = false;
+            landedContainer.appendChild(draggedItem);
+            
+            showFeedback(true, itemData.feedback.correct);
+    
+            if (score === totalQuestions) {
+                feedbackModalBtn.textContent = "Continue";
+                feedbackModalBtn.onclick = handleFinishClick;
+            } else {
+                feedbackModalBtn.textContent = "Continue";
+                feedbackModalBtn.onclick = handleContinueClick;
+                checkForPageTurn(); 
+            }
+        } else {
+            showFeedback(false, itemData.feedback.incorrect);
+            feedbackModalBtn.textContent = "Try Again";
+            feedbackModalBtn.onclick = handleContinueClick;
+        }
+    }
+    
+    function checkForPageTurn() {
+        if (currentPage >= numPages - 1 && score < totalQuestions) {
+            return;
+        }
+
+        const currentPageZones = document.querySelectorAll(`.drop-zone-page:nth-child(${currentPage + 1}) .drop-zone`);
+        const droppedCount = Array.from(currentPageZones).reduce((count, zone) => {
+            return count + zone.querySelector('.items-landed-container').children.length;
+        }, 0);
+
+        const itemsOnCurrentPage = pagedItems[currentPage].length;
+
+        if (droppedCount === itemsOnCurrentPage) {
+            if (currentPage < numPages - 1) {
+                setTimeout(transitionToNextPage, 500);
+            }
+        }
+    }
+
+    function transitionToNextPage() {
+        currentPage++;
+        if (currentPage < numPages) {
+            const translation = currentPage * (100 / numPages);
+            dropZonesTrack.style.transform = `translateX(-${translation}%)`;
+            
+            setTimeout(() => {
+                renderDragItems(pagedItems[currentPage]);
+            }, 400);
+        }
+    }
+
+    function switchScreen(hideScreen, showScreen) {
+        hideScreen.classList.add('hidden');
+        if (showScreen === gameScreen) {
+            gameHeader.classList.add('visible');
+        } else if (hideScreen === gameScreen) {
+            gameHeader.classList.remove('visible');
+        }
+        setTimeout(() => showScreen.classList.remove('hidden'), 50);
+    }
+
+    function updateProgressBar() {
+        const percentage = totalQuestions > 0 ? (score / totalQuestions) * 100 : 0;
+        progressBar.style.width = `${percentage}%`;
+        progressText.textContent = `${score} / ${totalQuestions}`;
+    }
+
+    function showFeedback(isCorrect, message) {
+        const titleText = isCorrect ? "Correct!" : "Try Again...";
+        feedbackTitle.innerHTML = `${isCorrect ? icons.correct : icons.incorrect} ${titleText}`;
+        feedbackText.textContent = message;
+        
+        const sound = isCorrect ? correctAudio : incorrectAudio;
+        sound.currentTime = 0;
+        sound.play().catch(e => console.log("Audio play failed."));
+
+        modal.className = '';
+        modal.classList.add(isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+        if (!isCorrect) modal.classList.add('shake');
+        
+        modalOverlay.classList.remove('hidden');
+    }
+
+    modal.addEventListener('animationend', () => modal.classList.remove('shake'));
+
+    const handleFinishClick = () => {
+        modalOverlay.classList.add('hidden');
+        setTimeout(() => {
+            switchScreen(gameScreen, completionOverlay);
+            outroAudio.play().catch(e => console.log("Outro audio play failed."));
+           
+        }, endScreenDelay);
+    };
+
+    const handleContinueClick = () => {
+        modalOverlay.classList.add('hidden');
+    };
+
+    function showNarration() {
+        introAudio.currentTime = 0;
+        introAudio.play().catch(e => console.log("Intro audio play failed."));
+        narrationModalOverlay.classList.remove('hidden');
+    }
+    
+    function stopAllAudio() {
+        [introAudio, outroAudio, correctAudio, incorrectAudio].forEach(audio => {
+            if (audio && !audio.paused) {
+                audio.pause();
+                audio.currentTime = 0;
+            }
+        });
+    }
+
+    function restartGame() {
+        stopAllAudio();
+        initializeGame();
+        switchScreen(completionOverlay, gameScreen);
+    }
+
+    startBtn.addEventListener('click', () => {
+        switchScreen(startScreen, gameScreen);
+        initializeGame();
+        showNarration();
+        if (typeof sendEvent !== 'undefined' && typeof ActivityEvent !== 'undefined') {
+            sendEvent(ActivityEvent.START_ACTIVITY, { activityName: 'Barrier Buster' });
+        }
+    });
+
+    restartActivityBtn.addEventListener('click', restartGame);
+    
+    document.querySelectorAll('.completion-buttons button').forEach(button => {
+        button.addEventListener('click', stopAllAudio);
+    });
+
+    continueNarrationBtn.addEventListener('click', () => {
+        narrationModalOverlay.classList.add('hidden');
+        stopAllAudio();
+    });
+
+    helpButton.addEventListener('click', () => helpModalOverlay.classList.remove('hidden'));
+    helpModalBtn.addEventListener('click', () => helpModalOverlay.classList.add('hidden'));
+
+    nextActivityBtn.addEventListener('click', () => {
+        window.location.href = "../ACTIVITY3/index.html"; 
+        if (typeof sendEvent !== 'undefined' && typeof ActivityEvent !== 'undefined') {
+            sendEvent(ActivityEvent.END_ACTIVITY, { activityName: 'Barrier Buster' });
+        }
+    });
+
+    prevActivityBtn.addEventListener('click', () => {
+        window.location.href = "../ACTIVITY1/index.html"; 
+        if (typeof sendEvent !== 'undefined' && typeof ActivityEvent !== 'undefined') {
+            sendEvent(ActivityEvent.END_ACTIVITY, { activityName: 'Barrier Buster' });
+        }
+    });
+});
+</script>
+<script src="../eventSender.js"></script>
+</body>
+</html>

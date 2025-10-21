@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Walk in Their Shoes – Role Play Challenge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Font Imports */
+        @font-face {
+            font-family: 'Fredoka';
+            /* Assuming assets folder is one level up from where the HTML is. Adjust if needed. */
+            src: url('../assets/Fredoka-VariableFont_wdth\,wght.ttf') format('truetype');
+        }
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        /* Root Variables */
+        :root {
+                  --font-xs: 1.1rem;
+            --font-sm: 1.4rem;
+            --font-md: 1.4rem;
+            --font-lg: 2rem;
+            --font-xl: 4rem;
+            --pad-sm: 1rem;
+            --pad-md: 1.6rem;
+            --pad-lg: 2.4rem;
+            --primary-color: #5D04B2;
+            --secondary-color: #fbb03b;
+            --progress-color: #ffff00;
+            --correct-color: #4caf50;
+            --incorrect-color: #d9534f;
+            --text-color-dark: #333;
+            --text-color-light: #fff;
+            --card-background-light: #ffffff;
+            --border-radius: 1rem;
+            --header-font: 'Fredoka', sans-serif;
+            --body-font: var(--header-font);
+        }
+        
+        html {
+             font-size: 1.8vmin;
+        }
+
+        /* ===== HIDE SCROLLBAR ===== */
+        body::-webkit-scrollbar, .scenario-content::-webkit-scrollbar, .modal::-webkit-scrollbar { display: none; }
+        body, .scenario-content, .modal { scrollbar-width: none; -ms-overflow-style: none; }
+
+        /* ====== GLOBAL BASE ====== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; background: #f0f4f8;
+            font-family: var(--body-font);
+            overflow: hidden;
+        }
+        #game-wrapper {
+            width: 100%; max-width: 1200px; aspect-ratio: 16 / 9;
+            overflow: hidden;
+            display: flex; flex-direction: column; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        #game-container {
+            width: 100%; height: 100%; background: #fff;
+            position: relative; display: flex; flex-direction: column;
+        }
+        .screen {
+            position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.5s ease-in-out, visibility 0.5s;
+            pointer-events: all; visibility: visible;
+        }
+        .hidden { opacity: 0; pointer-events: none; visibility: hidden; }
+
+        /* ===== START SCREEN ===== */
+        #start-screen {
+            color: var(--text-color-light); text-align: center; padding: 2rem;
+            background-image: url('images/gamebg.jpg'); background-size: cover; background-position: center;
+        }
+        #start-screen h1 {
+            color: var(--text-color-light); font-size: 3.2rem;
+            font-family: var(--header-font);
+            font-weight: 500;
+        }
+        .start-button { 
+            font-family: var(--header-font);
+            background: var(--secondary-color);
+            color: var(--text-color-light);
+            font-weight: 500;
+            font-size: 1.2rem;
+            border: 3px solid #fff;
+            border-radius: 4.8rem;
+            padding: var(--pad-sm) var(--pad-lg);
+            margin-top: 1.6rem;
+            cursor: pointer;
+            text-shadow: 0 0.2rem 0 #b88b2a;
+            transition: all 0.2s;
+        }
+        .start-button:hover { transform: scale(1.06); box-shadow: 0 6px 24px rgba(0,0,0,0.18); }
+
+
+        /* ===== GAME SCREEN STYLES ===== */
+        #game-screen { 
+            justify-content: flex-start; 
+            overflow: hidden; 
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .game-top-section { 
+            width: 100%; background-color: #5D04B2; 
+            padding: clamp(0.5rem, 1.5vmin, 0.75rem) clamp(0.75rem, 2vmin, 1.25rem);
+            display: flex; justify-content: space-between; align-items: center;
+            color: #fff; z-index: 10;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+        #game-title {
+            font-weight: 600;
+            margin: 0; font-family: var(--header-font);
+            font-size: 2.2rem;
+        }
+        .top-right-controls { display: flex; align-items: center; gap: 1rem; }
+        
+        #progress-container { 
+            width: clamp(100px, 20vw, 200px); background-color: rgba(255,255,255,0.3);
+            border-radius: 1rem; height: clamp(15px, 2.5vmin, 20px);
+            border: 2px solid #fff; position: relative; overflow: hidden;
+        }
+        #progress-bar {
+            height: 100%; width: 0%; background: var(--progress-color);
+            border-radius: 0.8rem; transition: width 0.5s ease;
+        }
+        #progress-text {
+            font-weight: 700; color: #fff;
+            text-shadow: none;
+        }
+
+        .instructions-icon {
+            width: 2.5rem; height: 2.5rem; background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease;
+            z-index: 15; flex-shrink: 0;
+            animation: glow-pulse-white 2s infinite;
+        }
+        .instructions-icon:hover { background: rgba(255, 255, 255, 0.3); transform: scale(1.1); }
+        .instructions-icon svg { width: 1.25rem; height: 1.25rem; fill: white;}
+
+        /* ===== NEW: Game Content Area ===== */
+        /* This wrapper will be the single flex item that takes remaining space */
+        #game-content-area {
+            position: relative;
+            flex: 1; /* This makes it take up the space *after* the header */
+            overflow: hidden; /* Ensures children don't spill out */
+            width: 100%;
+        }
+
+        /* ===== CHARACTER SELECTION ===== */
+        #character-select-container {
+            width: 100%;
+            height: 100%; /* MODIFIED: Now 100% of its new parent (#game-content-area) */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            padding: 2rem;
+            background: radial-gradient(ellipse at center, #6b27b3 0%, #cdcdcd 100%);
+            transition: opacity 0.5s ease-in-out;
+            position: absolute; /* MODIFIED: Was 'relative' */
+            top: 0; /* ADDED */
+            left: 0; /* ADDED */
+        }
+        #character-select-title {
+            font-family: var(--header-font);
+            font-size: 2rem;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .carousel-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 80%;
+            position: relative;
+        }
+        #character-carousel {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            justify-content: flex-start; /* Important for scrolling */
+            width: 100%;
+            padding: 1rem;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+        }
+        #character-carousel::-webkit-scrollbar {
+            display: none; /* Hide scrollbar */
+        }
+        .carousel-nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            border-radius: 50%;
+            width: 3rem;
+            height: 3rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+        .carousel-nav-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+        #carousel-prev { left: -3rem; }
+        #carousel-next { right: -3rem; }
+        .carousel-nav-btn svg { width: 1.5rem; height: 1.5rem; fill: white; }
+
+        .character-card {
+            height: clamp(200px, 40vh, 350px);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            filter: grayscale(1) opacity(0.6);
+            border-radius: 1rem;
+            flex-shrink: 0;
+        }
+        .character-card:not(.completed):hover {
+            filter: grayscale(0) opacity(1);
+            transform: scale(1.08);
+        }
+        .character-card.selected {
+            filter: grayscale(0) opacity(1);
+            transform: scale(1.15);
+            box-shadow: 0 0 30px rgba(255, 255, 0, 0.7);
+        }
+        .character-card.completed {
+            cursor: not-allowed;
+            filter: grayscale(1) opacity(0.4);
+        }
+        
+        /* Character card container with relative positioning for check mark */
+        .character-card-container {
+            position: relative;
+            display: inline-block;
+            height: clamp(200px, 40vh, 350px);
+            flex-shrink: 0;
+        }
+        
+        /* Green check mark overlay */
+        .check-mark-overlay {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: #4caf50;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            opacity: 0.3;
+        }
+        
+        .check-mark-overlay svg {
+            width: 1.2rem;
+            height: 1.2rem;
+            fill: white;
+        }
+        
+        .selection-footer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            height: 4rem;
+        }
+        #selected-character-name {
+            font-family: var(--header-font);
+            font-size: 3rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 
+                3px 3px 0 #000,
+                -1px -1px 0 #000,  
+                 1px -1px 0 #000,
+                -1px 1px 0 #000,
+                 1px 1px 0 #000;
+            margin: 0;
+        }
+        #start-scenario-btn {
+              font-family: var(--header-font); background: var(--secondary-color); color: #fff;
+            font-weight: 500; 
+            font-size: 1.5rem;
+            border: 0.1875rem solid #fff; border-radius: 3rem; 
+            padding: clamp(0.5rem, 1.5vmin, 0.75rem) clamp(1.25rem, 3vmin, 2rem);
+            cursor: pointer; transition: all 0.2s;
+            box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+            text-shadow: 0 0.125rem 0 #b88b2a; text-decoration: none;
+            min-width: 8.75rem; /* 140px */
+            opacity: 0;
+        }
+        #start-scenario-btn.visible {
+            opacity: 1; 
+            pointer-events: all;
+            transform: scale(1);
+        }
+
+        /* ===== MODALS ===== */
+        .overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            backdrop-filter: blur(5px);
+            z-index: 3000;
+            display: flex; justify-content: center; align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+        .overlay.hidden { display: none; visibility: hidden; opacity: 0; }
+        .modal {
+            background: var(--card-background-light); padding: 2.5rem; border-radius: 1rem;
+            text-align: center; width: 90%; max-width: 600px;
+            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(30px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); } }
+
+        .modal h2 {
+            font-size: 1.8rem; font-weight: 600; margin-bottom: 1.5rem;
+            font-family: var(--header-font);
+        }
+        .modal p, .modal ul, .modal ol { font-size: 1.5rem; line-height: 1.6; color: var(--text-color-dark, #333); }
+        
+        #activity-intro-overlay .modal { border-top: 8px solid var(--primary-color); }
+        #activity-intro-overlay .modal h2 { color: var(--primary-color); }
+        #activity-intro-overlay .modal p {
+            text-align: left; background: #f8f9fa; padding: 1.5rem;
+            border-radius: 0.75rem; border-left: 4px solid var(--primary-color);
+        }
+        
+        #instructions-overlay .modal { border-top: 8px solid var(--primary-color); }
+        #instructions-overlay .modal h2 { color: var(--primary-color); }
+        #instructions-overlay .modal ol { text-align: left; padding-left: 2rem; font-size: 1.2rem; }
+
+        /* Modal Buttons */
+        .modal button {
+            width: 100%; padding: 1rem; font-size: 1.2rem; font-weight: 700;
+            border: none; border-radius: 0.75rem; cursor: pointer; color: #fff;
+            transition: transform 0.2s, box-shadow 0.2s; margin-top: 1rem;
+        }
+        .modal button:hover { transform: scale(1.02); }
+        #activity-intro-overlay button, #instructions-overlay button { background-color: var(--primary-color); }
+
+        /* Feedback Modals */
+        .feedback-modal { max-width: 480px; }
+        .feedback-header { display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-bottom: 1rem; }
+        .feedback-header h2 { font-size: 2rem; font-weight: 700; }
+        .feedback-header.correct h2 { color: var(--correct-color); }
+        .feedback-header.incorrect h2 { color: var(--incorrect-color); }
+        .feedback-btn.correct { background-color: var(--correct-color); }
+        .feedback-btn.incorrect { background-color: var(--incorrect-color); }
+        #feedback-correct-overlay .modal { border-top: 8px solid var(--correct-color); }
+        #feedback-incorrect-overlay .modal { border-top: 8px solid var(--incorrect-color); }
+
+        /* ===== COMPLETION SCREEN ===== */
+        #completion-overlay { 
+            background-image: url('images/gamebg.jpg'); background-size: cover; background-position: center;
+            color: #fff; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; gap: 1rem; padding: 1rem;
+        }
+        .completion-title-banner { 
+            font-size: clamp(2rem, 7vmin, 4rem);
+            text-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.2);
+            text-align: center; font-family: var(--header-font);
+            font-weight: 500;
+        }
+        #completion-overlay .modal { 
+            background: transparent; box-shadow: none; width: auto; max-width: none;
+            display: flex; justify-content: center; align-items: center;
+            padding: 0; overflow: visible;
+        }
+        #completion-image { 
+            width: clamp(400px, 70%, 700px); max-width: 85%; height: auto;
+            border: 3px solid #FBB03B; border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-top: 0.5rem;
+        }
+        .completion-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 1.5rem;
+            width: 100%;
+            padding: 1rem 2rem;
+        }
+        .completion-btn {
+           font-family: var(--header-font); background: var(--secondary-color); color: #fff;
+            font-weight: 500; 
+            font-size: 1.5rem;
+            border: 0.1875rem solid #fff; border-radius: 3rem; 
+            padding: clamp(0.5rem, 1.5vmin, 0.75rem) clamp(1.25rem, 3vmin, 2rem);
+            cursor: pointer; transition: all 0.2s;
+            box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+            text-shadow: 0 0.125rem 0 #b88b2a; text-decoration: none;
+            min-width: 8.75rem; /* 140px */
+        }
+        .completion-btn:hover { transform: scale(1.05); box-shadow: 0 0.5rem 1.25rem rgba(0,0,0,0.2); }
+    
+        /* ===== SCENARIO LAYOUT ===== */
+        #scenario-view-container{
+             transition: opacity 0.5s ease-in-out;
+             width: 100%;
+             height: 100%; /* MODIFIED: Was 'calc(100% - 60px)' */
+             display: flex;
+             flex-direction: column;
+             position: absolute; /* ADDED */
+             top: 0; /* ADDED */
+             left: 0; /* ADDED */
+        }
+        .scenario-title {
+            font-family: var(--header-font); color: var(--primary-color);
+            font-size: 1.8rem; text-align: center; padding: 1rem;
+            width: 100%; margin-bottom: 0.5rem; flex-shrink: 0;
+            font-weight: 600;
+            background-color: rgba(255,255,255,0.8);
+        }
+        .scenario-content {
+            flex: 1; padding: 1rem 2rem; overflow: auto; display: flex;
+            justify-content: center; align-items: center; margin-top: 0;
+        }
+        .scenario-container {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            width: 100%;
+            max-width: 80rem;
+            padding: 1rem;
+            background-color: #f5f3f7;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 25px rgba(93, 4, 178, 0.15);
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+            height: 55vh;
+        }
+        .scenario-container.fade-out { opacity: 0; }
+        
+        .scenario-details { 
+            flex: 1 1 50%; display: flex; flex-direction: column; 
+            align-items: center; justify-content: space-evenly; gap: 1rem; height: 100%;
+        }
+        #character-return-icon {
+            width: 10rem; height: 10rem;
+            border-radius: 50%;
+            border: 4px solid var(--primary-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        #character-return-icon:hover {
+            transform: scale(1.1);
+        }
+        .scenario-story { font-size: 1.3rem; color: #444; line-height: 1.7; background: #f8f9fa; border-left: 0.25rem solid var(--primary-color); padding: 1.5rem; border-radius: 0.8rem; text-align: left; width: 100%; }
+        
+        .question-section {
+            flex: 1 1 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background-color: #f2f0f5;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+        }
+        .question-section h3 { font-family: var(--header-font); color: var(--text-color-dark); font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center; font-weight: 500;}
+        
+        .options-container { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 450px; }
+        .option-button {
+            background: var(--card-background-light); border: 2px solid #ddd; border-radius: 1rem; padding: 1.2rem; cursor: pointer;
+            transition: all 0.3s ease; font-size: 1.2rem; color: var(--text-color-dark); font-weight: 700;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .option-button:hover:not(:disabled) { transform: translateY(-3px); border-color: var(--primary-color); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+        .option-button.correct { background: var(--correct-color); color: white; border-color: #fff; transform: scale(1.02); }
+        .option-button.incorrect { background: var(--incorrect-color); color: white; animation: shake 0.5s; }
+        .option-button:disabled { cursor: not-allowed; opacity: 0.7; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+
+        /* ===== Glowing Pulsating Effect Keyframes ====== */
+        @keyframes glow-pulse-white { 0%, 100% { box-shadow: 0 0 10px rgba(255,255,255,0.7), 0 0 20px rgba(255,255,255,0.5); transform: scale(1); } 50% { box-shadow: 0 0 20px rgba(255,255,255,1), 0 0 30px rgba(255,255,255,0.7); transform: scale(1.1); } }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1199px) {  
+            html{ font-size: 2vmin; }
+            .scenario-container{ height: 60vh; }
+            .character-card { height: 35vh; }
+            .character-card-container { height: 35vh; }
+        }
+        @media (max-width: 1024px){
+            html{ font-size: 2.2vmin; }
+            .scenario-container{ height: 55vh; }
+        } 
+        @media (max-width: 991px) {
+            #game-wrapper { width: 100vw; height: 100vh; border-radius: 0; aspect-ratio: unset; } 
+            html{ font-size: 3vmin; }
+            .character-card { height: 200px; }
+            .character-card-container { height: 200px; }
+            .scenario-container {height: 100%; max-height: 100%; overflow-y: auto; padding: 1.5rem; }
+            .scenario-details, .question-section { flex-basis: auto; width: 100%; height: auto; }
+            .scenario-details {justify-content: space-around; gap: 1rem; }
+            .question-section { margin-top: 1rem; }
+            .completion-buttons { align-items: center; }
+            #completion-image { max-width: 58%; }
+            #character-return-icon { width: 5rem; height: 5rem; }
+            .carousel-wrapper { width: 90%; }
+            #carousel-prev { left: -0.5rem; }
+            #carousel-next { right: -0.5rem; }
+            .question-section h3{
+                margin-bottom: 0.5rem;
+                font-size: 1.2rem;
+            }
+        }
+        @media (max-width: 768px) {
+            html { font-size: 3.3vmin; }
+            .scenario-title { font-size: 1.8rem; }
+            .scenario-content { padding: 1rem; }
+            .completion-title-banner { font-size: 1.8rem; }
+            #completion-image { max-width: 66%; }
+            .completion-btn { min-width: 180px; }
+            .selection-footer { height: auto; gap: 1rem; margin-top: 0rem; }
+            #selected-character-name { font-size: 2.5rem; }
+            .carousel-wrapper { width: 100%; }
+            .carousel-nav-btn { width: 2.5rem; height: 2.5rem; }
+            #carousel-prev { left: -1.8rem; }
+            #carousel-next { right: -1.8rem; }
+            #character-select-container {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-wrapper">
+    <div id="game-container">
+        <div id="start-screen" class="screen">
+            <h1>Walk in Their Shoes</h1>
+            <button class="start-button" onclick="showActivityIntro();">Start Activity</button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+            <div class="game-top-section">
+                <h1 id="game-title">Role Play Challenge</h1>
+                <div class="top-right-controls">
+                    <div id="progress-container">
+                        <div id="progress-bar"></div>
+                    </div>
+                    <span id="progress-text">0 / 5</span>
+                    <div class="instructions-icon" onclick="showInstructions()">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <div id="game-content-area">
+                <div id="character-select-container" class="hidden">
+                    <h2 id="character-select-title">Choose a character to help</h2>
+                    <div class="carousel-wrapper">
+                        <button class="carousel-nav-btn" id="carousel-prev">
+                            <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+                        </button>
+                        <div id="character-carousel"></div>
+                        <button class="carousel-nav-btn" id="carousel-next">
+                            <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                        </button>
+                    </div>
+                    <div class="selection-footer">
+                        <h3 id="selected-character-name"></h3>
+                        <button id="start-scenario-btn" onclick="startScenario()">Help Them</button>
+                    </div>
+                </div>
+                
+                <div id="scenario-view-container" class="hidden">
+                     <h2 class="scenario-title" id="scenario-title"></h2>
+                     <div class="scenario-content">
+                        <div class="scenario-container" id="scenario-container">
+                            <div class="scenario-details">
+                                <img id="character-return-icon" onclick="showCharacterSelectScreen()">
+                                <p class="scenario-story" id="scenario-story-text"></p>
+                            </div>
+                            <div class="question-section">
+                                <h3 id="question-text"></h3>
+                                <div class="options-container" id="options-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+            <h2 class="completion-title-banner">Activity conclusion</h2>
+            <img id="completion-image" src="images/complete.jpg" alt="Activity Complete Summary">
+            <div class="completion-buttons">
+                <button class="completion-btn btn-restart" onclick="restartGame()">Restart Activity</button>
+                <button class="completion-btn btn-next" onclick="goToNextActivity()">Next Activity</button>
+            </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="overlay hidden">
+            <div class="modal">
+                <h2>Activity Introduction</h2>
+                <p id="intro-text"></p>
+                <button onclick="closeModal('activity-intro-overlay')">Continue</button>
+            </div>
+        </div>
+
+        <div id="instructions-overlay" class="overlay hidden">
+            <div class="modal">
+                <h2>Learner Instructions</h2>
+                <ol id="instructions-list"></ol>
+                <button onclick="closeModal('instructions-overlay')">Got it!</button>
+            </div>
+        </div>
+        
+        <div id="feedback-correct-overlay" class="overlay hidden">
+            <div class="modal feedback-modal">
+                <div class="feedback-header correct"><h2>Good Choice!</h2></div>
+                <p id="correct-feedback-text"></p>
+                <button class="feedback-btn correct" onclick="closeModal('feedback-correct-overlay')">Continue</button>
+            </div>
+        </div>
+        
+        <div id="feedback-incorrect-overlay" class="overlay hidden">
+            <div class="modal feedback-modal">
+                <div class="feedback-header incorrect"><h2>Consider Another Path...</h2></div>
+                <p id="incorrect-feedback-text"></p>
+                <button class="feedback-btn incorrect" onclick="handleTryAgain()">Try Again</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const activityData = {
+        introduction: "In this activity, you will step into someone else’s shoes. Choose a student to play as, each has a challenge they are dealing with. Help them make decisions and discover what happens based on the path you take.",
+        instructions: [
+            "Choose your character – Each student has a unique barrier or challenge.",
+            "Read their situation carefully – Imagine you are that person.",
+            "Pick one of the options – Decide what action they should take.",
+            "See the consequences – You will find out how your choice affects them emotionally and practically.",
+            "Reflect – Think about what worked, what did not, and why."
+        ],
+        conclusion: "Awesome job walking in someone else’s shoes! Every challenge has different emotions, risks, and solutions. You have just learnt that the way we respond can either build trust or create new barriers. Now, let us think: What would you do in a similar situation?",
+        characters: [
+            {
+                id: "amina",
+                name: "Amina",
+                image: "images/Amina.jpg",
+                icon: "images/Amina-icon.png", 
+                scenario: {
+                    title: "Amina’s Fear of Judgment",
+                    story: "I really want to talk to my teacher about subject choices, but what if they think I’m not smart enough?",
+                    question: "I think I will look weak if I ask a question about subjects. What should I do?",
+                    options: [
+                        { text: "Talk to the teacher privately.", feedback: "Well done! Amina felt nervous, but her teacher was kind and helpful. Now she feels more confident." },
+                        { text: "Stay quiet and research on my own.", feedback: "Amina found some info, but she’s still unsure and feels isolated. It is okay to research, but speaking up helps too." },
+                        { text: "Ask my friend to come with me to talk.", feedback: "Good idea! With a friend by her side, Amina got the courage to ask, and the teacher answered both their questions." }
+                    ],
+                    correctIndices: [0, 2]
+                }
+            },
+            {
+                id: "leo",
+                name: "Leo",
+                image: "images/Leo.jpg",
+                icon: "images/Leo-icon.png",
+                scenario: {
+                    title: "Leo's Conflicting Advice",
+                    story: "Both my teacher and my religious leader are important to me, but they've given me very different advice about my future.",
+                    question: "My teacher and my religious leader gave totally different advice. What should I do?",
+                    options: [
+                        { text: "Follow one and ignore the other.", feedback: "Leo made a quick choice but still feels unsure. Ignoring one source of guidance might mean missing an important perspective." },
+                        { text: "Talk to both and reflect before deciding.", feedback: "Great thinking! Talking it through helped Leo understand both viewpoints and make a well, informed decision for himself." },
+                        { text: "Ask for a neutral third opinion.", feedback: "Smart! Getting a neutral view from another trusted adult helped him balance both sides and see the situation more clearly." }
+                    ],
+                    correctIndices: [1, 2]
+                }
+            },
+            {
+                id: "zahra",
+                name: "Zahra",
+                image: "images/Zahra.jpg",
+                icon: "images/Zahra-icon.png",
+                scenario: {
+                    title: "Zahra's Fear of Spiritual Judgment",
+                    story: "My faith is important to me, but I feel confused. I want to talk to my religious leader, but some classmates make fun of people who are religious.",
+                    question: "What should I do?",
+                    options: [
+                        { text: "Talk privately to your spiritual leader.", feedback: "Good choice. Zahra sought the guidance she needed in a private, safe space and found comfort and clarity." },
+                        { text: "Ignore your feelings to avoid being mocked.", feedback: "Zahra kept the peace with her friends, but her questions are still unanswered. Avoiding help can delay getting the support you need." },
+                        { text: "Open up to a teacher you trust.", feedback: "Smart move. Teachers can provide support and help ensure your conversations remain private and respected at school." }
+                    ],
+                    correctIndices: [0, 2]
+                }
+            },
+            {
+                id: "linet",
+                name: "Linet",
+                image: "images/Linet.jpg",
+                icon: "images/Linet-icon.png",
+                scenario: {
+                    title: "Linet's Financial Barrier",
+                    story: "There is a career fair in town that could help me decide my future, but my family doesn't have the money for bus fare.",
+                    question: "What should I do?",
+                    options: [
+                        { text: "Ask your teacher if the school can help.", feedback: "Brilliant! The school was able to arrange transport for a few students, including Linet. Asking for help opened up the opportunity." },
+                        { text: "Stay home and forget about it.", feedback: "She missed a great opportunity. Financial issues are real barriers, but sometimes solutions exist if we ask for help." },
+                        { text: "Try to walk there with friends.", feedback: "Walking worked, but it was risky and took a long time. Asking for official help might have been a safer and better solution." }
+                    ],
+                    correctIndices: [0]
+                }
+            },
+            {
+                id: "sammy",
+                name: "Sammy",
+                image: "images/Sammy.jpg",
+                icon: "images/Sammy-icon.png",
+                scenario: {
+                    title: "Sammy's Change of Heart",
+                    story: "My parents have always wanted me to be a doctor, and I did too. But now I have discovered a passion for music, and I am afraid to tell them.",
+                    question: "My parents do not approve of music as a career. What should I do?",
+                    options: [
+                        { text: "Keep it secret and focus on music quietly.", feedback: "Sammy felt better doing what he loved, but hiding it created stress and tension at home. Honesty can be difficult but is often better in the long run." },
+                        { text: "Talk honestly to a teacher first.", feedback: "Great first step. The teacher helped him organize his thoughts and plan how to talk to his parents respectfully and effectively." },
+                        { text: "Try to convince your parents using facts.", feedback: "A good approach. His parents were surprised, but showing them a thoughtful plan for a music career opened their minds to the possibility." }
+                    ],
+                    correctIndices: [1, 2]
+                }
+            }
+        ]
+    };
+
+    let currentCharacterId = null;
+    let completedCharacters = new Set();
+    const totalScenarios = activityData.characters.length;
+    let selectedOptionIndex = null;
+    let introAudio, dingAudio, buzzAudio, outroAudio;
+    let hasPlayedIntro = false;
+    // Promise resolved when initial setup (carousel, static content, audio) is done
+    let initReadyResolve;
+    const initReady = new Promise((resolve) => { initReadyResolve = resolve; });
+
+    function initAudio() {
+        try {
+            introAudio = new Audio('audio/intro.mp3');
+            dingAudio = new Audio('audio/ding.mp3');
+            buzzAudio = new Audio('audio/buzz.mp3');
+            outroAudio = new Audio('audio/outro.mp3');
+        } catch (e) {
+            console.warn("Audio could not be loaded.");
+            const mockAudio = { play: () => {}, pause: () => {}, currentTime: 0 };
+            introAudio = dingAudio = buzzAudio = outroAudio = mockAudio;
+        }
+    }
+
+    function playSound(audio) { if(audio) { audio.currentTime = 0; audio.play().catch(e => {}); } }
+    function stopSound(audio) { if(audio) { audio.pause(); } }
+
+    function showCharacterSelectScreen(autoScrollToNext = false) {
+        currentCharacterId = null;
+        document.getElementById('character-select-container').classList.remove('hidden');
+        document.getElementById('scenario-view-container').classList.add('hidden');
+        document.getElementById('selected-character-name').textContent = '';
+        document.getElementById('start-scenario-btn').classList.remove('visible');
+        renderCarousel();
+        
+        // Auto-scroll to next unexplored character if requested
+        if (autoScrollToNext) {
+            // Use setTimeout to ensure DOM is updated first
+            setTimeout(() => {
+                scrollToNextUnexplored();
+            }, 100);
+        }
+    }
+
+    function renderCarousel() {
+        const carousel = document.getElementById('character-carousel');
+        carousel.innerHTML = '';
+        activityData.characters.forEach(char => {
+            // Create container for the character card
+            const container = document.createElement('div');
+            container.className = 'character-card-container';
+            container.dataset.id = char.id;
+            
+            // Create the character image
+            const img = document.createElement('img');
+            img.src = char.image;
+            img.alt = char.name;
+            img.className = 'character-card';
+            img.dataset.id = char.id;
+            
+            if (completedCharacters.has(char.id)) {
+                img.classList.add('completed');
+                
+                // Create check mark overlay for completed characters
+                const checkMark = document.createElement('div');
+                checkMark.className = 'check-mark-overlay';
+                checkMark.innerHTML = `
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    </svg>
+                `;
+                container.appendChild(checkMark);
+            }
+            
+            img.onclick = () => selectCharacter(char.id);
+            container.appendChild(img);
+            carousel.appendChild(container);
+        });
+    }
+
+    function selectCharacter(id) {
+        if (completedCharacters.has(id)) return;
+        
+        currentCharacterId = id;
+        const character = activityData.characters.find(c => c.id === id);
+        
+        document.querySelectorAll('.character-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        document.querySelector(`.character-card[data-id="${id}"]`).classList.add('selected');
+        
+        document.getElementById('selected-character-name').textContent = character.name;
+        document.getElementById('start-scenario-btn').classList.add('visible');
+    }
+
+    function startScenario() {
+        if (!currentCharacterId) return;
+        document.getElementById('character-select-container').classList.add('hidden');
+        document.getElementById('scenario-view-container').classList.remove('hidden');
+        loadScenario(currentCharacterId);
+    }
+    
+    function loadScenario(id) {
+        selectedOptionIndex = null;
+        const character = activityData.characters.find(c => c.id === id);
+        const scenario = character.scenario;
+        
+        document.getElementById('scenario-title').textContent = scenario.title;
+        document.getElementById('scenario-story-text').innerHTML = scenario.story;
+        document.getElementById('question-text').textContent = scenario.question;
+        
+        const returnIcon = document.getElementById('character-return-icon');
+        returnIcon.src = character.icon;
+        returnIcon.alt = character.name;
+
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+        scenario.options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.className = 'option-button';
+            button.innerHTML = option.text;
+            button.onclick = () => selectOption(index);
+            optionsContainer.appendChild(button);
+        });
+    }
+
+    function selectOption(index) {
+        if (selectedOptionIndex !== null) return;
+        selectedOptionIndex = index;
+        
+        const character = activityData.characters.find(c => c.id === currentCharacterId);
+        const scenario = character.scenario;
+        const buttons = document.getElementById('options-container').querySelectorAll('.option-button');
+        
+        buttons.forEach(btn => btn.disabled = true);
+        const chosenFeedback = scenario.options[index].feedback;
+
+        if (scenario.correctIndices.includes(index)) {
+            buttons[index].classList.add('correct');
+            playSound(dingAudio);
+             setTimeout(() => {
+                showFeedbackPopup('correct', chosenFeedback);
+            }, 500);
+        } else {
+            buttons[index].classList.add('incorrect');
+            playSound(buzzAudio);
+            setTimeout(() => {
+                showFeedbackPopup('incorrect', chosenFeedback);
+            }, 500);
+        }
+    }
+
+    function handleTryAgain() {
+        document.getElementById('feedback-incorrect-overlay').classList.add('hidden');
+        const buttons = document.getElementById('options-container').querySelectorAll('.option-button');
+        buttons.forEach(btn => {
+            btn.disabled = false;
+            btn.classList.remove('incorrect');
+        });
+        selectedOptionIndex = null;
+    }
+    
+    function updateProgress() {
+        const progress = completedCharacters.size;
+        document.getElementById('progress-bar').style.width = `${(progress / totalScenarios) * 100}%`;
+        document.getElementById('progress-text').textContent = `${progress} / ${totalScenarios}`;
+    }
+
+    function showFeedbackPopup(type, message) {
+        document.getElementById(`${type}-feedback-text`).innerHTML = message;
+        document.getElementById(`feedback-${type}-overlay`).classList.remove('hidden');
+    }
+    
+    function showActivityIntro() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
+
+        // Fire start event as soon as the user starts the activity
+        sendEvent(ActivityEvent.START_ACTIVITY, { activityName: 'Walk in Their Shoes' });
+
+        // Wait until initialization is complete before showing intro overlay
+        initReady.then(() => {
+            if (!hasPlayedIntro) {
+                document.getElementById('activity-intro-overlay').classList.remove('hidden');
+                playSound(introAudio);
+                hasPlayedIntro = true;
+            } else {
+                showCharacterSelectScreen();
+            }
+        });
+    }
+
+
+    function showInstructions() { document.getElementById('instructions-overlay').classList.remove('hidden'); }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.add('hidden');
+        if (id === 'activity-intro-overlay') { 
+            stopSound(introAudio); 
+            showCharacterSelectScreen(); 
+        }
+        if (id === 'feedback-correct-overlay') { 
+             completedCharacters.add(currentCharacterId);
+             updateProgress();
+             if(completedCharacters.size === totalScenarios){
+                 endActivity();
+             } else {
+                 // Auto-scroll to next unexplored character after completing a scenario
+                 showCharacterSelectScreen(true);
+             }
+        }
+    }
+    
+    function endActivity() {
+        document.getElementById('progress-bar').style.width = `100%`;
+        document.getElementById('progress-text').textContent = `${totalScenarios} / ${totalScenarios}`;
+        document.getElementById('game-screen').classList.add('hidden');
+        document.getElementById('completion-overlay').classList.remove('hidden');
+        playSound(outroAudio);
+        sendEvent(ActivityEvent.END_ACTIVITY, {activityName: 'Walk in Their Shoes'});
+    }
+    
+    function restartGame() {
+        stopSound(outroAudio);
+        // Hide completion and any overlays
+        document.getElementById('completion-overlay').classList.add('hidden');
+        document.getElementById('activity-intro-overlay').classList.add('hidden');
+
+        // Reset game state
+        completedCharacters.clear();
+        selectedOptionIndex = null;
+        currentCharacterId = null;
+        // Prevent the intro overlay from showing again on restart; go straight to character select
+        hasPlayedIntro = true;
+
+        // Update progress UI and ensure game screen is visible
+        updateProgress();
+        document.getElementById('game-screen').classList.remove('hidden');
+
+        // Immediately navigate back to character select and re-render carousel/nav
+        showCharacterSelectScreen(false);
+        renderCarousel();
+        setupCarouselNav();
+    }
+    function goToNextActivity() {
+        stopSound(outroAudio);
+        window.location.href = "../ACTIVITY2/index.html"; 
+        sendEvent(ActivityEvent.END_ACTIVITY, {activityName: 'Walk in Their Shoes'});
+    }
+    
+    function populateStaticContent() {
+        document.getElementById('intro-text').innerHTML = activityData.introduction;
+        
+        const instructionsList = document.getElementById('instructions-list');
+        instructionsList.innerHTML = activityData.instructions.map(item => `<li>${item}</li>`).join('');
+
+        document.getElementById('progress-text').textContent = `0 / ${totalScenarios}`;
+    }
+    
+    function setupCarouselNav() {
+        const carousel = document.getElementById('character-carousel');
+        const prevBtn = document.getElementById('carousel-prev');
+        const nextBtn = document.getElementById('carousel-next');
+
+        prevBtn.addEventListener('click', () => {
+            const scrollAmount = carousel.clientWidth * 0.8;
+            carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        });
+
+        nextBtn.addEventListener('click', () => {
+            const scrollAmount = carousel.clientWidth * 0.8;
+            carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        });
+    }
+
+    function scrollToNextUnexplored() {
+        const carousel = document.getElementById('character-carousel');
+        
+        // Find the first unexplored character
+        const nextUnexplored = activityData.characters.find(char => !completedCharacters.has(char.id));
+        
+        if (nextUnexplored) {
+            // Find the container element for this character
+            const targetContainer = carousel.querySelector(`.character-card-container[data-id="${nextUnexplored.id}"]`);
+            
+            if (targetContainer) {
+                // Calculate the position to scroll to (center the target in view)
+                const containerRect = targetContainer.getBoundingClientRect();
+                const carouselRect = carousel.getBoundingClientRect();
+                const targetLeft = targetContainer.offsetLeft - (carousel.clientWidth / 2) + (targetContainer.clientWidth / 2);
+                
+                // Smooth scroll to the target position
+                carousel.scrollTo({
+                    left: Math.max(0, targetLeft),
+                    behavior: 'smooth'
+                });
+            }
+        }
+    }
+
+    window.onload = () => { 
+        initAudio(); 
+        populateStaticContent(); 
+        setupCarouselNav();
+        // Mark initialization complete so overlays waiting on initReady can proceed
+        if (typeof initReadyResolve === 'function') initReadyResolve();
+    };
+</script>
+<script src = "../eventSender.js"></script>
+</body>
+</html>
