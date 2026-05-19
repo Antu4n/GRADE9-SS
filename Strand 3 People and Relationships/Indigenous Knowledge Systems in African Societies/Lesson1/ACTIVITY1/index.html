@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Indigenous Knowledge Discovery Map</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Indigenous Knowledge Discovery Map</h1>
+          <button
+            class="start-button"
+            onclick="startGame(); sendEvent(ActivityEvent.START_ACTIVITY, { activityName: 'Indigenous Knowledge Discovery Map' });"
+          >
+            Start Activity
+          </button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Indigenous Knowledge Discovery Map</h1>
+            <div class="progress-wrapper">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <div id="progress-text">0 / 9</div>
+              <div class="instructions-icon" onclick="showGameInstructions()">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="lab-game-area" id="lab-game-area"></div>
+          <div class="hint-icon" onclick="showHint()">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="activity-description-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Activity Introduction</h2>
+            <p>
+              Welcome to the Indigenous Knowledge Discovery Map! Explore this vibrant village scene to learn how different forms of Indigenous Knowledge shaped African life. Each part of this village holds a story. Click on any glowing hotspot to reveal the wisdom it holds.
+            </p>
+            <button
+              class="modal-close-btn"
+              onclick="closeActivityDescription();"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="game-instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Learner Instructions</h2>
+            <ul>
+              <li>Explore the vibrant community by clicking on the 9 glowing hotspots.</li>
+              <li>Read the detailed explanations of the different Indigenous Knowledge Systems.</li>
+              <li>Discover fun facts about how these practices are still used today!</li>
+            </ul>
+            <button class="modal-close-btn" onclick="closeGameInstructions()">
+              Got It!
+            </button>
+          </div>
+        </div>
+
+        <div id="scenario-overlay" class="overlay hidden">
+          <div class="scenario-modal">
+            <div id="scenario-zoom-img" class="scenario-image-container"></div>
+            <div class="scenario-content">
+              <h2 id="scenario-title"></h2>
+              <div id="scenario-info"></div>
+              <button
+                id="scenario-close-btn"
+                class="modal-close-btn"
+                onclick="closeScenario()"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Here is a hint</h2>
+            <p id="hint-text"></p>
+            <button class="modal-close-btn" onclick="closeHint()">
+              Got It!
+            </button>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="screen hidden">
+          <h2 class="completion-header">Activity Conclusion</h2>
+          <div class="completion-content-wrapper">
+             <div class="completion-image-container">
+               <img
+                 src="images/complete.jpg"
+                 alt="Activity Complete"
+                 class="completion-image"
+               />
+             </div>
+          </div>
+          <div class="completion-buttons-footer">
+            <button class="completion-btn" onclick="restartGame()">
+              Restart Activity
+            </button>
+            <a
+              href="../ACTIVITY2/index.html"
+              class="completion-btn"
+              onclick="sendEvent(ActivityEvent.END_ACTIVITY, { activityName: 'Indigenous Knowledge Discovery Map' });"
+              >Next Activity</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="outro-audio" src="audio/outro.mp3" preload="auto"></audio>
+    
+    <script>
+      // --- DATA ---
+      const activityData = [
+        {
+          id: "agriculture",
+          title: "Agriculture",
+          explanation: "This is an example of Indigenous Agriculture. Farmers used traditional techniques like intercropping and crop rotation to keep the soil fertile and harvest more food. Indigenous farmers practiced intercropping, growing two or more crops together to protect the soil and increase yields. They avoided chemical fertilizers by using compost and animal manure.",
+          fact: "Some Kenyan farmers still plant maize and beans together to save space and protect the soil!",
+          hint: "Look for someone planting crops in the field.",
+          coords: { top: "85%", left: "15%", width: "6%", height: "10%" },
+          image: "images/agriculture.jpg"
+        },
+        {
+          id: "medicine",
+          title: "Medicine",
+          explanation: "This shows Indigenous Medicine. Traditional healers used herbal remedies made from local plants like aloe, neem, and garlic to cure diseases and treat injuries. This knowledge was passed down through generations.",
+          fact: "Charcoal and ash are still used in many villages to treat stomach pains!",
+          hint: "Find the person preparing herbs with a mortar and pestle.",
+          coords: { top: "50%", left: "12%", width: "6%", height: "10%" },
+          image: "images/medicine.jpg"
+        },
+        {
+          id: "education",
+          title: "Education",
+          explanation: "This is Indigenous Education. Learning happened through oral traditions like stories, proverbs, songs, and riddles. Elders were the main teachers, passing knowledge and values like respect, honesty, and teamwork from one generation to the next.",
+          fact: "Some African communities still teach moral lessons through stories like ‘Hare and Hyena’!",
+          hint: "Look for an elder seated under a tree with children gathered around.",
+          coords: { top: "45%", left: "30%", width: "6%", height: "10%" },
+          image: "images/education.jpg"
+        },
+        {
+          id: "cultural-identity",
+          title: "Cultural Identity",
+          explanation: "This is a form of Cultural Identity. Through storytelling and proverbs, people learnt about their culture, beliefs, and history. These oral tools helped shape identity and belonging.",
+          fact: "Proverbs like ‘Haste makes waste’ were used to teach patience and wisdom!",
+          hint: "Find the person telling a story with a talking stick.",
+          coords: { top: "70%", left: "50%", width: "6%", height: "10%" },
+          image: "images/cultural-identity.jpg"
+        },
+        {
+          id: "religion",
+          title: "Religion",
+          explanation: "This shows Indigenous Religion. People worshipped at sacred places like trees, rivers, and shrines to connect with their ancestors and spiritual world. Spiritual leaders led ceremonies at sacred sites like groves, hills, or trees. Communities believed in ancestors and performed rituals for blessings and protection.",
+          fact: "Some trees are never cut down because people believe they are sacred or protect the village!",
+          hint: "Look for a sacred fig tree with traditional offerings.",
+          coords: { top: "27%", left: "50%", width: "6%", height: "10%" },
+          image: "images/religion.jpg"
+        },
+        {
+          id: "technology",
+          title: "Technology & Craftsmanship",
+          explanation: "This is Indigenous Technology. People made tools, pots, and crafts using local materials like clay, wood, and stone. Craftsmanship involved making useful tools and items using hands and natural materials. Clay was used for pots, while stone and iron were used to make farming tools.",
+          fact: "Traditional pots kept drinking water cooler than plastic bottles!",
+          hint: "Search for a potter shaping a clay pot by hand.",
+          coords: { top: "85%", left: "78%", width: "6%", height: "10%" },
+          image: "images/technology.jpg"
+        },
+        {
+          id: "arts",
+          title: "Arts & Expression",
+          explanation: "This represents Indigenous Arts. Music, dance, and dress were used to celebrate events and share messages in the community. Dance, drumming, and special costumes were part of traditional celebrations, ceremonies, and communication. Arts helped express joy, sorrow, or warnings.",
+          fact: "Some dances were used to tell historical stories or even scare away enemies!",
+          hint: "Look for a group dancing in traditional dress with drums.",
+          coords: { top: "48%", left: "65%", width: "6%", height: "10%" },
+          image: "images/arts.jpg"
+        },
+        {
+          id: "astronomy",
+          title: "Astronomy & Climate",
+          explanation: "This is Indigenous Astronomy. Elders used star positions, animal behaviour, and wind patterns to predict the weather and mark planting seasons.",
+          fact: "Some communities could predict rainfall just by watching bird migration!",
+          hint: "Find the man looking at the stars near a board with moon symbols.",
+          coords: { top: "48%", left: "78%", width: "6%", height: "10%" },
+          image: "images/astronomy.jpg"
+        },
+        {
+          id: "environment",
+          title: "Environmental Conservation",
+          explanation: "This is Indigenous Environmental Conservation. People protected forests, water sources, and sacred lands to keep nature in balance. Communities used rules and taboos to protect natural places. Conservation practices included avoiding overgrazing, protecting trees, and respecting sacred sites.",
+          fact: "In some communities, cutting certain trees is forbidden because they are believed to house spirits!",
+          hint: "Look towards the clean river and protected trees.",
+          coords: { top: "21%", left: "88%", width: "6%", height: "10%" },
+          image: "images/environment.jpg"
+        }
+      ];
+      const TOTAL_ACTIVITIES = activityData.length;
+      const TARGET_ACTIVITIES = TOTAL_ACTIVITIES;
+
+      // --- STATE ---
+      let completedActivities = new Set();
+      let activeActivity = null;
+      let isActivityComplete = false;
+
+      // --- DOM ELEMENTS ---
+      const startScreen = document.getElementById("start-screen");
+      const gameScreen = document.getElementById("game-screen");
+      const completionOverlay = document.getElementById("completion-overlay");
+      const labGameArea = document.getElementById("lab-game-area");
+      const progressBar = document.getElementById("progress-bar");
+      const progressText = document.getElementById("progress-text");
+      const zoomImage = document.getElementById("scenario-zoom-img");
+      const overlays = {
+        activityDescription: document.getElementById(
+          "activity-description-overlay"
+        ),
+        gameInstructions: document.getElementById("game-instructions-overlay"),
+        scenario: document.getElementById("scenario-overlay"),
+        hint: document.getElementById("hint-overlay"),
+      };
+      const sounds = {
+        ding: document.getElementById("ding-sound"),
+        intro: document.getElementById("intro-audio"),
+        outro: document.getElementById("outro-audio"),
+      };
+
+      // --- INITIALIZATION ---
+      document.addEventListener("DOMContentLoaded", initializeGame);
+
+      function initializeGame() {
+        labGameArea.innerHTML = "";
+        activityData.forEach((item, index) => {
+          const hotspot = document.createElement("div");
+          hotspot.className = "hotspot active";
+          hotspot.id = item.id;
+          hotspot.dataset.index = index;
+          Object.assign(hotspot.style, item.coords);
+          labGameArea.appendChild(hotspot);
+        });
+        updateHotspotStates();
+        updateProgress();
+        labGameArea.addEventListener("click", handleHotspotClick);
+      }
+
+      // --- GAME FLOW ---
+      function startGame() {
+        startScreen.classList.add("hidden");
+        gameScreen.classList.remove("hidden");
+        setTimeout(() => {
+          overlays.activityDescription.classList.remove("hidden");
+          if (sounds.intro) playSound(sounds.intro);
+        }, 500);
+      }
+
+      function closeActivityDescription() {
+        overlays.activityDescription.classList.add("hidden");
+        if (sounds.intro) sounds.intro.pause();
+      }
+
+      function handleHotspotClick(event) {
+        const clickedHotspot = event.target.closest(".hotspot");
+        if (!clickedHotspot || clickedHotspot.classList.contains("completed"))
+          return;
+
+        activeActivity = activityData[parseInt(clickedHotspot.dataset.index)];
+        showScenarioInfo(activeActivity);
+      }
+
+      function showScenarioInfo(activity) {
+        const scenarioTitle = document.getElementById("scenario-title");
+        const infoContainer = document.getElementById("scenario-info");
+        const closeButton = document.getElementById("scenario-close-btn");
+
+        // Set the individual image source dynamically
+        zoomImage.style.backgroundImage = `url('${activity.image}')`;
+
+        scenarioTitle.textContent = activity.title;
+
+        infoContainer.innerHTML = "";
+        scenarioTitle.classList.remove("fade-in-up");
+        scenarioTitle.style.opacity = 0;
+
+        const contentDetails = [
+          { title: "Description", text: activity.explanation },
+          { title: "💡 Did You Know?", text: activity.fact }
+        ];
+
+        const allItems = [
+          { el: scenarioTitle, delay: 0 },
+          ...contentDetails.map((detail, index) => {
+            const itemDiv = document.createElement("div");
+            itemDiv.className = "info-item";
+            itemDiv.innerHTML = `<h3>${detail.title}</h3><p>${detail.text}</p>`;
+            infoContainer.appendChild(itemDiv);
+            return { el: itemDiv, delay: (index + 1) * 300 };
+          }),
+        ];
+
+        closeButton.style.visibility = "hidden";
+        closeButton.style.opacity = "0";
+
+        overlays.scenario.classList.remove("hidden");
+
+        allItems.forEach((item) => {
+          item.el.classList.remove("fade-in-up");
+          setTimeout(() => {
+            item.el.classList.add("fade-in-up");
+          }, item.delay);
+        });
+
+        const totalAnimationTime = allItems.length * 300 + 400;
+        setTimeout(() => {
+          closeButton.style.visibility = "visible";
+          closeButton.style.opacity = "1";
+        }, totalAnimationTime);
+      }
+
+      function closeScenario() {
+        overlays.scenario.classList.add("hidden");
+
+        if (activeActivity && !completedActivities.has(activeActivity.id)) {
+          playSound(sounds.ding);
+          completedActivities.add(activeActivity.id);
+          updateProgress();
+          updateHotspotStates();
+        }
+
+        activeActivity = null;
+
+        if (completedActivities.size >= TOTAL_ACTIVITIES && !isActivityComplete) {
+          isActivityComplete = true;
+          setTimeout(() => {
+            gameScreen.classList.add("hidden");
+            completionOverlay.classList.remove("hidden");
+            if (sounds.outro) playSound(sounds.outro);
+          }, 800);
+        }
+      }
+
+      function restartGame() {
+        if (sounds.outro) sounds.outro.pause();
+        completedActivities.clear();
+        activeActivity = null;
+        isActivityComplete = false;
+        completionOverlay.classList.add("hidden");
+        gameScreen.classList.remove("hidden");
+        updateHotspotStates();
+        updateProgress();
+      }
+
+      // --- UI & FEEDBACK ---
+      function updateProgress() {
+        const progress = (completedActivities.size / TOTAL_ACTIVITIES) * 100;
+        progressBar.style.width = `${progress}%`;
+        progressText.textContent = `${completedActivities.size} / ${TOTAL_ACTIVITIES}`;
+      }
+
+      function updateHotspotStates() {
+        document.querySelectorAll(".hotspot").forEach((hotspot) => {
+          const activityId = hotspot.id;
+          hotspot.classList.remove("completed", "active");
+          if (completedActivities.has(activityId)) {
+            hotspot.classList.add("completed");
+          } else {
+            hotspot.classList.add("active");
+          }
+        });
+      }
+
+      // --- MODAL CONTROLS ---
+      function showGameInstructions() {
+        overlays.gameInstructions.classList.remove("hidden");
+      }
+      function closeGameInstructions() {
+        overlays.gameInstructions.classList.add("hidden");
+      }
+
+      function showHint() {
+        const nextUncompleted = activityData.find(
+          (a) => !completedActivities.has(a.id)
+        );
+        const hintTarget = activeActivity || nextUncompleted;
+
+        if (hintTarget) {
+          document.getElementById("hint-text").textContent = hintTarget.hint;
+          overlays.hint.classList.remove("hidden");
+        }
+      }
+      function closeHint() {
+        overlays.hint.classList.add("hidden");
+      }
+
+      // --- UTILITIES ---
+      function playSound(audioEl) {
+        if (audioEl) {
+          audioEl.currentTime = 0;
+          audioEl.play().catch((e) => console.error("Audio play failed:", e));
+        }
+      }
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

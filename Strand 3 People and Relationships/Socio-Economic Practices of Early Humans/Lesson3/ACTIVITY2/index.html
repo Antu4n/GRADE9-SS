@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hand Axe Explorer</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        
+        <div id="start-screen" class="screen">
+          <h1>Hand Axe Explorer</h1>
+          <button
+            class="start-button"
+            onclick="
+              startGame();
+              sendEvent(ActivityEvent.START_ACTIVITY, {
+                activityName: 'Activity 2: Hand Axe Explorer',
+              });
+            "
+          >
+            Start Activity
+          </button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Hand Axe Explorer</h1>
+            <div class="progress-wrapper">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <div id="progress-text">0 / 3</div>
+              <div class="instructions-icon" onclick="showGameInstructions()">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          
+          <div class="lab-game-area" id="lab-game-area">
+            <div id="labels-container" class="labels-container"></div>
+          </div>
+
+          <div class="hint-icon" onclick="showHint()">
+            <svg viewBox="0 0 24 24">
+              <path d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="activity-description-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Activity Introduction</h2>
+            <div class="intro-content">
+              <p>Get ready to show what you have learnt! This is a hand axe, one of the most important tools in early human history.</p>
+              <p>Your job is to label its parts by dragging each name to where it belongs. Look closely at the shape and imagine how it was held and used. Let us begin!</p>
+            </div>
+            <button class="modal-close-btn" onclick="closeActivityDescription()">Continue</button>
+          </div>
+        </div>
+
+        <div id="game-instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Learner Instructions</h2>
+            <ul>
+              <li>Look closely at the diagram of the hand axe.</li>
+              <li>Drag each label to the part of the tool where you think it belongs.</li>
+              <li>Watch for feedback if your choice does not seem right. You can try again until all labels are correct.</li>
+              <li>When all parts are labelled correctly, your progress bar will fill to 100%.</li>
+            </ul>
+            <button class="modal-close-btn" onclick="closeGameInstructions()">Got It!</button>
+          </div>
+        </div>
+
+        <div id="feedback-modal-overlay" class="modal-overlay hidden">
+          <div id="feedback-modal">
+            <div class="modal-content">
+              <div class="modal-body">
+                <div id="feedback-title" class="modal-title"></div>
+                <p id="feedback-modal-text" class="modal-text"></p>
+              </div>
+              <div class="modal-buttons">
+                <button id="next-question-button" class="modal-btn">Continue</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="summary-overlay" class="overlay hidden">
+          <div class="modal summary-modal-lg">
+            <h2 class="modal-title">Exploration Summary</h2>
+            <div class="table-responsive">
+              <table class="summary-table">
+                <thead>
+                  <tr>
+                    <th>Part</th>
+                    <th>Location / Correct Zone</th>
+                    <th>Function / Purpose</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Sharp Edge</td>
+                    <td>Curved, sharpened side of the axe</td>
+                    <td>Used for cutting meat, chopping wood, and scraping bark.</td>
+                  </tr>
+                  <tr>
+                    <td>Point/Tip</td>
+                    <td>Tapered pointed end at the top</td>
+                    <td>Helped pierce materials or start a cut.</td>
+                  </tr>
+                  <tr>
+                    <td>Blunt End (Hafting)</td>
+                    <td>Opposite end of the blade, round or blunt base</td>
+                    <td>For holding or possibly fitting into a wooden handle safely.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <button class="modal-close-btn" onclick="closeSummary()">Continue</button>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Here is a hint</h2>
+            <p id="hint-text"></p>
+            <button class="modal-close-btn" onclick="closeHint()">Got It!</button>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <h2 class="completion-title-banner">Activity Conclusion</h2>
+          <div class="modal">
+            <img
+              id="completion-image"
+              src="images/complete.jpg"
+              alt="Completion celebration"
+              onerror="this.src='https://placehold.co/400x300/7c3aed/ffffff?text=Complete!'; this.onerror = null;"
+            />
+          </div>
+          <div class="completion-buttons">
+            <button class="completion-btn" id="previous-activity-btn" onclick="previousActivity()">Previous Activity</button>
+            <button class="completion-btn" id="restart-activity-btn" onclick="restartGame()">Restart Activity</button>
+            <button class="completion-btn" id="next-activity-btn" onclick="nextActivity()">Next Activity</button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Key Takeaways</h2>
+            <div class="intro-content">
+              <p>Great work, label legend! You now know the ins and outs of one of history’s most important tools.</p>
+              <p>These sharp, simple inventions helped shape human survival. Let us move on and practice drawing and labelling these tools on your own!</p>
+            </div>
+            <button class="modal-close-btn" onclick="closeTakeaways()">Finish</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="buzz-sound" src="audio/buzz.mp3" preload="auto"></audio>
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="outro-audio" src="audio/outro.mp3" preload="auto"></audio>
+
+    <script>
+      // --- DATA ---
+      const activityData = [
+        {
+          id: "point-tip",
+          title: "Point/Tip",
+          correctFeedback: "Yes! That pointed tip helped pierce materials or start a cut.",
+          incorrectFeedback: "Check for the narrowest, most tapered end. Which part could break through or start a cut?",
+          hint: "Check for the narrowest, most tapered end at the top.",
+          dotCoords: { top: "4%", left: "53%" },
+          dropCoords: { top: "18%", left: "80%" },
+        },
+        {
+          id: "sharp-edge",
+          title: "Sharp Edge",
+          correctFeedback: "Spot on! The sharp edge was used for cutting meat, chopping wood, and scraping bark.",
+          incorrectFeedback: "Look closely at the sides. Which part shows signs of being chipped or sharpened for cutting?",
+          hint: "Look for the curved, sharpened side of the axe.",
+          dotCoords: { top: "45%", left: "39%" },
+          dropCoords: { top: "45%", left: "15%" },
+        },
+        {
+          id: "blunt-end",
+          title: "Blunt End (Hafting Area)",
+          correctFeedback: "Perfect! That blunt area was for holding or possibly fitting into a wooden handle.",
+          incorrectFeedback: "Think about where someone would grip the axe. Which end would be safest to hold?",
+          hint: "Think about where someone would grip the axe. Look for the round/blunt base.",
+          dotCoords: { top: "78%", left: "50%" },
+          dropCoords: { top: "78%", left: "80%" },
+        }
+      ];
+
+      const TOTAL_ACTIVITIES = activityData.length;
+      const TARGET_ACTIVITIES = TOTAL_ACTIVITIES;
+
+      // --- STATE ---
+      let completedActivities = new Set();
+      let isActivityComplete = false;
+      let activeDragClone = null;
+      let activeDragOriginal = null;
+      let isDragging = false;
+
+      // --- DOM ELEMENTS ---
+      const startScreen = document.getElementById("start-screen");
+      const gameScreen = document.getElementById("game-screen");
+      const labGameArea = document.getElementById("lab-game-area");
+      const progressBar = document.getElementById("progress-bar");
+      const progressText = document.getElementById("progress-text");
+      const overlays = {
+        activityDescription: document.getElementById("activity-description-overlay"),
+        gameInstructions: document.getElementById("game-instructions-overlay"),
+        hint: document.getElementById("hint-overlay"),
+        summary: document.getElementById("summary-overlay"),
+        completion: document.getElementById("completion-overlay"),
+        takeaways: document.getElementById("takeaways-overlay"),
+      };
+      const sounds = {
+        ding: document.getElementById("ding-sound"),
+        buzz: document.getElementById("buzz-sound"),
+        intro: document.getElementById("intro-audio"),
+        outro: document.getElementById("outro-audio"),
+      };
+      const feedbackModalOverlay = document.getElementById("feedback-modal-overlay");
+      const nextQuestionBtn = document.getElementById("next-question-button");
+      const feedbackModal = document.getElementById("feedback-modal");
+      const feedbackTitle = document.getElementById("feedback-title");
+      const feedbackText = document.getElementById("feedback-modal-text");
+
+      const icons = {
+        correct: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+        incorrect: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`,
+      };
+
+      // --- INITIALIZATION ---
+      document.addEventListener("DOMContentLoaded", initializeGame);
+
+      // Prevent scrolling globally when dragging is active
+      document.addEventListener('touchmove', (e) => {
+        if (isDragging) e.preventDefault();
+      }, { passive: false });
+
+      function initializeGame() {
+        // Clear prior content
+        document.querySelectorAll('.map-dot, .drop-zone').forEach(el => el.remove());
+        const existingSvg = document.getElementById('line-canvas');
+        if(existingSvg) existingSvg.remove();
+
+        // Create SVG canvas
+        labGameArea.insertAdjacentHTML('afterbegin', '<svg id="line-canvas" width="100%" height="100%" style="position:absolute; top:0; left:0; pointer-events:none; z-index: 1;"></svg>');
+        const svgCanvas = document.getElementById("line-canvas");
+        const labelsContainer = document.getElementById("labels-container");
+        labelsContainer.innerHTML = '';
+
+        activityData.forEach((item) => {
+          // 1. Create Dot Marker
+          const dot = document.createElement("div");
+          dot.className = "map-dot pulse-dot";
+          dot.id = `dot-${item.id}`;
+          Object.assign(dot.style, item.dotCoords);
+          labGameArea.appendChild(dot);
+
+          // 2. Create Drop Zone
+          const dropZone = document.createElement("div");
+          dropZone.className = "drop-zone";
+          dropZone.id = `drop-${item.id}`;
+          dropZone.dataset.id = item.id;
+          Object.assign(dropZone.style, item.dropCoords);
+          labGameArea.appendChild(dropZone);
+
+          // 3. Create SVG Connection Line
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.id = `line-${item.id}`;
+          line.setAttribute("x1", item.dotCoords.left);
+          line.setAttribute("y1", item.dotCoords.top);
+          line.setAttribute("x2", item.dropCoords.left);
+          line.setAttribute("y2", item.dropCoords.top);
+          line.classList.add("svg-connection-line");
+          svgCanvas.appendChild(line);
+
+          // 4. Create Draggable Label
+          const label = document.createElement("div");
+          label.className = "draggable-label";
+          label.id = `label-${item.id}`;
+          label.dataset.id = item.id;
+          label.textContent = item.title;
+          
+          // Pointer events for drag/drop to support both touch & mouse
+          label.addEventListener('pointerdown', handleDragStart);
+          labelsContainer.appendChild(label);
+        });
+
+        updateProgress();
+        if (typeof adjustSvgLinesForSmallScreens === "function") adjustSvgLinesForSmallScreens();
+      }
+
+      // --- GAME FLOW ---
+      function startGame() {
+        startScreen.classList.add("hidden");
+        gameScreen.classList.remove("hidden");
+        setTimeout(() => {
+          overlays.activityDescription.classList.remove("hidden");
+          if (sounds.intro) playSound(sounds.intro);
+        }, 500);
+      }
+
+      function closeActivityDescription() {
+        overlays.activityDescription.classList.add("hidden");
+        if (sounds.intro) sounds.intro.pause();
+      }
+
+      // --- DRAG & DROP LOGIC ---
+      function handleDragStart(e) {
+        if (e.button !== 0 && e.type !== 'touchstart') return;
+        e.preventDefault();
+
+        const original = e.target;
+        if (original.classList.contains('completed')) return;
+
+        isDragging = true;
+        activeDragOriginal = original;
+        
+        // Visual ghost clone that follows pointer
+        activeDragClone = original.cloneNode(true);
+        activeDragClone.classList.add('drag-clone');
+        activeDragClone.classList.remove('draggable-label');
+        document.body.appendChild(activeDragClone);
+
+        moveClone(e.clientX || e.touches[0].clientX, e.clientY || e.touches[0].clientY);
+        
+        original.style.opacity = '0.3'; // dim original
+
+        // Bind global movement listeners
+        document.addEventListener('pointermove', handleDragMove);
+        document.addEventListener('pointerup', handleDragEnd);
+      }
+
+      function moveClone(x, y) {
+        if (!activeDragClone) return;
+        activeDragClone.style.left = x + 'px';
+        activeDragClone.style.top = y + 'px';
+      }
+
+      function handleDragMove(e) {
+        moveClone(e.clientX, e.clientY);
+      }
+
+      function handleDragEnd(e) {
+        document.removeEventListener('pointermove', handleDragMove);
+        document.removeEventListener('pointerup', handleDragEnd);
+        isDragging = false;
+
+        if (!activeDragClone) return;
+
+        const clientX = e.clientX || (e.changedTouches ? e.changedTouches[0].clientX : 0);
+        const clientY = e.clientY || (e.changedTouches ? e.changedTouches[0].clientY : 0);
+
+        // Hide clone temporarily to find element underneath pointer
+        activeDragClone.style.display = 'none';
+        const elementBelow = document.elementFromPoint(clientX, clientY);
+        activeDragClone.style.display = 'block';
+
+        const dropZone = elementBelow ? elementBelow.closest('.drop-zone') : null;
+
+        if (dropZone && !dropZone.classList.contains('filled')) {
+          const zoneId = dropZone.dataset.id;
+          const labelId = activeDragOriginal.dataset.id;
+          const activity = activityData.find((a) => a.id === labelId);
+
+          if (zoneId === labelId) {
+            handleCorrectDrop(dropZone, activity);
+          } else {
+            handleIncorrectDrop(activityData.find(a => a.id === zoneId) || activity);
+          }
+        } else {
+          // Snap back if dropped anywhere else
+          activeDragOriginal.style.opacity = '1';
+        }
+
+        activeDragClone.remove();
+        activeDragClone = null;
+        activeDragOriginal = null;
+      }
+
+      // --- FEEDBACK & PROGRESS ---
+      function handleCorrectDrop(dropZone, activity) {
+        playSound(sounds.ding);
+        
+        // Fill zone visually
+        dropZone.classList.add('filled');
+        dropZone.innerHTML = `<span>${activity.title}</span>`;
+        
+        // Hide original label
+        activeDragOriginal.classList.add('completed');
+        
+        // Color lines and dots
+        const line = document.getElementById(`line-${activity.id}`);
+        const dot = document.getElementById(`dot-${activity.id}`);
+        if(line) line.classList.add('completed-line');
+        if(dot) {
+            dot.classList.add('completed-dot');
+            dot.classList.remove('pulse-dot');
+        }
+
+        completedActivities.add(activity.id);
+        updateProgress();
+        showFeedback(true, activity.correctFeedback);
+      }
+
+      function handleIncorrectDrop(activity) {
+        activeDragOriginal.style.opacity = '1'; // restore label
+        showFeedback(false, activity.incorrectFeedback);
+      }
+
+      function showFeedback(isCorrect, message) {
+        const titleText = isCorrect ? "Correct" : "Not Quite...";
+        feedbackTitle.innerHTML = `${isCorrect ? icons.correct : icons.incorrect} ${titleText}`;
+        feedbackText.textContent = message;
+        feedbackModal.className = isCorrect ? "correct-feedback" : "incorrect-feedback";
+        // Force styles inline to avoid theme overrides (ensures visibility)
+        const modalContentEl = feedbackModal.querySelector('.modal-content');
+        const btn = document.getElementById('next-question-button');
+        const colorVar = isCorrect ? getComputedStyle(document.documentElement).getPropertyValue('--correct-color').trim() : getComputedStyle(document.documentElement).getPropertyValue('--incorrect-color').trim();
+        if (modalContentEl) modalContentEl.style.borderTopColor = colorVar || (isCorrect ? '#4caf50' : '#e74c3c');
+        if (feedbackTitle) feedbackTitle.style.color = colorVar || (isCorrect ? '#4caf50' : '#e74c3c');
+        if (btn) { btn.style.backgroundColor = colorVar || (isCorrect ? '#4caf50' : '#e74c3c'); btn.style.color = '#fff'; }
+        playSound(isCorrect ? sounds.ding : sounds.buzz);
+        feedbackModalOverlay.classList.remove("hidden");
+      }
+
+      // --- END GAME SCREENS ---
+      function closeSummary() {
+        overlays.summary.classList.add("hidden");
+        isActivityComplete = true;
+        setTimeout(() => {
+          overlays.completion.classList.remove("hidden");
+          if (sounds.outro) playSound(sounds.outro);
+        }, 500);
+      }
+
+      function showTakeaways() {
+        overlays.completion.classList.add("hidden");
+        overlays.takeaways.classList.remove("hidden");
+      }
+
+      function closeTakeaways() {
+        overlays.takeaways.classList.add("hidden");
+        if (typeof sendEvent === "function") {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: "Activity 2: Hand Axe Explorer",
+          });
+        }
+        // Proceed to next HTML file or system flow
+        window.location.href = "../ACTIVITY3/index.html"; 
+      }
+      function previousActivity() {
+        window.location.href = "../ACTIVITY1/index.html"; 
+        sendEvent(ActivityEvent.END_ACTIVITY, {
+          activityName: "Activity 2: Hand Axe Explorer",
+        });
+      }
+
+
+      function restartGame() {
+        if (sounds.outro) sounds.outro.pause();
+        completedActivities.clear();
+        isActivityComplete = false;
+        overlays.completion.classList.add("hidden");
+        overlays.summary.classList.add("hidden");
+        initializeGame();
+      }
+
+      function nextActivity(){
+        sendEvent(ActivityEvent.END_ACTIVITY, {
+          activityName: "Activity 2: Hand Axe Explorer",
+        });
+        window.location.href = "../ACTIVITY4/index.html";
+      }
+
+      // --- UI & UTILS ---
+      function updateProgress() {
+        let displayCount = Math.min(completedActivities.size, TARGET_ACTIVITIES);
+        const progress = (displayCount / TARGET_ACTIVITIES) * 100;
+        progressBar.style.width = `${progress}%`;
+        progressText.textContent = `${displayCount} / ${TARGET_ACTIVITIES}`;
+      }
+
+      function showGameInstructions() { overlays.gameInstructions.classList.remove("hidden"); }
+      function closeGameInstructions() { overlays.gameInstructions.classList.add("hidden"); }
+
+      function showHint() {
+        const nextUncompleted = activityData.find(a => !completedActivities.has(a.id));
+        if (nextUncompleted) {
+          document.getElementById("hint-text").textContent = nextUncompleted.hint;
+          overlays.hint.classList.remove("hidden");
+        }
+      }
+      function closeHint() { overlays.hint.classList.add("hidden"); }
+
+      function playSound(audioEl) {
+        if (audioEl) {
+          audioEl.currentTime = 0;
+          audioEl.play().catch((e) => console.error("Audio play failed:", e));
+        }
+      }
+
+      nextQuestionBtn.addEventListener("click", () => {
+        feedbackModalOverlay.classList.add("hidden");
+        if (completedActivities.size >= TARGET_ACTIVITIES && !isActivityComplete) {
+          overlays.summary.classList.remove("hidden");
+        }
+      });
+
+      function adjustSvgLinesForSmallScreens() {
+        const mq = window.matchMedia("(max-width: 991px)");
+        function apply() {
+          activityData.forEach(item => {
+            const line = document.getElementById(`line-${item.id}`);
+            if (line) {
+              // Ensure coordinates adapt correctly on resize
+              line.setAttribute("x1", item.dotCoords.left);
+              line.setAttribute("y1", item.dotCoords.top);
+              line.setAttribute("x2", item.dropCoords.left);
+              line.setAttribute("y2", item.dropCoords.top);
+            }
+          });
+        }
+        apply();
+        window.addEventListener("resize", apply);
+      }
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

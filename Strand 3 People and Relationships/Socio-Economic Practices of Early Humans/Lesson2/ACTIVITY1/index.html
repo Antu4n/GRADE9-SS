@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Activity 1: Tools Through the Ages</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Tools Through the Ages</h1>
+          <button class="start-button">Start Activity</button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Timeline Explorer</h1>
+            <div class="header-right-group">
+              <div class="progress-area">
+                <div id="progress-container">
+                  <div id="progress-bar"></div>
+                </div>
+                <div id="progress-text">0 / 5</div>
+              </div>
+              <div class="instructions-icon" id="instructions-icon">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="game-content">
+            <div id="timeline-board" class="timeline-container">
+              </div>
+          </div>
+          <div class="hint-icon" id="hint-icon">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="activity-description-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="modal-title">Activity Introduction</div>
+              <p class="modal-text">
+                Let us follow the story of human invention! From simple rocks to sharp blades, tools helped early humans shape the world around them. Explore the timeline to watch how tools transformed from the Early Stone Age all the way to the Late Stone Age. Each tool tells a story of survival, skill, and innovation!
+              </p>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-btn" id="continue-btn">Continue</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="modal-title">Learner Instructions</div>
+              <ol>
+                <li>Click on the tool icons to see images, animations, and descriptions.</li>
+                <li>Read the description and observe the details in each tool's design and purpose.</li>
+                <li>When you close a tool's info, the timeline will advance to reveal the next tool.</li>
+                <li>Compare how tools change from one stage to the next.</li>
+                <li>Visit all tool hotspots to unlock the complete story of human innovation.</li>
+              </ol>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-btn" id="close-instructions-btn">
+                Got it!
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="modal-title" style="color:var(--secondary-color)">Here is a Hint</div>
+              <ul
+                style="
+                  text-align: left;
+                  padding-left: 1.5rem;
+                  font-size: 1.2rem;
+                  line-height: 1.6;
+                  color: var(--text-color-dark);
+                "
+              >
+                <li>Click the visible tool card on the timeline to learn about it.</li>
+                <li>You must review the information inside the pop-up to unlock the next stage in history.</li>
+                <li>Look for differences in size, shape, and use as you progress.</li>
+              </ul>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-btn" id="close-hint-btn">Got it</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="tool-detail-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <div class="modal-body detail-split-layout">
+              <div class="detail-left">
+                <img
+                  id="detail-image"
+                  class="detail-image"
+                  src=""
+                  alt="Tool Detail"
+                  onerror="this.src='https://placehold.co/600x400/e0e7ff/4f46e5?text=Tool+Media'; this.onerror=null;"
+                />
+              </div>
+              <div class="detail-right">
+                <div id="detail-stage" class="modal-stage-label"></div>
+                <div id="detail-title" class="modal-title"></div>
+                <p id="detail-desc" class="modal-text detail-desc-text"></p>
+              </div>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-btn" id="close-detail-btn">Continue</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <h2 class="completion-title-banner">Activity Conclusion</h2>
+            <img
+              id="completion-image"
+              src="images/complete.jpg"
+              alt="Completion celebration"
+              onerror="
+                this.src =
+                  'https://placehold.co/400x300/fbb03b/ffffff?text=Great+Job!';
+                this.onerror = null;
+              "
+            />
+          <div class="completion-buttons">
+            <button class="completion-btn" id="restart-activity-btn" style="margin-right: 1rem;">
+              Restart Activity
+            </button>
+            <button class="completion-btn" id="next-activity-btn">
+              Next Activity
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="complete-audio" src="audio/outro.mp3" preload="auto"></audio>
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="buzz-sound" src="audio/buzz.mp3" preload="auto"></audio>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // --- DOM Elements ---
+        const startScreen = document.getElementById("start-screen");
+        const gameScreen = document.getElementById("game-screen");
+        const startBtn = document.querySelector(".start-button");
+        const progressBar = document.getElementById("progress-bar");
+        const progressText = document.getElementById("progress-text");
+        const timelineBoard = document.getElementById("timeline-board");
+
+        // --- Overlay Elements ---
+        const activityDescriptionOverlay = document.getElementById("activity-description-overlay");
+        const instructionsOverlay = document.getElementById("instructions-overlay");
+        const hintOverlay = document.getElementById("hint-overlay");
+        const toolDetailOverlay = document.getElementById("tool-detail-overlay");
+        const completionOverlay = document.getElementById("completion-overlay");
+
+        // --- Button Elements ---
+        const continueBtn = document.getElementById("continue-btn");
+        const instructionsIcon = document.getElementById("instructions-icon");
+        const closeInstructionsBtn = document.getElementById("close-instructions-btn");
+        const hintIcon = document.getElementById("hint-icon");
+        const closeHintBtn = document.getElementById("close-hint-btn");
+        const closeDetailBtn = document.getElementById("close-detail-btn");
+        const restartActivityBtn = document.getElementById("restart-activity-btn");
+        const nextActivityBtn = document.getElementById("next-activity-btn");
+
+        // --- Detail Modal Elements ---
+        const detailStage = document.getElementById("detail-stage");
+        const detailTitle = document.getElementById("detail-title");
+        const detailImage = document.getElementById("detail-image");
+        const detailDesc = document.getElementById("detail-desc");
+
+        // --- Audio Elements ---
+        const introAudio = document.getElementById("intro-audio");
+        const completeAudio = document.getElementById("complete-audio");
+        const dingSound = document.getElementById("ding-sound");
+
+        // --- Game Data ---
+        const toolsData = [
+          {
+            id: 0,
+            stage: "Early Stone Age (Lower Palaeolithic)",
+            title: "Oldowan Tools",
+            thumb: "images/oldowan.jpg",
+            image: "images/oldowan.jpg",
+            description: "These are the earliest tools, Oldowan. Made by striking one stone against another, they helped early humans crack bones or cut meat. Simple, but life-saving! These tools were chunky, unshaped stones with a sharp edge, made with little planning."
+          },
+          {
+            id: 1,
+            stage: "Early Stone Age (Lower Palaeolithic)",
+            title: "Acheulian Tools",
+            thumb: "images/acheulian.jpg",
+            image: "images/acheulian.jpg",
+            description: "Next came the Acheulian tools. These hand axes took skill to shape and had multiple uses, from digging to butchering. Notice their teardrop shape!"
+          },
+          {
+            id: 2,
+            stage: "Middle Stone Age (Mesolithic)",
+            title: "Sangoan Tools",
+            thumb: "images/sangoan.jpg",
+            image: "images/sangoan.jpg",
+            description: "Tools became more specialized in the Middle Stone Age. Sangoan tools like scrapers and picks were used for woodwork and preparing hides. They were smaller and easier to handle. Notice how these tools were designed for specific tasks, not just general chopping."
+          },
+          {
+            id: 3,
+            stage: "Middle Stone Age (Mesolithic)",
+            title: "Blades and Points",
+            thumb: "images/blades.jpg",
+            image: "images/blades.jpg",
+            description: "Later in the Middle Stone Age, humans made fine blades and sharp spear points. These tools showed increasing precision and the use of handles, a big step forward! Adding parts made tools easier to use like a blade with a handle."
+          },
+          {
+            id: 4,
+            stage: "Late Stone Age (Upper Palaeolithic)",
+            title: "Microliths & Polished Tools",
+            thumb: "images/microliths.jpg",
+            image: "images/microliths.jpg",
+            description: "Now we reach the Late Stone Age, a time for tiny, clever inventions. Microliths were sharp little flakes, fitted into wooden shafts to make advanced tools like arrows. They also polished axes and used bone and antler to make things like needles! Look at the size and precision. These tools reflect a society with time to plan, design, and specialize."
+          }
+        ];
+
+        // --- Game State ---
+        let currentUnlockedIndex = 0; 
+        let activeDetailIndex = null;
+        const totalNodes = toolsData.length;
+
+        // --- Core Functions ---
+        function initializeGame() {
+          currentUnlockedIndex = 0;
+          timelineBoard.innerHTML = "";
+          updateProgressBar(0);
+          
+          // Render the first card immediately
+          appendCard(0);
+        }
+
+        function createToolCard(index) {
+          const data = toolsData[index];
+          const card = document.createElement("div");
+          card.className = "tool-card";
+          card.dataset.index = index;
+          
+          card.innerHTML = `
+            <div class="tool-card-img-container">
+              <img src="${data.thumb}" alt="${data.title}" class="tool-card-thumb" onerror="this.src='https://placehold.co/200x150/e0e7ff/4f46e5?text=Icon'; this.onerror=null;" />
+              <div class="tool-card-icon-overlay">
+                <svg viewBox="0 0 24 24" width="30" height="30" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+              </div>
+            </div>
+            <div class="tool-card-content">
+              <div class="tool-card-stage-label">${data.stage.split(' (')[0]}</div>
+              <div class="tool-card-title">${data.title}</div>
+            </div>
+          `;
+
+          card.addEventListener("click", () => openDetailModal(index));
+          return card;
+        }
+
+        function appendCard(index) {
+          const card = createToolCard(index);
+          card.classList.add("reveal-anim");
+          timelineBoard.appendChild(card);
+          
+          // Smooth scroll to the newest card
+          setTimeout(() => {
+            card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }, 100);
+        }
+
+        function appendArrow() {
+          const arrow = document.createElement("div");
+          arrow.className = "flow-arrow reveal-anim";
+          arrow.innerHTML = `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+          timelineBoard.appendChild(arrow);
+        }
+
+        function openDetailModal(index) {
+          activeDetailIndex = index;
+          const data = toolsData[index];
+          
+          detailStage.textContent = data.stage;
+          detailTitle.textContent = data.title;
+          detailImage.src = data.image;
+          detailDesc.textContent = data.description;
+          
+          // Mark the card as viewed (visually dim the ping/overlay)
+          const activeCard = timelineBoard.querySelector(`.tool-card[data-index="${index}"]`);
+          if (activeCard) {
+            activeCard.classList.add("viewed");
+          }
+
+          toolDetailOverlay.classList.remove("hidden");
+        }
+
+        function closeDetailModalHandler() {
+          toolDetailOverlay.classList.add("hidden");
+          
+          // Stop audio if it was playing
+          stopAllAudio();
+          playSound(dingSound);
+
+          // If the user just viewed the latest unlocked item, progress the timeline
+          if (activeDetailIndex === currentUnlockedIndex) {
+            currentUnlockedIndex++;
+            updateProgressBar(currentUnlockedIndex);
+            
+            if (currentUnlockedIndex < totalNodes) {
+              // Reveal the next step with animation delays
+              setTimeout(() => {
+                appendArrow();
+                setTimeout(() => {
+                  appendCard(currentUnlockedIndex);
+                }, 300); // delay before card appears
+              }, 300); // delay before arrow appears
+            } else {
+              // Sequence complete
+              setTimeout(checkGameCompletion, 800);
+            }
+          }
+        }
+
+        function updateProgressBar(completed) {
+          const percentage = (completed / totalNodes) * 100;
+          progressBar.style.width = `${percentage}%`;
+          progressText.textContent = `${completed} / ${totalNodes}`;
+        }
+
+        function checkGameCompletion() {
+          completionOverlay.classList.remove("hidden");
+          playSound(completeAudio);
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.END_ACTIVITY, {
+              activityName: "Activity 1: Tools Through the Ages",
+            });
+          }
+        }
+
+        function playSound(sound) {
+          if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch((e) => console.error("Audio play failed:", e));
+          }
+        }
+
+        function stopAllAudio() {
+          [introAudio, completeAudio, dingSound].forEach((audio) => {
+            if (audio) {
+              audio.pause();
+              audio.currentTime = 0;
+            }
+          });
+        }
+
+        // --- Event Listeners Setup ---
+        startBtn.addEventListener("click", () => {
+          startScreen.classList.add("hidden");
+          gameScreen.classList.remove("hidden");
+          initializeGame();
+
+          activityDescriptionOverlay.classList.remove("hidden");
+          playSound(introAudio);
+
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.START_ACTIVITY, {
+              activityName: "Activity 1: Tools Through the Ages",
+            });
+          }
+        });
+
+        continueBtn.addEventListener("click", () => {
+          stopAllAudio();
+          activityDescriptionOverlay.classList.add("hidden");
+        });
+
+        instructionsIcon.addEventListener("click", () => instructionsOverlay.classList.remove("hidden"));
+        closeInstructionsBtn.addEventListener("click", () => instructionsOverlay.classList.add("hidden"));
+
+        hintIcon.addEventListener("click", () => hintOverlay.classList.remove("hidden"));
+        closeHintBtn.addEventListener("click", () => hintOverlay.classList.add("hidden"));
+
+        closeDetailBtn.addEventListener("click", closeDetailModalHandler);
+
+        restartActivityBtn.addEventListener("click", () => {
+          stopAllAudio();
+          completionOverlay.classList.add("hidden");
+          initializeGame();
+        });
+
+        nextActivityBtn.addEventListener("click", () => {
+          window.location.href = "../ACTIVITY2/index.html";
+        });
+
+        // Close overlays when clicking outside the content box
+        [activityDescriptionOverlay, instructionsOverlay, hintOverlay].forEach(
+          (overlay) => {
+            overlay.addEventListener("click", (e) => {
+              if (e.target === overlay) {
+                overlay.classList.add("hidden");
+                if (overlay === activityDescriptionOverlay) stopAllAudio();
+              }
+            });
+          },
+        );
+      });
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

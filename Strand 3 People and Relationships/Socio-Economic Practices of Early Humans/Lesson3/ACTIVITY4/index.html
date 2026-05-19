@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Activity 4: Stone Age Tool Jigsaw</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Stone Age Tool Jigsaw</h1>
+          <button class="start-button">Start Activity</button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Puzzle Builder</h1>
+            <div class="header-right-group">
+              <div class="progress-area">
+                <div id="progress-container">
+                  <div id="progress-bar"></div>
+                </div>
+                <div id="progress-text">0 / 9</div>
+              </div>
+              <div class="instructions-icon" id="instructions-icon">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="game-content">
+            <div id="game-board">
+              <div class="puzzle-layout">
+                <div class="puzzle-panel">
+                  <div id="puzzle-board" class="puzzle-board" aria-label="Puzzle board">
+                    <div class="puzzle-board-bg" aria-hidden="true"></div>
+                    <div id="puzzle-zones" class="puzzle-zones" aria-hidden="true"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="hint-icon" id="hint-icon">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="activity-description-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="modal-title">Activity Introduction</div>
+              <p class="modal-text">
+                Time for a challenge, Stone Age explorer! Let us see how well you remember the tools you have been studying. Piece together this jigsaw puzzle of Stone Age tools and spot the ones you can name. Each piece is part of the story. Ready? Let us put the past back together one piece at a time!
+              </p>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-btn" id="continue-btn">Continue</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="modal-title">Learner Instructions</div>
+              <ol>
+                <li>Look at the puzzle board, it is waiting for you to rebuild the picture of Stone Age tools.</li>
+                <li>Drag and drop each puzzle piece into the correct spot.</li>
+                <li>Keep going until all the pieces are in place and the full picture is revealed.</li>
+                <li>Try to name each tool as you complete it to test your memory.</li>
+              </ol>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-btn" id="close-instructions-btn">Got it!</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="modal-title">Here is a Hint</div>
+              <ul style="text-align: left; padding-left: 1.5rem; font-size: 1.2rem; line-height: 1.6; color: var(--text-color-dark);">
+                <li>Edge pieces are highlighted in a soft outline.</li>
+                <li>Tool silhouettes subtly appear in the background as hints.</li>
+              </ul>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-btn" id="close-hint-btn">Got it</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="feedback-modal-overlay" class="modal-overlay hidden">
+          <div id="feedback-modal">
+            <div class="modal-content">
+              <div class="modal-body">
+                <div id="feedback-title" class="modal-title"></div>
+                <p id="feedback-modal-text" class="modal-text"></p>
+              </div>
+              <div class="modal-buttons">
+                <button id="next-question-button" class="modal-btn">Continue</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="summary-overlay" class="modal-overlay hidden">
+          <div class="modal-content" style="max-width: 900px; width: 90%;">
+            <div class="modal-body">
+              <div class="modal-title" style="margin-bottom: 0.5rem;">Tools Summary</div>
+              <div class="takeaways-scroll-area">
+                <table id="takeaways-table">
+                  <thead>
+                    <tr>
+                      <th>Tool</th>
+                      <th>Use & Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>Hand Axe</td><td>One of the earliest all-purpose tools! Used for chopping wood, butchering meat, and general cutting.</td></tr>
+                    <tr><td>Scraper</td><td>Helped early humans prepare animal hides and shape tools. Perfect for scraping meat off bones or cleaning animal skins.</td></tr>
+                    <tr><td>Microlith</td><td>Tiny but mighty often part of arrowheads or spears. Miniature blades fixed into wood or bone handles.</td></tr>
+                    <tr><td>Hammerstone</td><td>Used to break nuts or shape other stones. A simple round stone used like a hammer.</td></tr>
+                    <tr><td>Grinding Stone</td><td>Helped turn nuts and grains into flour. Used to crush grains, seeds, and nuts into a meal.</td></tr>
+                    <tr><td>Digging Stick</td><td>Vital for planting and foraging. A simple pointed stick used to dig up tubers or holes.</td></tr>
+                    <tr><td>Arrowhead (Hafted)</td><td>Helped early humans hunt from a distance. A sharp, pointed stone often hafted onto a wooden shaft.</td></tr>
+                    <tr><td>Polished Axe</td><td>A huge improvement in Late Stone Age toolmaking! Ground smooth and used for chopping trees.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-btn" id="summary-continue-btn">Continue to Conclusion</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <h2 class="completion-title-banner">Activity Conclusion</h2>
+          <div class="modal">
+            <img
+              id="completion-image"
+              src="images/hotspot-img.jpg"
+              alt="Completed Stone Age Tools"
+            />
+          </div>
+          <div class="completion-buttons">
+            <button class="completion-btn" id="prev-activity-btn">Previous Activity</button>
+            <button class="completion-btn" id="restart-activity-btn">Restart Activity</button>
+            <button class="completion-btn" id="key-takeaways-btn">Key Takeaways</button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="modal-overlay hidden">
+          <h2 class="takeaways-main-header">Lesson Complete</h2>
+          <div class="modal" style="background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); max-width: 900px; width: 90%; padding: 2rem;">
+            <div class="takeaways-header" style="margin-bottom: 0.5rem; justify-content: center;">
+              <h3>Key Takeaways</h3>
+            </div>
+            <div class="takeaways-scroll-area">
+              <ul style="text-align: left; padding-left: 1.5rem; font-size: 1.2rem; line-height: 1.6; color: var(--text-color-dark); margin-top: 0.5rem;">
+                <li>Stone Age tools had different shapes, sizes, and materials based on their purpose – cutting, scraping, pounding, or digging.</li>
+                <li>Microliths were advanced tools that were combined with handles to create composite tools like arrows or spears.</li>
+                <li>Illustrating and labelling tools helps learners visualize their use and importance in early human life.</li>
+                <li>Tool-making was a creative and critical skill that allowed early humans to adapt, survive, and eventually build communities.</li>
+                <li>Visual observation and drawing can improve memory, understanding, and appreciation for historical technologies.</li>
+              </ul>
+            </div>
+          </div>
+          <button class="end-lesson-btn" id="end-lesson-btn">Brain Power Checkpoint</button>
+        </div>
+      </div>
+    </div>
+
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="complete-audio" src="audio/outro.mp3" preload="auto"></audio>
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="buzz-sound" src="audio/buzz.mp3" preload="auto"></audio>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // --- DOM Elements ---
+        const startScreen = document.getElementById("start-screen");
+        const gameScreen = document.getElementById("game-screen");
+        const gameContainer = document.getElementById("game-container");
+        const startBtn = document.querySelector(".start-button");
+        const progressBar = document.getElementById("progress-bar");
+        const progressText = document.getElementById("progress-text");
+
+        // --- Modal Elements ---
+        const activityDescriptionOverlay = document.getElementById("activity-description-overlay");
+        const instructionsOverlay = document.getElementById("instructions-overlay");
+        // const hintOverlay = document.getElementById("hint-overlay");
+        const feedbackModalOverlay = document.getElementById("feedback-modal-overlay");
+        const summaryOverlay = document.getElementById("summary-overlay");
+        const completionOverlay = document.getElementById("completion-overlay");
+        const takeawaysOverlay = document.getElementById("takeaways-overlay");
+
+        // --- Button Elements ---
+        const continueBtn = document.getElementById("continue-btn");
+        const instructionsIcon = document.getElementById("instructions-icon");
+        const closeInstructionsBtn = document.getElementById("close-instructions-btn");
+        // const hintIcon = document.getElementById("hint-icon");
+        // const closeHintBtn = document.getElementById("close-hint-btn");
+        const nextQuestionBtn = document.getElementById("next-question-button");
+        const summaryContinueBtn = document.getElementById("summary-continue-btn");
+        const prevActivityBtn = document.getElementById("prev-activity-btn");
+        const restartActivityBtn = document.getElementById("restart-activity-btn");
+        const keyTakeawaysBtn = document.getElementById("key-takeaways-btn");
+        const endLessonBtn = document.getElementById("end-lesson-btn");
+
+        // --- Feedback Elements ---
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackText = document.getElementById("feedback-modal-text");
+
+        // --- Audio Elements ---
+        const introAudio = document.getElementById("intro-audio");
+        const completeAudio = document.getElementById("complete-audio");
+        const dingSound = document.getElementById("ding-sound");
+        const buzzSound = document.getElementById("buzz-sound");
+
+        const icons = {
+          correct: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+          incorrect: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`,
+        };
+
+        // --- Puzzle Logic State ---
+        const PUZZLE_COLS = 3;
+        const PUZZLE_ROWS = 3;
+        const PUZZLE_TOTAL = 9;
+        const puzzleImageSrc = "images/hotspot-img.jpg";
+        
+        let draggedItem = null;
+        let sourceZone = null;
+        let touchClone = null;
+        let completedCount = 0;
+        let zoneRects = [];
+        let completionShown = false;
+
+        function initializeGame() {
+          completedCount = 0;
+          completionShown = false;
+          updateProgressBar();
+          initGameBoard();
+        }
+
+        function initGameBoard() {
+          completedCount = 0;
+          const zonesWrap = document.getElementById("puzzle-zones");
+          zonesWrap.innerHTML = "";
+
+          let zonesData = [];
+          let piecesData = [];
+          for (let r = 0; r < PUZZLE_ROWS; r++) {
+            for (let c = 0; c < PUZZLE_COLS; c++) {
+              let id = r * PUZZLE_COLS + c + 1;
+              zonesData.push({ id, row: r, col: c });
+              piecesData.push({ id, row: r, col: c });
+            }
+          }
+
+          // Shuffle pieces, ensure NO pieces are perfectly placed on load to enforce full gameplay
+          let isSolved = true;
+          while (isSolved) {
+            piecesData.sort(() => Math.random() - 0.5);
+            isSolved = piecesData.some((p, i) => p.id === zonesData[i].id);
+          }
+
+          zonesData.forEach((z, index) => {
+            const zone = document.createElement("div");
+            zone.className = "puzzle-zone";
+            zone.dataset.zoneId = String(z.id);
+            addPuzzleDropListeners(zone);
+            zonesWrap.appendChild(zone);
+
+            const p = piecesData[index];
+            const piece = document.createElement("div");
+            piece.className = "puzzle-piece";
+            piece.draggable = true;
+            piece.dataset.pieceId = String(p.id);
+
+            piece.style.backgroundImage = `url('${puzzleImageSrc}')`;
+            piece.style.backgroundSize = `${PUZZLE_COLS * 100}% ${PUZZLE_ROWS * 100}%`;
+
+            const posX = (p.col / (PUZZLE_COLS - 1)) * 100;
+            const posY = (p.row / (PUZZLE_ROWS - 1)) * 100;
+            piece.style.backgroundPosition = `${posX}% ${posY}%`;
+
+            addPuzzleDragListeners(piece);
+            zone.appendChild(piece);
+          });
+
+          setTimeout(cacheZoneRects, 300);
+          evaluatePuzzle(false);
+        }
+
+        function evaluatePuzzle() {
+          let correctCount = 0;
+          document.querySelectorAll(".puzzle-zone").forEach((zone) => {
+            const piece = zone.querySelector(".puzzle-piece");
+            zone.classList.remove("locked-zone");
+            if (piece) {
+              piece.classList.remove("locked-piece");
+              piece.draggable = true;
+            }
+
+            if (piece && zone.dataset.zoneId === piece.dataset.pieceId) {
+              correctCount++;
+              piece.draggable = false;
+              piece.classList.add("locked-piece");
+              zone.classList.add("locked-zone");
+            }
+          });
+
+          completedCount = correctCount;
+          updateProgressBar();
+        }
+
+        function updateProgressBar() {
+          const percentage = (completedCount / PUZZLE_TOTAL) * 100;
+          progressBar.style.width = `${percentage}%`;
+          progressText.textContent = `${completedCount} / ${PUZZLE_TOTAL}`;
+        }
+
+        function cacheZoneRects() {
+          const zones = [...document.querySelectorAll(".puzzle-zone")];
+          zoneRects = zones.map((z) => {
+            const r = z.getBoundingClientRect();
+            return {
+              el: z,
+              left: r.left,
+              top: r.top,
+              width: r.width,
+              height: r.height,
+              cx: r.left + r.width / 2,
+              cy: r.top + r.height / 2,
+            };
+          });
+        }
+
+        function findNearestZone(x, y) {
+          let best = null;
+          let bestD = Infinity;
+          for (const z of zoneRects) {
+            const dx = x - z.cx;
+            const dy = y - z.cy;
+            const d = Math.hypot(dx, dy);
+            if (d < bestD) {
+              bestD = d;
+              best = z;
+            }
+          }
+          return { zoneRect: best, distance: bestD };
+        }
+
+        function trySnapByPoint(pieceEl, clientX, clientY) {
+          const { zoneRect } = findNearestZone(clientX, clientY);
+          if (!zoneRect) return false;
+          handlePuzzleDrop(zoneRect.el, pieceEl);
+          return true;
+        }
+
+        function handlePuzzleDrop(targetZone, draggedPiece) {
+          if (!targetZone || !draggedPiece) return;
+          if (targetZone.classList.contains("locked-zone")) return;
+
+          const currentSource = sourceZone || draggedPiece.parentElement;
+          if (targetZone === currentSource) return;
+
+          const targetPiece = targetZone.querySelector(".puzzle-piece");
+
+          if (targetPiece) {
+            currentSource.appendChild(targetPiece);
+          }
+          targetZone.appendChild(draggedPiece);
+
+          const pieceId = draggedPiece.dataset.pieceId;
+          const isCorrect = targetZone.dataset.zoneId === pieceId;
+
+          evaluatePuzzle();
+
+          if (isCorrect) {
+            targetZone.classList.add("correct-anim");
+            setTimeout(() => targetZone.classList.remove("correct-anim"), 600);
+            showFeedback(true, "Perfect fit! Keep building the picture.");
+          } else {
+            targetZone.classList.add("incorrect-anim");
+            setTimeout(() => targetZone.classList.remove("incorrect-anim"), 600);
+            showFeedback(false, "Not quite! That piece belongs somewhere else.");
+          }
+        }
+
+        function addPuzzleDragListeners(card) {
+          card.addEventListener("dragstart", (e) => {
+            if (card.classList.contains("locked-piece")) {
+              e.preventDefault();
+              return;
+            }
+            draggedItem = card;
+            sourceZone = card.parentElement;
+            setTimeout(() => card.classList.add("dragging"), 0);
+          });
+
+          card.addEventListener("dragend", () => {
+            if (draggedItem) draggedItem.classList.remove("dragging");
+            draggedItem = null;
+            sourceZone = null;
+          });
+
+          card.addEventListener("touchstart", (e) => {
+            if (card.classList.contains("locked-piece")) return;
+            if (e.cancelable) e.preventDefault();
+            draggedItem = card;
+            sourceZone = card.parentElement;
+            card.classList.add("dragging");
+            const touch = e.touches[0];
+            const rect = card.getBoundingClientRect();
+
+            touchClone = card.cloneNode(true);
+            touchClone.className = "touch-clone puzzle-piece";
+            touchClone.style.backgroundImage = card.style.backgroundImage;
+            touchClone.style.backgroundSize = card.style.backgroundSize;
+            touchClone.style.backgroundPosition = card.style.backgroundPosition;
+            touchClone.style.width = rect.width + "px";
+            touchClone.style.height = rect.height + "px";
+            document.body.appendChild(touchClone);
+
+            moveClone(touch.clientX, touch.clientY);
+          }, { passive: false });
+
+          card.addEventListener("touchmove", (e) => {
+            if (touchClone) {
+              if (e.cancelable) e.preventDefault();
+              const touch = e.touches[0];
+              moveClone(touch.clientX, touch.clientY);
+
+              const { zoneRect } = findNearestZone(touch.clientX, touch.clientY);
+              document.querySelectorAll(".puzzle-zone").forEach((z) => z.classList.remove("drag-over"));
+              if (zoneRect && !zoneRect.el.classList.contains("locked-zone")) {
+                zoneRect.el.classList.add("drag-over");
+              }
+            }
+          }, { passive: false });
+
+          card.addEventListener("touchend", (e) => {
+            if (touchClone) {
+              touchClone.remove();
+              touchClone = null;
+            }
+            if (draggedItem) {
+              draggedItem.classList.remove("dragging");
+              const touch = e.changedTouches[0];
+              document.querySelectorAll(".puzzle-zone").forEach((s) => s.classList.remove("drag-over"));
+              trySnapByPoint(draggedItem, touch.clientX, touch.clientY);
+              draggedItem = null;
+              sourceZone = null;
+            }
+          });
+        }
+
+        function moveClone(x, y) {
+          if (touchClone) {
+            touchClone.style.left = x - touchClone.offsetWidth / 2 + "px";
+            touchClone.style.top = y - touchClone.offsetHeight / 2 + "px";
+          }
+        }
+
+        function addPuzzleDropListeners(zone) {
+          zone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            if (!zone.classList.contains("locked-zone")) {
+              zone.classList.add("drag-over");
+            }
+          });
+          zone.addEventListener("dragleave", () => {
+            zone.classList.remove("drag-over");
+          });
+          zone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            zone.classList.remove("drag-over");
+            if (draggedItem) {
+              handlePuzzleDrop(zone, draggedItem);
+            }
+          });
+        }
+
+        function showFeedback(isCorrect, message) {
+          const titleText = isCorrect ? "Correct" : "Not Quite...";
+          feedbackTitle.innerHTML = `${isCorrect ? icons.correct : icons.incorrect} ${titleText}`;
+          feedbackText.textContent = message;
+          feedbackModal.className = isCorrect ? "correct-feedback" : "incorrect-feedback";
+          playSound(isCorrect ? dingSound : buzzSound);
+          feedbackModalOverlay.classList.remove("hidden");
+        }
+
+        function checkGameCompletion() {
+          if (completedCount === PUZZLE_TOTAL && !completionShown) {
+            completionShown = true;
+            setTimeout(() => {
+              completionOverlay.classList.remove("hidden");
+              if (gameContainer) gameContainer.classList.add("overlay-open");
+              playSound(completeAudio);
+            }, 300);
+          }
+        }
+
+        function playSound(sound) {
+          if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch((e) => console.error("Audio play failed:", e));
+          }
+        }
+
+        function stopAllAudio() {
+          [introAudio, completeAudio, dingSound, buzzSound].forEach((audio) => {
+            if (audio) {
+              audio.pause();
+              audio.currentTime = 0;
+            }
+          });
+        }
+
+        // --- Event Listeners Setup ---
+        window.addEventListener("resize", cacheZoneRects);
+
+        startBtn.addEventListener("click", () => {
+          startScreen.classList.add("hidden");
+          gameScreen.classList.remove("hidden");
+          initializeGame();
+
+          activityDescriptionOverlay.classList.remove("hidden");
+          playSound(introAudio);
+
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.START_ACTIVITY, {
+              activityName: "Activity 4: Stone Age Tool Jigsaw",
+            });
+          }
+        });
+
+        continueBtn.addEventListener("click", () => {
+          stopAllAudio();
+          activityDescriptionOverlay.classList.add("hidden");
+        });
+
+        instructionsIcon.addEventListener("click", () => instructionsOverlay.classList.remove("hidden"));
+        closeInstructionsBtn.addEventListener("click", () => instructionsOverlay.classList.add("hidden"));
+
+        // hintIcon.addEventListener("click", () => hintOverlay.classList.remove("hidden"));
+        // closeHintBtn.addEventListener("click", () => hintOverlay.classList.add("hidden"));
+
+        nextQuestionBtn.addEventListener("click", () => {
+          feedbackModalOverlay.classList.add("hidden");
+          if (completedCount === PUZZLE_TOTAL) {
+            if (!completionShown) {
+              // Show summary overlay first instead of straight to completion
+              summaryOverlay.classList.remove("hidden");
+            }
+          }
+        });
+
+        summaryContinueBtn.addEventListener("click", () => {
+          summaryOverlay.classList.add("hidden");
+          checkGameCompletion();
+        });
+
+        restartActivityBtn.addEventListener("click", () => {
+          stopAllAudio();
+          completionOverlay.classList.add("hidden");
+          if (gameContainer) gameContainer.classList.remove("overlay-open");
+          initializeGame();
+        });
+
+        prevActivityBtn.addEventListener("click", () => {
+          window.location.href = "../ACTIVITY3/index.html";
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.END_ACTIVITY, {
+              activityName: "Activity 4: Stone Age Tool Jigsaw",
+            });
+          }
+        });
+
+        keyTakeawaysBtn.addEventListener("click", () => {
+          completionOverlay.classList.add("hidden");
+          if (gameContainer) gameContainer.classList.remove("overlay-open");
+          stopAllAudio();
+          takeawaysOverlay.classList.remove("hidden");
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.END_ACTIVITY, {
+              activityName: "Activity 4: Stone Age Tool Jigsaw",
+            });
+          }
+        });
+
+        endLessonBtn.addEventListener("click", () => {
+          if (typeof sendEvent !== "undefined" && typeof LessonEvent !== "undefined") {
+            sendEvent(LessonEvent.END_LESSON, {
+              lessonName: "Illustrate the Tools Used by Early Humans During the Stone Age",
+            });
+          }
+        });
+
+        [activityDescriptionOverlay, instructionsOverlay].forEach((overlay) => {
+          overlay.addEventListener("click", (e) => {
+            if (e.target === overlay) {
+              overlay.classList.add("hidden");
+              if (overlay === activityDescriptionOverlay) stopAllAudio();
+            }
+          });
+        });
+      });
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

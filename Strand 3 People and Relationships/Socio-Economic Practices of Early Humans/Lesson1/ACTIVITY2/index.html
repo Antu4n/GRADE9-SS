@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socio-economic Practices by Period</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Socio-economic Practices</h1>
+          <button
+            class="start-button"
+            onclick="
+              startGame();
+              sendEvent(ActivityEvent.START_ACTIVITY, {
+                activityName: 'Socio-economic Practices by Period',
+              });
+            "
+          >
+            Start Activity
+          </button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Socio-economic Practices</h1>
+            <div class="progress-wrapper">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <div id="progress-text">0 / 12</div>
+              <div class="instructions-icon" onclick="showGameInstructions()">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          
+          <div class="lab-game-area" id="lab-game-area">
+             </div>
+          
+          <div class="hint-icon" onclick="showHint()">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="activity-description-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Activity Introduction</h2>
+            <div class="intro-content">
+              <p>
+                Let us dig deeper! What did early humans eat? Where did they sleep? How did they survive and grow together?
+                In this interactive table, you will explore how life evolved through each stage of the Stone Age. Tap the cells to uncover the secrets of survival, creativity, and community!
+              </p>
+            </div>
+            <button
+              class="modal-close-btn"
+              onclick="closeActivityDescription()"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="game-instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Learner Instructions</h2>
+            <ul>
+              <li>
+                Look at the comparison grid with the three Stone Age periods in columns and the four lifestyle categories in rows.
+              </li>
+              <li>
+                Tap or click any "Click to reveal" cell to uncover how people lived, worked, and believed in that period.
+              </li>
+              <li>
+                Read the text and compare what you see between different periods, notice how things changed over time.
+              </li>
+              <li>Unlock all 12 cells to complete your Stone Age comparison chart.</li>
+            </ul>
+            <button class="modal-close-btn" onclick="closeGameInstructions()">
+              Got It!
+            </button>
+          </div>
+        </div>
+
+        <div id="scenario-overlay" class="overlay flip-overlay hidden">
+          <div class="scenario-modal">
+            <div class="scenario-content">
+              <h2 id="scenario-title"></h2>
+              <div id="scenario-info"></div>
+              <button
+                id="scenario-close-btn"
+                class="modal-close-btn"
+                onclick="closeScenario()"
+              >
+              Got It
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary overlay removed: completion will show automatically when all cells are revealed -->
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Here is a hint</h2>
+            <p id="hint-text"></p>
+            <button class="modal-close-btn" onclick="closeHint()">
+              Got It!
+            </button>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <h2 class="completion-title-banner">Activity Conclusion</h2>
+          <div class="modal">
+            <img
+              id="completion-image"
+              src="images/complete.jpg"
+              alt="Completion celebration"
+              onerror="
+                this.src =
+                  'https://placehold.co/400x300/7c3aed/ffffff?text=Complete!';
+                this.onerror = null;
+              "
+            />
+          </div>
+          <div class="completion-buttons">
+            <button
+              class="completion-btn"
+              id="previous-activity-btn"
+              onclick="previousActivity()"
+            >
+              Restart Activity
+            </button>
+            <button
+              class="completion-btn"
+              id="restart-activity-btn"
+              onclick="restartGame()"
+            >
+              Restart Activity
+            </button>
+            <button
+              class="completion-btn"
+              id="next-activity-btn"
+              onclick="nextActivity()"
+            >
+              Next Activity
+            </button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Activity Conclusion</h2>
+            <div class="intro-content">
+              <p>
+                Awesome work, history detective! You have compared how early humans ate, lived, created, and believed across the three Stone Age periods.
+              </p>
+              <p>
+                From simple shelters to farming villages, their journey shows how survival led to society. Now, let us explore the tools they made in detail!
+              </p>
+            </div>
+            <button class="modal-close-btn" onclick="closeTakeaways()">
+              Finish Activity
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="outro-audio" src="audio/outro.mp3" preload="auto"></audio>
+
+    <script src="../js/anime.min.js"></script>
+    <script>
+    // --- DATA ---
+      const periods = ["Early Stone Age", "Middle Stone Age", "Late Stone Age"];
+      const themes = [
+        { id: "food", title: "Food & Economy" },
+        { id: "shelter", title: "Shelter & Society" },
+        { id: "tools", title: "Tools & Skills" },
+        { id: "culture", title: "Culture & Beliefs" }
+      ];
+
+      const activityData = [
+        // Early Stone Age
+        {
+          id: "early-food", periodIndex: 0, themeIndex: 0,
+          fullText: "Early humans hunted animals and gathered wild fruits and roots. Men chased prey, while women collected plants and nuts. They used simple hunting methods, such as setting traps, chasing and catching wild animals, or throwing stones or sticks at them.",
+          summaryText: "Hunted animals & gathered wild fruits/roots."
+        },
+        {
+          id: "early-shelter", periodIndex: 0, themeIndex: 1,
+          fullText: "They lived in small family groups and found safety in rock shelters or under trees. They moved around often in search of food or in response to weather and climatic changes. They wore no clothing.",
+          summaryText: "Nomadic family groups living in rock shelters."
+        },
+        {
+          id: "early-tools", periodIndex: 0, themeIndex: 2,
+          fullText: "They made rough stone tools like Oldowan and Acheulian hand axes. These helped with hunting and cutting meat.",
+          summaryText: "Rough stone tools like hand axes."
+        },
+        {
+          id: "early-culture", periodIndex: 0, themeIndex: 3,
+          fullText: "They had no writing or artwork yet. Life was mostly about survival.",
+          summaryText: "No writing/art; focused purely on survival."
+        },
+        // Middle Stone Age
+        {
+          id: "middle-food", periodIndex: 1, themeIndex: 0,
+          fullText: "Still hunters and gatherers, but smarter. They hunted in teams and used fire to cook food. They also practised fishing.",
+          summaryText: "Team hunting, fishing, and cooking with fire."
+        },
+        {
+          id: "middle-shelter", periodIndex: 1, themeIndex: 1,
+          fullText: "They stayed longer in caves and organized into small communities. Fire was used to keep warm, light up caves, and keep away wild animals. The entrances were covered with animal skins to keep the rain and wind out and keep the warmth inside. Language helped them plan together.",
+          summaryText: "Cave communities; fire for warmth & protection."
+        },
+        {
+          id: "middle-tools", periodIndex: 1, themeIndex: 2,
+          fullText: "Tools became sharper, like scrapers and spears. Fire-making and clothing from animal skins became common.",
+          summaryText: "Sharper tools (spears); clothing from animal skins."
+        },
+        {
+          id: "middle-culture", periodIndex: 1, themeIndex: 3,
+          fullText: "They painted caves with animals and symbols. This was the start of storytelling! They also made necklaces from seeds and shells.",
+          summaryText: "Cave paintings & simple jewelry (seeds/shells)."
+        },
+        // Late Stone Age
+        {
+          id: "late-food", periodIndex: 2, themeIndex: 0,
+          fullText: "Big change! They started farming crops like wheat and barley and kept animals like sheep and goats.",
+          summaryText: "Farmed crops & kept domestic animals."
+        },
+        {
+          id: "late-shelter", periodIndex: 2, themeIndex: 1,
+          fullText: "They built huts and lived in villages. Families grew larger and shared work.",
+          summaryText: "Built permanent huts & lived in villages."
+        },
+        {
+          id: "late-tools", periodIndex: 2, themeIndex: 2,
+          fullText: "They made microliths, tiny, sharp tools, and started crafting pottery, baskets, and clothes. They used natural fibres to make clothes.",
+          summaryText: "Microliths, pottery, and woven clothes."
+        },
+        {
+          id: "late-culture", periodIndex: 2, themeIndex: 3,
+          fullText: "They believed in life after death. People were buried with items. They decorated their bodies and made art often related to activities of animals such as hunting and animal migrations!",
+          summaryText: "Belief in afterlife; complex body decoration & art."
+        }
+      ];
+
+      const TOTAL_ACTIVITIES = activityData.length;
+      let completedActivities = new Set();
+      let activeActivity = null;
+      let activeCell = null;
+      let isActivityComplete = false;
+
+      // --- DOM ELEMENTS ---
+      const startScreen = document.getElementById("start-screen");
+      const gameScreen = document.getElementById("game-screen");
+      const labGameArea = document.getElementById("lab-game-area");
+      const progressBar = document.getElementById("progress-bar");
+      const progressText = document.getElementById("progress-text");
+      const overlays = {
+        activityDescription: document.getElementById("activity-description-overlay"),
+        gameInstructions: document.getElementById("game-instructions-overlay"),
+        scenario: document.getElementById("scenario-overlay"),
+        completion: document.getElementById("completion-overlay"),
+        takeaways: document.getElementById("takeaways-overlay"),
+      };
+      const sounds = {
+        ding: document.getElementById("ding-sound"),
+        intro: document.getElementById("intro-audio"),
+        outro: document.getElementById("outro-audio"),
+      };
+
+      // --- INITIALIZATION ---
+      document.addEventListener("DOMContentLoaded", initializeGame);
+
+      function initializeGame() {
+        let gridHTML = `<div class="comparison-grid-wrapper"><div class="comparison-grid">`;
+        
+        // Header Row
+        gridHTML += `<div class="grid-header-cell empty-cell"></div>`;
+        periods.forEach(p => {
+          gridHTML += `<div class="grid-header-cell period-header">${p}</div>`;
+        });
+
+        // Rows
+        themes.forEach((theme, rIndex) => {
+          gridHTML += `<div class="grid-header-cell theme-header">${theme.title}</div>`;
+          periods.forEach((period, cIndex) => {
+            const dataItem = activityData.find(a => a.periodIndex === cIndex && a.themeIndex === rIndex);
+            gridHTML += `
+              <div class="grid-cell" id="cell-${dataItem.id}" data-id="${dataItem.id}">
+                <div class="cell-content">
+                   <span class="reveal-text">Click to reveal</span>
+                   <span class="summary-text hidden">${dataItem.summaryText}</span>
+                </div>
+              </div>
+            `;
+          });
+        });
+
+        gridHTML += `</div></div>`;
+        labGameArea.innerHTML = gridHTML;
+        
+        document.querySelectorAll('.grid-cell').forEach(cell => {
+          cell.addEventListener('click', handleCellClick);
+        });
+
+        updateProgress();
+      }
+
+      // --- GAME FLOW ---
+      function startGame() {
+        startScreen.classList.add("hidden");
+        gameScreen.classList.remove("hidden");
+        setTimeout(() => {
+          overlays.activityDescription.classList.remove("hidden");
+          if (sounds.intro) playSound(sounds.intro);
+        }, 500);
+      }
+
+      function closeActivityDescription() {
+        overlays.activityDescription.classList.add("hidden");
+        if (sounds.intro) sounds.intro.pause();
+      }
+
+      function handleCellClick(event) {
+        activeCell = event.target.closest(".grid-cell");
+        if (!activeCell) return;
+
+        const activityId = activeCell.dataset.id;
+        activeActivity = activityData.find(a => a.id === activityId);
+        showScenarioInfo(activeActivity, activeCell);
+      }
+
+      function showScenarioInfo(activity, cellElement) {
+        const scenarioTitle = document.getElementById("scenario-title");
+        const infoContainer = document.getElementById("scenario-info");
+        const modal = document.querySelector('.scenario-modal');
+
+        // Set Content
+        scenarioTitle.textContent = `${periods[activity.periodIndex]} - ${themes[activity.themeIndex].title}`;
+        infoContainer.innerHTML = `<div class="info-item"><p>${activity.fullText}</p></div>`;
+
+        // Card Flip Animation Timeline
+        const tl = anime.timeline({
+          easing: 'easeInOutSine'
+        });
+
+        // 1. Flip the clicked cell to 90deg (invisible edge)
+        tl.add({
+          targets: cellElement,
+          rotateY: 90,
+          duration: 250,
+          complete: function() {
+             overlays.scenario.classList.remove("hidden");
+             // Reset modal state for animation
+             anime.set(modal, { rotateY: -90, scale: 0.8, opacity: 0 });
+          }
+        })
+        // 2. Flip the modal in from -90deg to 0deg
+        .add({
+          targets: modal,
+          rotateY: 0,
+          scale: 1,
+          opacity: 1,
+          duration: 400,
+          easing: 'easeOutBack'
+        });
+      }
+
+      function closeScenario() {
+        const modal = document.querySelector('.scenario-modal');
+        
+        const tl = anime.timeline({
+          easing: 'easeInOutSine'
+        });
+
+        // 1. Flip the modal out to 90deg
+        tl.add({
+          targets: modal,
+          rotateY: 90,
+          scale: 0.8,
+          opacity: 0,
+          duration: 300,
+          complete: function() {
+            overlays.scenario.classList.add("hidden");
+            
+            if (activeActivity && activeCell) {
+              if (!completedActivities.has(activeActivity.id)) {
+                playSound(sounds.ding);
+                completedActivities.add(activeActivity.id);
+                
+                // Swap text to summary while the cell is still at 90deg (invisible edge)
+                activeCell.querySelector('.reveal-text').classList.add('hidden');
+                activeCell.querySelector('.summary-text').classList.remove('hidden');
+                activeCell.classList.add('completed');
+                updateProgress();
+              }
+            }
+          }
+        })
+        // 2. Flip the cell back from 90deg to 0deg, showing new content
+        .add({
+          targets: activeCell,
+          rotateY: [90, 0],
+          duration: 350,
+          easing: 'easeOutBack',
+          complete: function() {
+             try { if (activeCell) activeCell.style.transform = '';} catch(e){}
+             activeActivity = null;
+             activeCell = null;
+             
+             if (completedActivities.size >= TOTAL_ACTIVITIES && !isActivityComplete) {
+              isActivityComplete = true;
+              setTimeout(() => {
+                overlays.completion.classList.remove("hidden");
+                if (sounds.outro) playSound(sounds.outro);
+              }, 400);
+            }
+          }
+        });
+      }
+
+      function nextActivity() {
+        window.location.href = "../ACTIVITY3/index.html";
+        if (typeof sendEvent === "function") {
+          sendEvent(ActivityEvent.NEXT_ACTIVITY, {
+            activityName: "Socio-economic Practices by Period",
+          });
+        }
+      }
+
+      function restartGame() {
+        if (sounds.outro) sounds.outro.pause();
+        completedActivities.clear();
+        activeActivity = null;
+        activeCell = null;
+        isActivityComplete = false;
+        
+        document.querySelectorAll('.grid-cell').forEach(cell => {
+          cell.classList.remove('completed');
+          cell.querySelector('.reveal-text').classList.remove('hidden');
+          cell.querySelector('.summary-text').classList.add('hidden');
+          cell.style.transform = ''; // Reset inline styles from anime
+        });
+
+        overlays.completion.classList.add("hidden");
+        updateProgress();
+      }
+      function previousActivity() {
+        window.location.href = "../ACTIVITY1/index.html";
+        sendEvent(ActivityEvent.END_ACTIVITY, {
+          activityName: "Socio-economic Practices by Period",
+        });
+      }
+
+      function showTakeaways() {
+        overlays.completion.classList.add("hidden");
+        overlays.takeaways.classList.remove("hidden");
+      }
+
+      function closeTakeaways() {
+        overlays.takeaways.classList.add("hidden");
+        if (typeof sendEvent === "function") {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: "Socio-economic Practices by Period",
+          });
+        }
+        nextActivity();
+      }
+
+      // --- UI & FEEDBACK ---
+      function updateProgress() {
+        let displayCount = Math.min(completedActivities.size, TOTAL_ACTIVITIES);
+        const progress = (displayCount / TOTAL_ACTIVITIES) * 100;
+        progressBar.style.width = `${progress}%`;
+        progressText.textContent = `${displayCount} / ${TOTAL_ACTIVITIES}`;
+      }
+
+      // --- MODAL CONTROLS ---
+      function showGameInstructions() {
+        overlays.gameInstructions.classList.remove("hidden");
+      }
+      function closeGameInstructions() {
+        overlays.gameInstructions.classList.add("hidden");
+      }
+
+      function playSound(audioEl) {
+        if (audioEl) {
+          audioEl.currentTime = 0;
+          audioEl.play().catch((e) => console.error("Audio play failed:", e));
+        }
+      }
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Then vs Now – Matching Game</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Then vs Now</h1>
+          <button class="start-button">Start Activity</button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Then vs Now</h1>
+            <div class="top-right-controls">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <span id="progress-text">0 / 6</span>
+
+              <div class="icon-btn instructions-icon" id="instructions-icon" title="Instructions">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          
+          <div class="game-content" id="game-content-area">
+            <div class="matching-container">
+              <svg id="lines-svg"></svg>
+              <div class="cards-column then-column" id="then-column">
+                <div class="column-title">Then (Stone Age)</div>
+                </div>
+              <div class="cards-column now-column" id="now-column">
+                <div class="column-title">Now (Modern Day)</div>
+                </div>
+            </div>
+          </div>
+
+          <div class="hint-icon" id="hint-icon" onclick="showHint()">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Activity Introduction</h2>
+            <p>
+              Let us time-travel! While life has changed a lot since the Stone Age, some needs remain the same. Can you match what early humans did <strong>then</strong> to what we do <strong>now</strong>? Let us discover how survival and society have evolved!
+            </p>
+            <button id="close-intro-btn">Continue</button>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Learner Instructions</h2>
+            <ol>
+              <li>Look at the two columns: <strong>"Then"</strong> shows Stone Age activities, and <strong>"Now"</strong> shows their modern-day equivalents.</li>
+              <li>Drag a line from the dot on each <strong>Then</strong> card to match it with the correct <strong>Now</strong> card dot.</li>
+              <li>Keep matching until all cards are correctly paired.</li>
+              <li>Try to notice how human needs have stayed the same, even if our methods have changed.</li>
+            </ol>
+            <button id="close-instructions-btn">Got it!</button>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Here is a hint</h2>
+            <p></p>
+            <button onclick="closeModal('hint-overlay')">Got it!</button>
+          </div>
+        </div>
+
+        <div id="feedback-modal-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header">
+              <h2 id="feedback-title"></h2>
+            </div>
+            <p id="feedback-modal-text"></p>
+            <button id="next-question-button" class="feedback-btn">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <h2 class="completion-title-banner">Activity Conclusion</h2>
+            <img
+              id="completion-image"
+              src="images/complete.jpg"
+              alt="Completion celebration"
+              onerror="this.src='https://placehold.co/400x300/5d04b2/ffffff?text=Complete!'; this.onerror=null;"
+            />
+          <div class="completion-buttons">
+            <button class="completion-btn" id="previous-activity-btn">
+              Previous Activity
+            </button>
+            <button class="completion-btn" id="restart-activity-btn">
+              Restart Activity
+            </button>
+            <button class="completion-btn" id="key-takeaways-btn">
+              Key Takeaways
+            </button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="overlay hidden">
+          <h2 class="takeaways-main-header">Lesson Complete</h2>
+          <div class="modal">
+            <div class="takeaways-header">
+              <h3>Key Takeaways</h3>
+            </div>
+            <table id="takeaways-table">
+              <thead>
+                <tr>
+                  <th>Concept</th>
+                  <th>Detail</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Socio-economic practices</td>
+                  <td>Early humans developed socio-economic practices for survival, including getting food, building shelter, organizing society, and expressing beliefs.</td>
+                </tr>
+                <tr>
+                  <td>Economic activities</td>
+                  <td>Economic activities like hunting, gathering, farming, and crafting met daily needs.</td>
+                </tr>
+                <tr>
+                  <td>Social organization</td>
+                  <td>Social organization centred on family and community, with roles divided by gender and age, supported by language and communication.</td>
+                </tr>
+                <tr>
+                  <td>Shelter and clothing</td>
+                  <td>Shelter and clothing evolved from caves and animal skins to built homes, jewellery, and body decoration.</td>
+                </tr>
+                <tr>
+                  <td>Cultural and spiritual practices</td>
+                  <td>Cultural and spiritual practices such as rock art and burial rituals reveal early humans’ creativity, beliefs, and emotional life, many of which have modern equivalents today.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button class="end-lesson-btn" id="end-lesson-btn">
+            Brain Power Checkpoint
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="complete-audio" src="audio/outro.mp3" preload="auto"></audio>
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="buzz-sound" src="audio/buzz.mp3" preload="auto"></audio>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const startScreen = document.getElementById("start-screen");
+        const gameScreen = document.getElementById("game-screen");
+        const startBtn = document.querySelector(".start-button");
+        const progressBar = document.getElementById("progress-bar");
+        const progressText = document.getElementById("progress-text");
+        
+        const thenColumn = document.getElementById("then-column");
+        const nowColumn = document.getElementById("now-column");
+        const linesSvg = document.getElementById("lines-svg");
+        
+        const activityIntroOverlay = document.getElementById("activity-intro-overlay");
+        const instructionsOverlay = document.getElementById("instructions-overlay");
+        const hintOverlay = document.getElementById("hint-overlay");
+        const feedbackModalOverlay = document.getElementById("feedback-modal-overlay");
+        const completionOverlay = document.getElementById("completion-overlay");
+        const takeawaysOverlay = document.getElementById("takeaways-overlay");
+        
+        const closeIntroBtn = document.getElementById("close-intro-btn");
+        const instructionsIcon = document.getElementById("instructions-icon");
+        const closeInstructionsBtn = document.getElementById("close-instructions-btn");
+        const hintIcon = document.getElementById("hint-icon");
+        const nextQuestionBtn = document.getElementById("next-question-button");
+        const restartActivityBtn = document.getElementById("restart-activity-btn");
+        const keyTakeawaysBtn = document.getElementById("key-takeaways-btn");
+        const endLessonBtn = document.getElementById("end-lesson-btn");
+        
+        const feedbackHeader = feedbackModalOverlay.querySelector(".feedback-header");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackText = document.getElementById("feedback-modal-text");
+        
+        const introAudio = document.getElementById("intro-audio");
+        const completeAudio = document.getElementById("complete-audio");
+        const dingSound = document.getElementById("ding-sound");
+        const buzzSound = document.getElementById("buzz-sound");
+
+        const icons = {
+          correct: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+          incorrect: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`,
+        };
+
+        const gameData = [
+          {
+            id: "hunting",
+            then: "Hunting wild animals",
+            now: "Shopping for meat at the supermarket",
+            feedback: {
+              correct: "Spot on! Just like early humans hunted for food, we now buy it – but we still need meals to survive.",
+              incorrect: "Hmm, let us think again. How do we get our food in today’s world?"
+            }
+          },
+          {
+            id: "gathering",
+            then: "Gathering wild fruits and roots",
+            now: "Farming or shopping for fruits and vegetables",
+            feedback: {
+              correct: "Great match! Early humans picked wild food – today, we grow or buy it.",
+              incorrect: "Take another look. What do we do today that still helps us find fresh food?"
+            }
+          },
+          {
+            id: "caves",
+            then: "Living in caves or shelters",
+            now: "Living in houses or apartments",
+            feedback: {
+              correct: "Exactly! Homes have changed in shape, but we still need shelter.",
+              incorrect: "Think again – where do we feel safe and sleep today?"
+            }
+          },
+          {
+            id: "tools",
+            then: "Making stone tools",
+            now: "Using machines or modern tools",
+            feedback: {
+              correct: "Nice work! Tools changed shape and material, but their purpose stayed the same.",
+              incorrect: "Hmm… what do we use today when we want to build, fix, or work?"
+            }
+          },
+          {
+            id: "skins",
+            then: "Wearing animal skins and body paint",
+            now: "Wearing clothes and accessories",
+            feedback: {
+              correct: "Well done! Humans always used clothing to stay warm and show identity.",
+              incorrect: "Try again! What do we wear today that helps us stay warm or express who we are?"
+            }
+          },
+          {
+            id: "art",
+            then: "Drawing on cave walls",
+            now: "Making digital art, social media, or storytelling",
+            feedback: {
+              correct: "Perfect! From cave walls to digital screens, we have always told stories and shared ideas.",
+              incorrect: "Take another look. What is today’s version of expressing ourselves through art?"
+            }
+          }
+        ];
+
+        const hintMessage =
+          "Think about the basic purpose behind each Stone Age action. Does it relate to getting food, finding shelter, staying warm, or expressing thoughts?";
+
+        let completedTasks = 0;
+        const totalTasks = gameData.length;
+        let matchedPairs = []; 
+        
+        let isDrawing = false;
+        let currentLine = null;
+        let activeStartCard = null;
+        let activeStartDot = null;
+        let startPos = null;
+
+        function shuffleArray(array) {
+          for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+          }
+        }
+
+        function initializeGame() {
+          completedTasks = 0;
+          matchedPairs = [];
+          linesSvg.innerHTML = "";
+          updateProgressBar();
+          loadItems();
+        }
+
+        function loadItems() {
+          const oldThenCards = thenColumn.querySelectorAll(".match-card");
+          const oldNowCards = nowColumn.querySelectorAll(".match-card");
+          oldThenCards.forEach(c => c.remove());
+          oldNowCards.forEach(c => c.remove());
+          
+          let thenItems = [...gameData];
+          let nowItems = [...gameData]; 
+          shuffleArray(nowItems); 
+
+          thenItems.forEach((item) => {
+            const card = document.createElement("div");
+            card.className = "match-card then-card";
+            card.dataset.id = item.id;
+            card.innerHTML = `
+              <div class="card-text">${item.then}</div>
+              <div class="connection-dot then-dot" data-id="${item.id}" data-correct="${item.feedback.correct}" data-incorrect="${item.feedback.incorrect}"></div>
+            `;
+            thenColumn.appendChild(card);
+          });
+
+          nowItems.forEach((item) => {
+            const card = document.createElement("div");
+            card.className = "match-card now-card";
+            card.dataset.matchId = item.id;
+            card.innerHTML = `
+              <div class="connection-dot now-dot" data-match="${item.id}"></div>
+              <div class="card-text">${item.now}</div>
+            `;
+            nowColumn.appendChild(card);
+          });
+
+          attachDrawingListeners();
+        }
+
+        function getSvgCoords(clientX, clientY) {
+          const svgRect = linesSvg.getBoundingClientRect();
+          return {
+            x: clientX - svgRect.left,
+            y: clientY - svgRect.top
+          };
+        }
+
+        function getDotCenter(dotElement) {
+          const rect = dotElement.getBoundingClientRect();
+          return getSvgCoords(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        }
+
+        // Helper function to create a "loose string" bezier curve path
+        function createLoosePath(x1, y1, x2, y2) {
+          // Calculate distance to determine how much the line should sag
+          const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+          // Adjust this multiplier for more or less looseness
+          const droop = distance * 0.15; 
+          
+          // Control points slightly towards the middle and lower down
+          const cx1 = x1 + (x2 - x1) / 3;
+          const cy1 = y1 + droop;
+          const cx2 = x1 + 2 * (x2 - x1) / 3;
+          const cy2 = y2 + droop;
+          
+          return `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`;
+        }
+
+        function attachDrawingListeners() {
+          const container = document.getElementById("game-content-area");
+          
+          container.addEventListener("pointerdown", handlePointerDown);
+          window.addEventListener("pointermove", handlePointerMove, { passive: false });
+          window.addEventListener("pointerup", handlePointerUp);
+        }
+
+        function handlePointerDown(e) {
+          const target = e.target;
+          if (target.classList.contains("then-dot")) {
+            if (target.closest('.match-card').classList.contains('matched')) return;
+
+            e.preventDefault();
+            isDrawing = true;
+            activeStartDot = target;
+            activeStartCard = target.closest(".match-card");
+            activeStartCard.classList.add("active");
+
+            startPos = getDotCenter(activeStartDot);
+
+            // Use an SVG <path> instead of <line> to allow for curves
+            currentLine = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            currentLine.setAttribute("d", createLoosePath(startPos.x, startPos.y, startPos.x, startPos.y));
+            currentLine.setAttribute("class", "drawing-line");
+            linesSvg.appendChild(currentLine);
+          }
+        }
+
+        function handlePointerMove(e) {
+          if (!isDrawing || !currentLine) return;
+          e.preventDefault();
+
+          document.querySelectorAll('.now-dot').forEach(dot => dot.classList.remove('hovered'));
+          const elementUnderPointer = document.elementFromPoint(e.clientX, e.clientY);
+          if (elementUnderPointer && elementUnderPointer.classList.contains('now-dot') && !elementUnderPointer.closest('.match-card').classList.contains('matched')) {
+             elementUnderPointer.classList.add('hovered');
+          }
+
+          const currentPos = getSvgCoords(e.clientX, e.clientY);
+          // Update the path with the new coordinates
+          currentLine.setAttribute("d", createLoosePath(startPos.x, startPos.y, currentPos.x, currentPos.y));
+        }
+
+        function handlePointerUp(e) {
+          if (!isDrawing) return;
+          isDrawing = false;
+          
+          activeStartCard.classList.remove("active");
+          document.querySelectorAll('.now-dot').forEach(dot => dot.classList.remove('hovered'));
+
+          const elementUnderPointer = document.elementFromPoint(e.clientX, e.clientY);
+          
+          if (elementUnderPointer && elementUnderPointer.classList.contains("now-dot")) {
+            const endDot = elementUnderPointer;
+            const endCard = endDot.closest(".match-card");
+
+            if (endCard.classList.contains('matched')) {
+                currentLine.remove();
+                currentLine = null;
+                return;
+            }
+
+            const sourceId = activeStartDot.dataset.id;
+            const targetMatchId = endDot.dataset.match;
+
+            if (sourceId === targetMatchId) {
+              handleCorrectMatch(activeStartCard, endCard, activeStartDot, endDot);
+            } else {
+              handleIncorrectMatch(activeStartDot);
+            }
+          } else {
+            currentLine.remove();
+          }
+
+          currentLine = null;
+          activeStartDot = null;
+          activeStartCard = null;
+          startPos = null;
+        }
+
+        function handleCorrectMatch(startCard, endCard, startDot, endDot) {
+          const endPos = getDotCenter(endDot);
+          currentLine.setAttribute("d", createLoosePath(startPos.x, startPos.y, endPos.x, endPos.y));
+          currentLine.setAttribute("class", "matched-line");
+          
+          startCard.classList.add("matched");
+          endCard.classList.add("matched");
+          startDot.classList.add("matched");
+          endDot.classList.add("matched");
+
+          matchedPairs.push({
+            startDot: startDot,
+            endDot: endDot,
+            line: currentLine
+          });
+
+          completedTasks++;
+          updateProgressBar();
+          showFeedback(true, startDot.dataset.correct);
+        }
+
+        function handleIncorrectMatch(startDot) {
+          currentLine.remove();
+          showFeedback(false, startDot.dataset.incorrect);
+        }
+
+        function updateProgressBar() {
+          const percentage = (completedTasks / totalTasks) * 100;
+          progressBar.style.width = `${percentage}%`;
+          progressText.textContent = `${completedTasks} / ${totalTasks}`;
+        }
+
+        window.addEventListener('resize', () => {
+          matchedPairs.forEach(pair => {
+            const startP = getDotCenter(pair.startDot);
+            const endP = getDotCenter(pair.endDot);
+            pair.line.setAttribute("d", createLoosePath(startP.x, startP.y, endP.x, endP.y));
+          });
+        });
+
+        function showFeedback(isCorrect, message) {
+          const titleText = isCorrect ? "Correct!" : "Not Quite...";
+          feedbackTitle.innerHTML = ` ${isCorrect ? icons.correct : icons.incorrect} ${titleText}`;
+          feedbackText.textContent = message;
+          feedbackHeader.className = isCorrect ? "feedback-header correct" : "feedback-header incorrect";
+          nextQuestionBtn.className = isCorrect ? "feedback-btn correct" : "feedback-btn incorrect";
+          feedbackModalOverlay.className = isCorrect ? "overlay correct-feedback" : "overlay incorrect-feedback";
+          playSound(isCorrect ? dingSound : buzzSound);
+          feedbackModalOverlay.classList.remove("hidden");
+        }
+
+        function playSound(sound) {
+          if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch((e) => console.error("Audio play failed:", e));
+          }
+        }
+
+        function stopAllAudio() {
+          [introAudio, completeAudio, dingSound, buzzSound].forEach((audio) => {
+            if (audio) {
+              audio.pause();
+              audio.currentTime = 0;
+            }
+          });
+        }
+
+        startBtn.addEventListener("click", () => {
+          startScreen.classList.add("hidden");
+          gameScreen.classList.remove("hidden");
+          activityIntroOverlay.classList.remove("hidden");
+          playSound(introAudio);
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.START_ACTIVITY, { activityName: "Activity 2: Then vs Now – Matching Game" });
+          }
+        });
+
+        closeIntroBtn.addEventListener("click", () => {
+          stopAllAudio();
+          activityIntroOverlay.classList.add("hidden");
+          initializeGame();
+        });
+
+        instructionsIcon.addEventListener("click", () => instructionsOverlay.classList.remove("hidden"));
+        closeInstructionsBtn.addEventListener("click", () => instructionsOverlay.classList.add("hidden"));
+
+        window.showHint = () => {
+          document.querySelector("#hint-overlay p").innerHTML = hintMessage;
+          hintOverlay.classList.remove("hidden");
+        };
+
+        window.closeModal = (id) => {
+          document.getElementById(id).classList.add("hidden");
+        };
+
+        hintIcon.addEventListener("click", () => window.showHint());
+
+        nextQuestionBtn.addEventListener("click", () => {
+          feedbackModalOverlay.classList.add("hidden");
+          if (completedTasks === totalTasks) {
+            setTimeout(() => {
+              gameScreen.classList.add("hidden");
+              completionOverlay.classList.remove("hidden");
+              playSound(completeAudio);
+            }, 500);
+          }
+        });
+
+        restartActivityBtn.addEventListener("click", () => {
+          stopAllAudio();
+          completionOverlay.classList.add("hidden");
+          gameScreen.classList.remove("hidden");
+          initializeGame();
+        });
+
+        document.getElementById("previous-activity-btn").addEventListener("click", () => {
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.END_ACTIVITY, { activityName: "Activity 2: Then vs Now – Matching Game" });
+          }
+          window.location.href = "../ACTIVITY1/index.html";
+        });
+
+        keyTakeawaysBtn.addEventListener("click", () => {
+          completionOverlay.classList.add("hidden");
+          stopAllAudio();
+          takeawaysOverlay.classList.remove("hidden");
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.END_ACTIVITY, {
+              activityName: "Activity 2: Then vs Now – Matching Game",
+            });
+          }
+        });
+
+        endLessonBtn.addEventListener("click", () => {
+          if (typeof sendEvent !== "undefined" && typeof LessonEvent !== "undefined") {
+            sendEvent(LessonEvent.END_LESSON, {
+              lessonName: "Recognise Socio-economic Practices of Early Humans",
+            });
+          }
+        });
+
+      });
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

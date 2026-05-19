@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity 1: Beyond Tools – Life and Beliefs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1 id="start-title">Beyond Tools – Life and Beliefs</h1>
+          <button class="start-button" onclick="showActivityIntro()">
+            Start Activity
+          </button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Beyond Tools – Life and Beliefs</h1>
+            <div class="top-right-controls">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <span id="progress-text">0 / 4</span>
+              <div class="instructions-icon" onclick="showInstructions()">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="hint-icon" onclick="openHintModal()">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              />
+            </svg>
+          </div>
+
+          <div id="game-content-area">
+            <div class="bg-grid-overlay"></div>
+            
+            <div id="tree-container">
+              <svg id="tree-svg" width="100%" height="100%">
+                </svg>
+              
+              <div id="central-node" class="pulsing-start" onclick="expandTree()">
+                <svg class="progress-ring" viewBox="0 0 100 100">
+                  <circle class="ring-bg" cx="50" cy="50" r="46" />
+                  <circle id="ring-progress" class="ring-fill" cx="50" cy="50" r="46" />
+                </svg>
+                <div class="central-text">Socio-Economic<br>Practices</div>
+              </div>
+
+              <div id="leaf-nodes-wrapper"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <h2 class="completion-title-banner">Activity Conclusion</h2>
+          <img
+            id="completion-image"
+            src="images/complete.jpg"
+            alt="Key Takeaways Summary"
+            onerror="
+              this.src =
+                'https://via.placeholder.com/600x400?text=Conclusion+Image'
+            "
+          />
+          <div class="completion-buttons" style="margin-top: 1.5rem;">
+            <button class="completion-btn btn-restart" onclick="restartGame()">
+              Restart Activity
+            </button>
+            <button class="completion-btn btn-previous" onclick="nextActivity()">
+              Next Activity
+            </button>
+          </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Activity Introduction</h2>
+            <p id="intro-text"></p>
+            <button onclick="closeModal('activity-intro-overlay')">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Learner Instructions</h2>
+            <div id="instructions-text" style="text-align: left; font-size: 1.2rem; line-height: 1.6;"></div>
+            <button onclick="closeModal('instructions-overlay')">
+              Got it!
+            </button>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal hint-modal">
+            <h2>Here is a hint</h2>
+            <div class="hint-content">
+              <ul class="hints-list" id="hints-list-container">
+              </ul>
+            </div>
+            <button
+              class="hint-btn"
+              onclick="closeModal('hint-overlay')"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+
+        <div id="image-details-overlay" class="overlay hidden">
+          <div class="modal">
+            <div id="details-content-new">
+              <div id="details-image-panel">
+                <div id="details-image-header">
+                  <span class="details-eyebrow" id="details-eyebrow-text">Era</span>
+                  <h2 id="details-image-title">Location View</h2>
+                </div>
+                <img id="details-image" src="" alt="Location View" />
+              </div>
+              <div id="details-questions">
+                <div id="details-question-text">Scenario Description</div>
+                <div id="details-options-container"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../js/anime.min.js"></script>
+    <script>
+      const icons = {
+        economic: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
+        social: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+        shelter: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+        cultural: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`
+      };
+
+      const activityData = {
+        title: "Beyond Tools – Life and Beliefs",
+        introduction: "Great explorers do not stop at the surface, they dig deeper. Tap each branch of the mind map to discover how people lived, worked, dressed, and believed. Every branch tells a different part of the story.",
+        instructions: "Tap the central node to start.<br>Choose any branch to explore one aspect of Stone Age life.<br>Read, watch, and listen to the content.<br>Answer the question or reflection task in each branch.<br>5️⃣ Visit all four branches to complete the activity and unlock your explorer badge.",
+        hints: [
+          "Think about how the environment affected their choices.",
+          "Beliefs and daily work were often deeply connected in early communities."
+        ],
+        images: [
+          {
+            id: "1",
+            imageSrc: "images/economic.jpg",
+            scene: "Economic Activities",
+            iconSvg: icons.economic,
+            type: "Food & Survival",
+            explanation: "Stone Age people hunted animals, gathered fruits, and fished. Later, they farmed crops like wheat and barley, tamed animals like goats and sheep, and made baskets, pots, and tools to support their work.",
+            tip: "How do you think the shift to farming changed their daily routines?",
+            left: "20%",
+            top: "60%", // Adjusted to prevent overflow
+            themeColor: "#2E7D32" 
+          },
+          {
+            id: "2",
+            imageSrc: "images/social.jpg",
+            scene: "Social Organisation",
+            iconSvg: icons.social,
+            type: "Community",
+            explanation: "In early times, people lived in small family groups. Over time, they formed clans and communities. They developed language to cooperate, and divided roles, some hunted, others gathered, made tools, or cared for children.",
+            tip: "Why was developing spoken language such a huge advantage?",
+            left: "40%",
+            top: "75%", // Adjusted to prevent overflow
+            themeColor: "#1565C0" 
+          },
+          {
+            id: "3",
+            imageSrc: "images/shelter.jpg",
+            scene: "Shelter & Clothing",
+            iconSvg: icons.shelter,
+            type: "Protection",
+            explanation: "Early humans sheltered in caves and rock overhangs. Later, they built huts. They made clothes from animal skins and plant fibres, and decorated themselves with paint, oils, and jewellery from bones or shells.",
+            tip: "What materials do you think were hardest to find and prepare?",
+            left: "60%",
+            top: "75%", // Adjusted to prevent overflow
+            themeColor: "#E64A19" 
+          },
+          {
+            id: "4",
+            imageSrc: "images/cultural.jpg",
+            scene: "Cultural & Spiritual",
+            iconSvg: icons.cultural,
+            type: "Beliefs",
+            explanation: "Stone Age humans painted caves to tell stories, record hunts, and pass on knowledge. They believed in life after death and buried people with tools or items for use in the next life.",
+            tip: "Why do you think early humans placed tools in burial sites?",
+            left: "80%",
+            top: "60%", // Adjusted to prevent overflow
+            themeColor: "#6A1B9A" 
+          }
+        ]
+      };
+
+      let currentImageId = null;
+      let completedImages = new Set();
+      let totalImages = activityData.images.length;
+      let introAudio, dingAudio, buzzAudio, outroAudio;
+      let hasPlayedIntro = false;
+      let treeExpanded = false;
+      let currentRevealIndex = 0; // Tracks which node to reveal next
+
+      let initReadyResolve;
+      const initReady = new Promise((resolve) => {
+        initReadyResolve = resolve;
+      });
+
+      function initAudio() {
+        try {
+          introAudio = new Audio("audio/intro.mp3");
+          dingAudio = new Audio("audio/ding.mp3");
+          buzzAudio = new Audio("audio/buzz.mp3");
+          outroAudio = new Audio("audio/outro.mp3");
+        } catch (e) {
+          console.warn("Audio could not be loaded.");
+          const mockAudio = { play: () => {}, pause: () => {}, currentTime: 0 };
+          introAudio = dingAudio = buzzAudio = outroAudio = mockAudio;
+        }
+      }
+      function playSound(audio) {
+        if (audio) {
+          audio.currentTime = 0;
+          audio.play().catch((e) => {});
+        }
+      }
+      function stopSound(audio) {
+        if (audio) {
+          audio.pause();
+        }
+      }
+
+      function renderTreeDOM() {
+        const treeSvg = document.getElementById("tree-svg");
+        const wrapper = document.getElementById("leaf-nodes-wrapper");
+        wrapper.innerHTML = "";
+        treeSvg.innerHTML = "";
+
+        activityData.images.forEach((imgData) => {
+          // Connecting line
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute("x1", "50%");
+          line.setAttribute("y1", "25%");
+          line.setAttribute("x2", imgData.left);
+          line.setAttribute("y2", imgData.top);
+          line.setAttribute("class", "branch-line");
+          line.setAttribute("id", `line-${imgData.id}`);
+          
+          // Set to continuous color-coded lines
+          line.style.strokeDasharray = "1000"; 
+          line.style.strokeDashoffset = "1000";
+          line.style.stroke = imgData.themeColor; 
+          
+          treeSvg.appendChild(line);
+
+          // Leaf node
+          const wrapperDiv = document.createElement("div");
+          wrapperDiv.className = "leaf-wrapper";
+          wrapperDiv.id = `wrapper-${imgData.id}`;
+          wrapperDiv.style.left = imgData.left;
+          wrapperDiv.style.top = imgData.top;
+          
+          const node = document.createElement("div");
+          node.className = "leaf-node";
+          node.id = `node-${imgData.id}`;
+          node.style.borderColor = imgData.themeColor;
+          node.style.color = imgData.themeColor;
+          
+          const inner = document.createElement("div");
+          inner.className = "leaf-inner";
+          inner.id = `inner-${imgData.id}`;
+          inner.innerHTML = imgData.iconSvg;
+          
+          node.appendChild(inner);
+          wrapperDiv.appendChild(node);
+
+          const label = document.createElement("div");
+          label.className = "leaf-label";
+          label.id = `label-${imgData.id}`;
+          label.textContent = imgData.scene;
+
+          wrapperDiv.appendChild(label);
+          wrapper.appendChild(wrapperDiv);
+
+          wrapperDiv.onclick = () => openNode(imgData);
+        });
+      }
+
+      function revealNode(index) {
+        if (index >= activityData.images.length) return;
+        
+        const imgData = activityData.images[index];
+        const lineElem = document.getElementById(`line-${imgData.id}`);
+        const nodeElem = document.getElementById(`node-${imgData.id}`);
+        const labelElem = document.getElementById(`label-${imgData.id}`);
+        const wrapperElem = document.getElementById(`wrapper-${imgData.id}`);
+
+        anime({
+          targets: lineElem,
+          strokeDashoffset: [1000, 0],
+          easing: "easeInOutSine",
+          duration: 800,
+          complete: function() {
+            anime({
+              targets: nodeElem,
+              scale: [0, 1],
+              opacity: [0, 1],
+              duration: 600,
+              easing: "easeOutBack"
+            });
+            
+            anime({
+              targets: labelElem,
+              opacity: [0, 1],
+              translateY: [-10, 0],
+              duration: 400,
+              delay: 200,
+              easing: "easeOutQuad"
+            });
+
+            setTimeout(() => {
+              wrapperElem.classList.add("clickable");
+              wrapperElem.style.animation = `node-bobbing 3s infinite ease-in-out`;
+            }, 400);
+          }
+        });
+      }
+
+      function expandTree() {
+        if (treeExpanded) return;
+        treeExpanded = true;
+        
+        const centralNode = document.getElementById("central-node");
+        centralNode.classList.remove("pulsing-start");
+        centralNode.classList.add("expanded");
+        centralNode.style.cursor = "default";
+        playSound(dingAudio);
+
+        // Sequentially reveal only the first node
+        revealNode(currentRevealIndex);
+      }
+
+      function openNode(imgData) {
+        const wrapperElem = document.getElementById(`wrapper-${imgData.id}`);
+        if (!wrapperElem.classList.contains("clickable") || completedImages.has(imgData.id)) {
+          return;
+        }
+
+        currentImageId = imgData.id;
+
+        const detailsImg = document.getElementById("details-image");
+        detailsImg.onerror = function () {
+          this.src = "https://via.placeholder.com/300?text=Image+Missing";
+        };
+        detailsImg.src = imgData.imageSrc;
+        detailsImg.alt = imgData.scene;
+        
+        document.getElementById("details-eyebrow-text").textContent = imgData.type;
+        document.getElementById("details-image-title").textContent = imgData.scene;
+        
+        const questionContainer = document.getElementById("details-question-text");
+        questionContainer.innerHTML = `
+          <div style="font-size: 1.2rem; line-height: 1.5; margin-bottom: 1rem;">${imgData.explanation}</div>
+          <div class="tip-container">
+            <strong>Reflection Tip:</strong> ${imgData.tip}
+          </div>
+        `;
+
+        const optionsContainer = document.getElementById("details-options-container");
+        optionsContainer.innerHTML = "";
+
+        const continueBtn = document.createElement("button");
+        continueBtn.className = "option-btn";
+        continueBtn.textContent = "Continue";
+        continueBtn.onclick = () => markJobRead(continueBtn, imgData);
+        optionsContainer.appendChild(continueBtn);
+
+        document.getElementById("image-details-overlay").classList.remove("hidden");
+      }
+
+      function markJobRead(button, imgData) {
+        button.disabled = true;
+        playSound(dingAudio);
+        
+        completedImages.add(currentImageId);
+        updateProgress();
+        closeModal("image-details-overlay");
+
+        const wrapperElem = document.getElementById(`wrapper-${imgData.id}`);
+        const innerElem = document.getElementById(`inner-${imgData.id}`);
+        
+        wrapperElem.classList.remove("clickable");
+        wrapperElem.style.animation = "none";
+        wrapperElem.classList.add("completed");
+        
+        innerElem.innerHTML = `<svg class="completed-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
+
+        // Sequentially reveal the next node
+        currentRevealIndex++;
+        if (currentRevealIndex < totalImages) {
+          setTimeout(() => revealNode(currentRevealIndex), 300);
+        }
+      }
+
+      function updateProgress() {
+        const progress = completedImages.size;
+        
+        document.getElementById("progress-bar").style.width = `${(progress / totalImages) * 100}%`;
+        document.getElementById("progress-text").textContent = `${progress} / ${totalImages}`;
+
+        const ring = document.getElementById("ring-progress");
+        const circ = 289.02;
+        const offset = circ - (progress / totalImages) * circ;
+        ring.style.strokeDashoffset = offset;
+
+        if (progress === totalImages) {
+          setTimeout(endActivity, 800);
+        }
+      }
+
+      function showActivityIntro() {
+        document.getElementById("start-screen").classList.add("hidden");
+        document.getElementById("game-screen").classList.remove("hidden");
+
+        if (typeof sendEvent !== "undefined") {
+          sendEvent(ActivityEvent.START_ACTIVITY, {
+            activityName: activityData.title,
+          });
+        }
+
+        initReady.then(() => {
+          renderTreeDOM();
+          if (!hasPlayedIntro) {
+            document
+              .getElementById("activity-intro-overlay")
+              .classList.remove("hidden");
+            playSound(introAudio);
+            hasPlayedIntro = true;
+          }
+        });
+      }
+
+      function showInstructions() {
+        document.getElementById("instructions-overlay").classList.remove("hidden");
+      }
+
+      function openHintModal() {
+        const el = document.getElementById("hint-overlay");
+        if (el) el.classList.remove("hidden");
+      }
+
+      function closeModal(id) {
+        document.getElementById(id).classList.add("hidden");
+        if (id === "activity-intro-overlay") {
+          stopSound(introAudio);
+        }
+      }
+
+      function endActivity() {
+        document.getElementById("game-screen").classList.add("hidden");
+        document.getElementById("completion-overlay").classList.remove("hidden");
+        playSound(outroAudio);
+      }
+
+      function restartGame() {
+        stopSound(outroAudio);
+        document.getElementById("completion-overlay").classList.add("hidden");
+        document.getElementById("activity-intro-overlay").classList.add("hidden");
+        document.getElementById("image-details-overlay").classList.add("hidden");
+
+        completedImages.clear();
+        currentImageId = null;
+        treeExpanded = false;
+        currentRevealIndex = 0;
+        hasPlayedIntro = true;
+        
+        const ring = document.getElementById("ring-progress");
+        ring.style.strokeDashoffset = 289.02;
+        
+        const centralNode = document.getElementById("central-node");
+        centralNode.classList.remove("expanded");
+        centralNode.classList.add("pulsing-start");
+        centralNode.style.cursor = "pointer";
+
+        updateProgress();
+        document.getElementById("game-screen").classList.remove("hidden");
+        
+        renderTreeDOM();
+      }
+
+      function nextActivity() {
+        if (typeof sendEvent !== "undefined") {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            currentActivity: activityData.title,
+          });
+        }
+        window.location.href = "../ACTIVITY2/index.html";
+      } 
+
+      function populateStaticContent() {
+        document.getElementById("start-title").textContent = activityData.title;
+        document.getElementById("game-title").textContent = activityData.title;
+        document.getElementById("intro-text").innerHTML = activityData.introduction;
+        document.getElementById("instructions-text").innerHTML = activityData.instructions;
+        
+        const hintsList = document.getElementById("hints-list-container");
+        hintsList.innerHTML = "";
+        activityData.hints.forEach(hint => {
+            const li = document.createElement("li");
+            li.textContent = hint;
+            hintsList.appendChild(li);
+        });
+        
+        document.getElementById("progress-text").textContent = `0 / ${totalImages}`;
+      }
+
+      window.onload = () => {
+        initAudio();
+        populateStaticContent();
+        if (typeof initReadyResolve === "function") initReadyResolve();
+      };
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>
