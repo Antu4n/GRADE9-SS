@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Activity 2: My Indigenous Wisdom Journal</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="../js/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>My Indigenous Wisdom Journal</h1>
+          <button class="start-button">Start Activity</button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">My Indigenous Wisdom Journal</h1>
+            <div class="top-right-controls">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <span id="progress-text">0 / 1</span>
+
+              <div class="instructions-icon" id="instructions-icon">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="game-content">
+            <div id="drop-zones-container">
+              <div class="drop-zone" id="journal-container">
+                <div class="drop-zone-header">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                  <span>Wisdom Journal</span>
+                </div>
+                <div class="items-landed-container" id="journal-content-area">
+                  </div>
+              </div>
+            </div>
+            <div id="bottom-controls">
+              </div>
+          </div>
+
+          <div class="hint-icon" id="hint-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Activity Introduction</h2>
+            <p>
+              Throughout this unit, you have explored how Indigenous Knowledge Systems shaped African societies, through farming, healing, weather prediction, peacebuilding, and more. Now it is your turn to reflect. How has this knowledge inspired you? What values will you carry forward?
+            </p>
+            <button id="close-intro-btn">Continue</button>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Learner Instructions</h2>
+            <ol>
+              <li>Read each journal prompt carefully.</li>
+              <li>Write your responses in full sentences, using your own thoughts and examples.</li>
+              <li>Try to connect your answers to what you have learnt in this unit about Indigenous Knowledge Systems.</li>
+              <li>Be honest and reflective, there are no wrong answers, but thoughtful responses will help you appreciate these systems more deeply.</li>
+              <li>Complete all four prompts.</li>
+            </ol>
+            <button id="close-instructions-btn">Got it!</button>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="hint-title">Here is a hint</h2>
+            <div class="hints-box">
+              <p>Think about something you have seen, heard, or learnt that relates to your culture or community. How does it help people live well together or with the environment?</p>
+            </div>
+            <button id="close-hint-btn">Got it!</button>
+          </div>
+        </div>
+
+        <div id="feedback-modal-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header">
+              <h2 id="feedback-title"></h2>
+            </div>
+            <p id="feedback-modal-text"></p>
+            <button id="next-question-button" class="feedback-btn">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <h2 class="completion-title-banner">Activity Conclusion</h2>
+          <div class="completion-image-container">
+            <img
+              class="completion-image"
+              id="completion-screenshot"
+              src=""
+              alt="Activity Complete Screenshot"
+            />Appreciate the Indigenous Knowledge Systems in the Society
+          </div>
+          
+          <div class="completion-buttons nav-buttons">
+            <button class="completion-btn" id="previous-activity-btn">
+              Previous Activity
+            </button>
+            <button class="completion-btn" id="restart-activity-btn">
+              Restart Activity
+            </button>
+            <button class="completion-btn" id="key-takeaways-btn">
+              Key Takeaways
+            </button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="overlay hidden">
+          <h2 class="takeaways-main-header">Lesson Complete</h2>
+          <div class="modal">
+            <div class="takeaways-header">
+              <h3>Key Takeaways</h3>
+            </div>
+            <table id="takeaways-table">
+              <thead>
+                <tr>
+                  <th>Concept</th>
+                  <th>Detail</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Value</td>
+                  <td>Indigenous Knowledge Systems hold significant value for cultural identity, sustainability, and community well-being.</td>
+                </tr>
+                <tr>
+                  <td>Wisdom</td>
+                  <td>They represent innovation, respect for nature, and tested wisdom.</td>
+                </tr>
+                <tr>
+                  <td>Heritage</td>
+                  <td>Appreciating these systems helps preserve heritage and fosters respect for diverse ways of knowing.</td>
+                </tr>
+                <tr>
+                  <td>Action</td>
+                  <td>Everyone can play a role in valuing and learning from traditional wisdom.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button class="end-lesson-btn" id="end-lesson-btn">
+            Brain Power Checkpoint
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="complete-audio" src="audio/outro.mp3" preload="auto"></audio>
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="buzz-sound" src="audio/buzz.mp3" preload="auto"></audio>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // --- DOM Elements ---
+        const startScreen = document.getElementById("start-screen");
+        const gameScreen = document.getElementById("game-screen");
+        const startBtn = document.querySelector(".start-button");
+        const progressBar = document.getElementById("progress-bar");
+        const progressText = document.getElementById("progress-text");
+        const bottomControls = document.getElementById("bottom-controls");
+        const journalContentArea = document.getElementById("journal-content-area");
+
+        // --- Modal & Overlay Elements ---
+        const activityIntroOverlay = document.getElementById("activity-intro-overlay");
+        const instructionsOverlay = document.getElementById("instructions-overlay");
+        const hintOverlay = document.getElementById("hint-overlay");
+        const feedbackModalOverlay = document.getElementById("feedback-modal-overlay");
+        const completionOverlay = document.getElementById("completion-overlay");
+        const takeawaysOverlay = document.getElementById("takeaways-overlay");
+
+        // --- Button Elements ---
+        const closeIntroBtn = document.getElementById("close-intro-btn");
+        const instructionsIcon = document.getElementById("instructions-icon");
+        const closeInstructionsBtn = document.getElementById("close-instructions-btn");
+        const hintIcon = document.getElementById("hint-icon");
+        const closeHintBtn = document.getElementById("close-hint-btn");
+        const nextQuestionBtn = document.getElementById("next-question-button");
+        const restartActivityBtn = document.getElementById("restart-activity-btn");
+        const keyTakeawaysBtn = document.getElementById("key-takeaways-btn");
+        const previousActivityBtn = document.getElementById("previous-activity-btn");
+        const endLessonBtn = document.getElementById("end-lesson-btn");
+
+        // --- Feedback Elements ---
+        const feedbackHeader = feedbackModalOverlay.querySelector(".feedback-header");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackText = document.getElementById("feedback-modal-text");
+
+        // --- Audio Elements ---
+        const introAudio = document.getElementById("intro-audio");
+        const completeAudio = document.getElementById("complete-audio");
+        const dingSound = document.getElementById("ding-sound");
+        const buzzSound = document.getElementById("buzz-sound");
+
+        // --- Validation Logic ---
+        function validateJournal() {
+          const ids = ['entry1', 'entry2', 'entry3', 'entry4'];
+          let filledCount = 0;
+          let elaboratedCount = 0;
+          
+          ids.forEach(id => {
+             const val = document.getElementById(id).value.trim();
+             if (val.length > 0) {
+                 filledCount++;
+                 // Check if the response shows some elaboration (arbitrary character limit for checking depth)
+                 if (val.length >= 15) {
+                     elaboratedCount++;
+                 }
+             }
+          });
+
+          if (filledCount === 4 && elaboratedCount === 4) {
+            return {
+                isComplete: true,
+                feedback: "That is a powerful connection. You have clearly understood the role of IKS in real life!"
+            };
+          } else if (filledCount === 4) {
+            return {
+                isComplete: false,
+                feedback: "Good start! Can you give an example or explain why this value is important to you?"
+            };
+          } else {
+            return {
+                isComplete: false,
+                feedback: "Think again about what Indigenous practices aim to protect. Health, peace, food, or nature? Make sure to fill in all journal entries."
+            };
+          }
+        }
+
+        // --- Core Functions ---
+        function initializeGame() {
+          progressBar.style.width = "0%";
+          progressText.textContent = "0 / 1";
+          journalContentArea.innerHTML = "";
+          
+          loadJournalEditor();
+        }
+
+        function loadJournalEditor() {
+          journalContentArea.innerHTML = `
+            <div class="journal-card">
+               <div class="journal-section">
+                 <label for="entry1" class="journal-prompt">1. What is one Indigenous practice or system you learnt about that you found interesting or meaningful? Why?</label>
+                 <textarea id="entry1" class="journal-textarea" placeholder="E.g., I found intercropping interesting because it helps grow more food without harming the soil."></textarea>
+               </div>
+               <div class="journal-section">
+                 <label for="entry2" class="journal-prompt">2. What value or belief do you think is most important in Indigenous Knowledge? (e.g., Sustainability, Respect for Nature, Cultural Identity, Innovation, Peacekeeping)</label>
+                 <textarea id="entry2" class="journal-textarea" placeholder="Explain your choice: E.g., I chose sustainability because…"></textarea>
+               </div>
+               <div class="journal-section">
+                 <label for="entry3" class="journal-prompt">3. Have you ever seen or heard someone in your family or community use Indigenous Knowledge?</label>
+                 <textarea id="entry3" class="journal-textarea" placeholder="E.g., Yes, my grandmother uses herbal medicine for colds."></textarea>
+               </div>
+               <div class="journal-section">
+                 <label for="entry4" class="journal-prompt">4. Write your personal pledge:</label>
+                 <textarea id="entry4" class="journal-textarea" placeholder="I will appreciate and use Indigenous Knowledge Systems by… E.g., …learning from my elders and respecting nature."></textarea>
+               </div>
+            </div>
+          `;
+
+          bottomControls.innerHTML = `
+            <button id="save-plan-btn" class="submit-btn utility-btn">Save Journal</button>
+            <button id="submit-plan-btn" class="submit-btn">Submit Journal</button>
+          `;
+
+          document.getElementById("submit-plan-btn").addEventListener("click", handleSubmit);
+          
+          // Advanced Save Handler with temporary static text replacement
+          document.getElementById("save-plan-btn").addEventListener("click", () => {
+            const targetContainer = document.getElementById("journal-container");
+
+            const result = validateJournal();
+            if (!result.isComplete) {
+              showFeedback(false, result.feedback);
+              return;
+            }
+
+            // Temporarily replace inputs with spans so html2canvas renders the text perfectly
+            const ids = ['entry1', 'entry2', 'entry3', 'entry4'];
+            ids.forEach(id => {
+                const ta = document.getElementById(id);
+                if (ta) {
+                    const textSpan = document.createElement('div');
+                    textSpan.className = 'journal-text-span temp-span';
+                    textSpan.innerText = ta.value;
+                    ta.style.display = 'none';
+                    ta.parentNode.insertBefore(textSpan, ta.nextSibling);
+                }
+            });
+
+            // Expand constraints to capture everything without scrollbars
+            document.body.classList.add("capture-mode-active");
+
+            html2canvas(targetContainer, {
+              backgroundColor: "#ECF0F1",
+              scale: 2,
+              useCORS: true,
+              allowTaint: true,
+              width: targetContainer.scrollWidth,
+              height: targetContainer.scrollHeight,
+              scrollY: 0
+            }).then((canvas) => {
+                document.body.classList.remove("capture-mode-active");
+                
+                const imgData = canvas.toDataURL("image/png");
+                const a = document.createElement("a");
+                a.href = imgData;
+                a.download = "My_Indigenous_Wisdom_Journal.png";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                // Restore inputs
+                document.querySelectorAll('.temp-span').forEach(el => el.remove());
+                ids.forEach(id => {
+                    const ta = document.getElementById(id);
+                    if (ta) ta.style.display = '';
+                });
+            }).catch((err) => {
+                console.error("Save failed: ", err);
+                document.body.classList.remove("capture-mode-active");
+                
+                document.querySelectorAll('.temp-span').forEach(el => el.remove());
+                ids.forEach(id => {
+                    const ta = document.getElementById(id);
+                    if (ta) ta.style.display = '';
+                });
+            });
+          });
+
+          setTimeout(() => {
+              const el = document.getElementById("entry1");
+              if(el) el.focus();
+          }, 100);
+        }
+
+        function handleSubmit() {
+          const result = validateJournal();
+          showFeedback(result.isComplete, result.feedback);
+        }
+
+        function showFeedback(isCorrect, message) {
+          const titleText = isCorrect ? "Excellent!" : "Action Needed";
+          const iconSvg = isCorrect
+            ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
+            : '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+          
+          feedbackTitle.innerHTML = `${iconSvg} <span>${titleText}</span>`;
+          feedbackText.textContent = message;
+          feedbackHeader.className = isCorrect ? "feedback-header correct" : "feedback-header incorrect";
+          nextQuestionBtn.className = isCorrect ? "feedback-btn correct" : "feedback-btn incorrect";
+          feedbackModalOverlay.className = isCorrect ? "overlay correct-feedback" : "overlay incorrect-feedback";
+          
+          nextQuestionBtn.dataset.isComplete = isCorrect;
+          
+          playSound(isCorrect ? dingSound : buzzSound);
+          feedbackModalOverlay.classList.remove("hidden");
+        }
+
+        function checkGameCompletion() {
+          progressBar.style.width = "100%";
+          progressText.textContent = "1 / 1";
+
+          setTimeout(() => {
+            const targetContainer = document.getElementById("game-screen");
+            
+            // Replace form elements with static text
+            const ids = ['entry1', 'entry2', 'entry3', 'entry4'];
+            ids.forEach(id => {
+                const ta = document.getElementById(id);
+                if (ta) {
+                    const textSpan = document.createElement('div');
+                    textSpan.className = 'journal-text-span';
+                    textSpan.innerText = ta.value;
+                    ta.parentNode.replaceChild(textSpan, ta);
+                }
+            });
+
+            // Expand constraints to capture everything without scrollbars
+            document.body.classList.add("capture-mode-active");
+
+            html2canvas(targetContainer, {
+              backgroundColor: "#ECF0F1",
+              scale: 2,
+              useCORS: true,
+              allowTaint: true,
+              width: targetContainer.scrollWidth,
+              height: targetContainer.scrollHeight,
+              scrollY: 0
+            })
+              .then((canvas) => {
+                document.body.classList.remove("capture-mode-active");
+                
+                const imgData = canvas.toDataURL("image/png");
+                const screenshotImg = document.getElementById("completion-screenshot");
+                screenshotImg.src = imgData;
+
+                gameScreen.classList.add("hidden");
+                completionOverlay.classList.remove("hidden");
+                playSound(completeAudio);
+              })
+              .catch((err) => {
+                console.error("Screenshot capture failed: ", err);
+                document.body.classList.remove("capture-mode-active");
+                
+                gameScreen.classList.add("hidden");
+                completionOverlay.classList.remove("hidden");
+                playSound(completeAudio);
+              });
+          }, 600);
+        }
+
+        function playSound(sound) {
+          if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch((e) => console.error("Audio play failed:", e));
+          }
+        }
+
+        function stopAllAudio() {
+          [introAudio, completeAudio, dingSound, buzzSound].forEach((audio) => {
+            if (audio) {
+              audio.pause();
+              audio.currentTime = 0;
+            }
+          });
+        }
+
+        // --- Event Listeners Setup ---
+        startBtn.addEventListener("click", () => {
+          startScreen.classList.add("hidden");
+          gameScreen.classList.remove("hidden");
+          activityIntroOverlay.classList.remove("hidden");
+          playSound(introAudio);
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.START_ACTIVITY, {
+              activityName: "Activity 2: My Indigenous Wisdom Journal – Interactive Form",
+            });
+          }
+        });
+
+        closeIntroBtn.addEventListener("click", () => {
+          stopAllAudio();
+          activityIntroOverlay.classList.add("hidden");
+          initializeGame();
+        });
+
+        instructionsIcon.addEventListener("click", () => instructionsOverlay.classList.remove("hidden"));
+        closeInstructionsBtn.addEventListener("click", () => instructionsOverlay.classList.add("hidden"));
+        
+        hintIcon.addEventListener("click", () => hintOverlay.classList.remove("hidden"));
+        closeHintBtn.addEventListener("click", () => hintOverlay.classList.add("hidden"));
+
+        nextQuestionBtn.addEventListener("click", () => {
+          feedbackModalOverlay.classList.add("hidden");
+          if (nextQuestionBtn.dataset.isComplete === "true") {
+            checkGameCompletion();
+          }
+        });
+
+        restartActivityBtn.addEventListener("click", () => {
+          stopAllAudio();
+          completionOverlay.classList.add("hidden");
+          gameScreen.classList.remove("hidden");
+          initializeGame();
+        });
+
+        previousActivityBtn.addEventListener("click", () => {
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.END_ACTIVITY, {
+              activityName: "Activity 2: My Indigenous Wisdom Journal – Interactive Form",
+            });
+          }
+          window.location.href = "../ACTIVITY1/index.html";
+        });
+
+        keyTakeawaysBtn.addEventListener("click", () => {
+          completionOverlay.classList.add("hidden");
+          stopAllAudio();
+          takeawaysOverlay.classList.remove("hidden");
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.END_ACTIVITY, {
+              activityName: "Activity 2: My Indigenous Wisdom Journal – Interactive Form",
+            });
+          }
+        });
+
+        endLessonBtn.addEventListener("click", () => {
+          if (typeof sendEvent !== "undefined" && typeof LessonEvent !== "undefined") {
+            sendEvent(LessonEvent.END_LESSON, {
+              lessonName: "Appreciate the Indigenous Knowledge Systems in the Society",
+            });
+          }
+        });
+      });
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

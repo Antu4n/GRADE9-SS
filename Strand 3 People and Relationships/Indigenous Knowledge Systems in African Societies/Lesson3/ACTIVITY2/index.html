@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity 2: Decision-Making Simulator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>The Drought Problem</h1>
+          <button class="start-button" onclick="showActivityIntro()">
+            Start Activity
+          </button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Decision-Making Simulator</h1>
+            <div class="top-right-controls">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <span id="progress-text">0 / 3</span>
+              <div class="instructions-icon" onclick="showInstructions()">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <h2 class="scenario-title" id="scenario-title"></h2>
+
+          <div class="scenario-content">
+            <div class="scenario-container" id="scenario-container">
+              <img
+                id="scenario-image"
+                src=""
+                alt="Scenario Image"
+                class="scenario-image"
+              />
+              <div class="scenario-details">
+                <p class="scenario-story" id="scenario-story-text"></p>
+                <div class="question-section">
+                  <h3>Choose the best answer:</h3>
+                  <div class="options-container" id="options-container"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hint-icon" id="hint-icon" onclick="showHint()">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <div class="completion-title-banner">Activity Conclusion</div>
+          <div class="modal">
+            <img
+              id="completion-image"
+              src="images/complete.jpg"
+              alt="Activity Complete"
+              onerror="this.style.display = 'none'"
+            />
+          </div>
+          <div class="completion-buttons">
+            <button
+              class="completion-btn btn-prev"
+              onclick="goToPreviousActivity()"
+            >
+              Previous Activity
+            </button>
+            <button class="completion-btn btn-restart" onclick="restartGame()">
+              Restart Activity
+            </button>
+            <button
+              class="completion-btn btn-next"
+              onclick="goToNextActivity()"
+            >
+              Next Activity
+            </button>
+          </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Activity Introduction</h2>
+            <p>
+              Your village has gone 4 months without rain. The crops are dying,
+              and the elders are concerned. You are asked to help decide what to
+              do. Will you rely on traditional forecasts, use your smartphone
+              weather app, or try something new? Your choices will shape what
+              happens next.
+            </p>
+            <button onclick="closeModal('activity-intro-overlay')">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Learner Instructions</h2>
+            <ol>
+              <li>
+                Read the scenario carefully, you are part of a drought-affected
+                village making important decisions.
+              </li>
+              <li>
+                At each decision point, choose the option you think will work
+                best for the community.
+              </li>
+              <li>
+                Remember to consider both Indigenous Knowledge and modern
+                knowledge systems when making choices.
+              </li>
+              <li>
+                After each choice, read the feedback to understand the impact of
+                your decision.
+              </li>
+              <li>
+                Continue until you have completed all the decision points and
+                see the final outcome of your actions.
+              </li>
+            </ol>
+            <button onclick="closeModal('instructions-overlay')">
+              Got it!
+            </button>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Here is a hint</h2>
+            <p></p>
+            <button onclick="closeModal('hint-overlay')">Got it!</button>
+          </div>
+        </div>
+
+        <div id="feedback-correct-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header correct">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <h2>Correct!</h2>
+            </div>
+            <p id="correct-feedback-text"></p>
+            <button
+              class="feedback-btn correct"
+              onclick="closeModal('feedback-correct-overlay')"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="feedback-incorrect-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header incorrect">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+              </svg>
+              <h2>Not Quite</h2>
+            </div>
+            <p id="incorrect-feedback-text"></p>
+            <button class="feedback-btn incorrect" onclick="handleTryAgain()">
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const activityData = {
+        scenarios: [
+          {
+            title: "Decision Point 1",
+            story: "What is your first action to respond to the drought?",
+            image: "images/scenario1.jpg",
+            options: [
+              {
+                text: "Ask the elders about weather signs",
+                feedback:
+                  "That is not right. In a crisis, could using both community wisdom and modern data give a clearer picture?",
+              },
+              {
+                text: "Check mobile weather apps and online forecasts",
+                feedback:
+                  "That is not right. In a crisis, could using both community wisdom and modern data give a clearer picture?",
+              },
+              {
+                text: "Talk to both elders and check the app",
+                feedback:
+                  "Great choice! Using both local wisdom and scientific data gives you a fuller picture of the drought situation.",
+              },
+            ],
+            correctIndex: 2,
+            hint: "Consider an approach that uses multiple sources of information to understand the whole picture.",
+          },
+          {
+            title: "Decision Point 2",
+            story:
+              "Based on what you learnt, what farming approach will you take?",
+            image: "images/scenario2.jpg",
+            options: [
+              {
+                text: "Continue planting usual crops",
+                feedback:
+                  "Try again! In droughts, what farming strategies combine tradition with innovation for better survival?",
+              },
+              {
+                text: "Buy chemical fertilizers and water tanks",
+                feedback:
+                  "Try again! In droughts, what farming strategies combine tradition with innovation for better survival?",
+              },
+              {
+                text: "Switch to drought, tolerant crops and use traditional planting wisdom",
+                feedback:
+                  "Smart thinking! Combining drought-resistant crops with Indigenous farming methods like intercropping gives your crops a better chance to survive.",
+              },
+            ],
+            correctIndex: 2,
+            hint: "Which option combines appropriate plant choices with proven, historical farming methods?",
+          },
+          {
+            title: "Decision Point 3",
+            story:
+              "What message do you share with the community at the end of the meeting?",
+            image: "images/scenario3.jpg",
+            options: [
+              {
+                text: "Trust only the elders, they’ve been here longer",
+                feedback:
+                  "Not quite. Could blending the wisdom of the past with the tools of the present build a stronger, more united community?",
+              },
+              {
+                text: "Follow only technology, tradition is outdated",
+                feedback:
+                  "Not quite. Could blending the wisdom of the past with the tools of the present build a stronger, more united community?",
+              },
+              {
+                text: "Respect the past and use the present: blend both systems",
+                feedback:
+                  "Perfect! When communities blend ancestral knowledge with modern tools, they build more resilient solutions.",
+              },
+            ],
+            correctIndex: 2,
+            hint: "Look for the choice that bridges both worlds together without excluding anyone.",
+          },
+        ],
+      };
+
+      let currentScenarioIndex = 0;
+      const totalScenarios = activityData.scenarios.length;
+      let selectedOptionIndex = null;
+      let introAudio, dingAudio, buzzAudio, outroAudio;
+
+      function initAudio() {
+        try {
+          introAudio = new Audio("audio/intro.mp3");
+          dingAudio = new Audio("audio/ding.mp3");
+          buzzAudio = new Audio("audio/buzz.mp3");
+          outroAudio = new Audio("audio/outro.mp3");
+        } catch (e) {
+          console.warn("Audio could not be loaded.");
+          const mockAudio = { play: () => {}, pause: () => {}, currentTime: 0 };
+          introAudio = dingAudio = buzzAudio = outroAudio = mockAudio;
+        }
+      }
+
+      function playSound(audio) {
+        if (audio) {
+          audio.currentTime = 0;
+          audio.play().catch((e) => {});
+        }
+      }
+      function stopSound(audio) {
+        if (audio) {
+          audio.pause();
+        }
+      }
+
+      function initGame() {
+        loadScenario();
+      }
+
+      function loadScenario() {
+        selectedOptionIndex = null;
+        const scenario = activityData.scenarios[currentScenarioIndex];
+
+        document.getElementById("scenario-title").textContent = scenario.title;
+        document.getElementById("scenario-story-text").innerHTML =
+          scenario.story;
+        document.getElementById("scenario-image").src = scenario.image;
+
+        const optionsContainer = document.getElementById("options-container");
+        optionsContainer.innerHTML = "";
+
+        const labels = ["A", "B", "C"];
+
+        // Create a shuffled display order for options (Fisher-Yates)
+        const order = scenario.options.map((_, i) => i);
+        for (let i = order.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [order[i], order[j]] = [order[j], order[i]];
+        }
+
+        // Render buttons in shuffled order. Store original option index in data-option-index.
+        order.forEach((origIndex, displayIndex) => {
+          const option = scenario.options[origIndex];
+          const button = document.createElement("button");
+          button.className = "option-button";
+          button.setAttribute("data-option-index", origIndex);
+          button.innerHTML = `<span class="option-label-badge">${labels[displayIndex]}</span><span class="option-text">${option.text}</span>`;
+          button.onclick = () => selectOption(origIndex);
+          optionsContainer.appendChild(button);
+        });
+
+        updateProgress();
+      }
+
+      function selectOption(index) {
+        if (selectedOptionIndex !== null) return;
+        selectedOptionIndex = index;
+        const scenario = activityData.scenarios[currentScenarioIndex];
+        const buttons = document
+          .getElementById("options-container")
+          .querySelectorAll(".option-button");
+
+        buttons.forEach((btn) => (btn.disabled = true));
+
+        const chosenButton = document.querySelector(
+          `#options-container button[data-option-index="${index}"]`,
+        );
+
+        if (index === scenario.correctIndex) {
+          if (chosenButton) chosenButton.classList.add("correct");
+          playSound(dingAudio);
+          setTimeout(() => {
+            showFeedbackPopup("correct", scenario.options[index].feedback);
+          }, 500);
+        } else {
+          if (chosenButton) chosenButton.classList.add("incorrect");
+          playSound(buzzAudio);
+          setTimeout(() => {
+            showFeedbackPopup("incorrect", scenario.options[index].feedback);
+          }, 500);
+        }
+      }
+
+      function handleTryAgain() {
+        document
+          .getElementById("feedback-incorrect-overlay")
+          .classList.add("hidden");
+        const buttons = document
+          .getElementById("options-container")
+          .querySelectorAll(".option-button");
+        buttons.forEach((btn) => {
+          btn.disabled = false;
+          btn.classList.remove("incorrect");
+        });
+        selectedOptionIndex = null;
+      }
+
+      function goToNextScenario() {
+        const container = document.getElementById("scenario-container");
+        container.classList.add("fade-out");
+        setTimeout(() => {
+          if (currentScenarioIndex < totalScenarios - 1) {
+            currentScenarioIndex++;
+            loadScenario();
+            container.classList.remove("fade-out");
+          } else {
+            endActivity();
+          }
+        }, 300);
+      }
+
+      function updateProgress() {
+        const progress = currentScenarioIndex;
+        document.getElementById("progress-bar").style.width = `${
+          (progress / totalScenarios) * 100
+        }%`;
+        document.getElementById("progress-text").textContent =
+          `${progress} / ${totalScenarios}`;
+      }
+
+      function showFeedbackPopup(type, message) {
+        document.getElementById(`${type}-feedback-text`).innerHTML = message;
+        document
+          .getElementById(`feedback-${type}-overlay`)
+          .classList.remove("hidden");
+      }
+
+      function showActivityIntro() {
+        document.getElementById("start-screen").classList.add("hidden");
+        document.getElementById("game-screen").classList.remove("hidden");
+        document
+          .getElementById("activity-intro-overlay")
+          .classList.remove("hidden");
+        playSound(introAudio);
+        sendEvent(ActivityEvent.START_ACTIVITY, {
+          activityName: "Activity 2: Decision-Making Simulator",
+        });
+      }
+
+      function showInstructions() {
+        document
+          .getElementById("instructions-overlay")
+          .classList.remove("hidden");
+      }
+
+      function showHint() {
+        const hintText = activityData.scenarios[currentScenarioIndex].hint;
+        const defaultHint =
+          "Think carefully about how to respond respectfully.";
+        document.querySelector("#hint-overlay p").textContent =
+          hintText || defaultHint;
+        document.getElementById("hint-overlay").classList.remove("hidden");
+      }
+
+      function closeModal(id) {
+        document.getElementById(id).classList.add("hidden");
+        if (id === "activity-intro-overlay") {
+          stopSound(introAudio);
+          initGame();
+        }
+        if (id === "feedback-correct-overlay") {
+          setTimeout(goToNextScenario, 600);
+        }
+      }
+
+      function endActivity() {
+        document.getElementById("progress-bar").style.width = `100%`;
+        document.getElementById("progress-text").textContent =
+          `${totalScenarios} / ${totalScenarios}`;
+        document.getElementById("game-screen").classList.add("hidden");
+        document
+          .getElementById("completion-overlay")
+          .classList.remove("hidden");
+        playSound(outroAudio);
+      }
+
+      function restartGame() {
+        stopSound(outroAudio);
+        document.getElementById("completion-overlay").classList.add("hidden");
+        currentScenarioIndex = 0;
+        document.getElementById("game-screen").classList.remove("hidden");
+        document
+          .getElementById("scenario-container")
+          .classList.remove("fade-out");
+        loadScenario();
+      }
+
+      function goToPreviousActivity() {
+        window.location.href = "../ACTIVITY1/index.html";
+        sendEvent(ActivityEvent.END_ACTIVITY, {
+          activityName: "Activity 2: Decision-Making Simulator",
+        });
+      }
+
+      function goToNextActivity() {
+        window.location.href = "../ACTIVITY3/index.html";
+        sendEvent(ActivityEvent.END_ACTIVITY, {
+          activityName: "Activity 2: Decision-Making Simulator",
+        });
+      }
+
+      window.onload = () => {
+        initAudio();
+      };
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

@@ -1,0 +1,718 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity 1: Traditional vs. Modern Dilemma</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="../js/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Traditional vs. Modern Dilemma</h1>
+          <button class="start-button" onclick="showActivityIntro()">
+            Start Activity
+          </button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Traditional vs. Modern Dilemma</h1>
+            <div class="top-right-controls">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <span id="progress-text">0 / 5</span>
+              <div class="instructions-icon" onclick="showInstructions()">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <h2 class="scenario-title" id="scenario-title"></h2>
+
+          <div class="scenario-content">
+            <div class="scenario-container" id="scenario-container">
+              <img
+                id="scenario-image"
+                src=""
+                alt="Question Diagram"
+                class="scenario-image"
+              />
+              <div class="scenario-details">
+                <p class="scenario-story" id="scenario-story-text"></p>
+                <div class="question-section">
+                  <div class="options-container" id="options-container"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hint-icon" id="hint-icon" onclick="showHint()">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <div class="completion-title-banner">Activity Conclusion</div>
+          <div class="modal">
+            <img
+              id="completion-image"
+              src="images/complete.jpg"
+              alt="Activity Complete"
+              onerror="this.style.display = 'none'"
+            />
+          </div>
+          <div class="completion-buttons">
+            <button class="completion-btn btn-restart" onclick="restartGame()">
+              Restart Activity
+            </button>
+            <button
+              class="completion-btn btn-next"
+              id="nextActivityBtn"
+              onclick="nextActivity()"
+            >
+              Next Activity
+            </button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="overlay takeaways-overlay hidden">
+          <div class="takeaways-container-wrapper">
+            <h2 class="takeaways-main-title">Lesson Complete</h2>
+            <div class="takeaways-card">
+              <h3>Key Takeaways</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Aspect</th>
+                    <th>Detail</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Agriculture</td>
+                    <td>
+                      Organic compost and natural pest control methods like neem
+                      protect soil, crops, and water sources.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Conservation</td>
+                    <td>
+                      Sacred trees and forests are protected through spiritual
+                      beliefs, taboos, and traditional rules.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Water Management</td>
+                    <td>
+                      Sand dams and rock catchments are low-cost,
+                      community-built methods to sustainably store rainwater.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Resource Renewal</td>
+                    <td>
+                      Traditional no-fishing periods allow fish to breed and
+                      replenish stocks for future generations.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Dispute Resolution</td>
+                    <td>
+                      Elders use customary law and dialogue to reach peaceful
+                      agreements and keep harmony.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <button
+              class="end-lesson-btn"
+              id="btn-end-lesson"
+              onclick="endLesson()"
+            >
+              Brain Power Checkpoint
+            </button>
+          </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Activity Introduction</h2>
+            <p>
+              Modern problems may seem new, but Indigenous communities have
+              faced similar challenges and developed wise, lasting solutions. In
+              this activity, you will explore real-life situations and choose
+              the Indigenous Knowledge practice that best fits. Think like an
+              elder. Act like a guardian of the land.
+            </p>
+            <button onclick="closeModal('activity-intro-overlay')">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Learner Instructions</h2>
+            <ol>
+              <li>Read each real-life scenario carefully.</li>
+              <li>
+                Look at the four answer choices, each is a possible solution.
+              </li>
+              <li>
+                Choose the Indigenous Knowledge practice that best addresses the
+                problem in the scenario.
+              </li>
+              <li>
+                If you get it wrong, read the feedback and think about why
+                another choice might work better.
+              </li>
+              <li>Continue until you have completed all scenarios.</li>
+              <li>
+                Aim to choose the most sustainable, culturally respectful
+                solutions for each situation.
+              </li>
+            </ol>
+            <button onclick="closeModal('instructions-overlay')">
+              Got it!
+            </button>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Here is a Hint</h2>
+            <p style="text-align: center"></p>
+            <button onclick="closeModal('hint-overlay')">Got it!</button>
+          </div>
+        </div>
+
+        <div id="feedback-correct-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header correct">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <h2>Correct!</h2>
+            </div>
+            <p id="correct-feedback-text"></p>
+            <button
+              class="feedback-btn correct"
+              onclick="closeModal('feedback-correct-overlay')"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="feedback-incorrect-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header incorrect">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+              </svg>
+              <h2>Not Quite</h2>
+            </div>
+            <p id="incorrect-feedback-text"></p>
+            <button class="feedback-btn incorrect" onclick="handleTryAgain()">
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const activityData = {
+        scenarios: [
+          {
+            title: "Agriculture News Report",
+            story:
+              "<strong>Context:</strong> A rural community is experiencing soil degradation and water pollution due to overuse of chemical fertilizers and insecticides.<br>Crop yields are dropping, and people are concerned about health risks.<br><strong>Which Indigenous Knowledge practice would best address this problem?</strong>",
+            image: "images/scenario1.jpg",
+            options: [
+              {
+                text: "Using organic compost and natural pest repellents like neem and ash",
+                feedback:
+                  "Excellent thinking! Organic compost and natural pest control methods like neem protect the soil, crops, and water sources, just as Indigenous communities have done for centuries.",
+              },
+              {
+                text: "Digging deeper wells to access more underground water",
+                feedback:
+                  "Not quite. Think about solutions that restore balance to the soil and protect water sources, the way communities farmed before chemicals.",
+              },
+              {
+                text: "Spraying stronger chemical insecticides more frequently",
+                feedback:
+                  "Not quite. Think about solutions that restore balance to the soil and protect water sources, the way communities farmed before chemicals.",
+              },
+              {
+                text: "Burning old crops to clear fields quickly",
+                feedback:
+                  "Not quite. Think about solutions that restore balance to the soil and protect water sources, the way communities farmed before chemicals.",
+              },
+            ],
+            correctIndices: [0],
+            hint: "Think about solutions that restore balance to the soil and protect water sources, the way communities farmed before chemicals.",
+          },
+          {
+            title: "Environmental Feature Article",
+            story:
+              "<strong>Context:</strong> A new road project plans to remove many indigenous trees, including some in areas elders say are sacred.<br>The community is split on whether to preserve or cut them.<br><strong>How can Indigenous Knowledge guide decision-making in this situation?</strong>",
+            image: "images/scenario2.jpg",
+            options: [
+              {
+                text: "Consulting local elders about sacred groves and community tree protection",
+                feedback:
+                  "Spot on! Indigenous communities often protected sacred trees and forests through spiritual beliefs, taboos, and traditional rules. Listening to elders respects both culture and conservation.",
+              },
+              {
+                text: "Measuring how tall the trees are to decide if they should be cut",
+                feedback:
+                  "Not quite. Think about how Indigenous communities decided which trees to protect, and how they respected both nature and cultural beliefs.",
+              },
+              {
+                text: "Using bulldozers only at night to avoid community protest",
+                feedback:
+                  "Not quite. Think about how Indigenous communities decided which trees to protect, and how they respected both nature and cultural beliefs.",
+              },
+              {
+                text: "Replacing the trees with roadside flower beds after removal",
+                feedback:
+                  "Not quite. Think about how Indigenous communities decided which trees to protect, and how they respected both nature and cultural beliefs.",
+              },
+            ],
+            correctIndices: [0],
+            hint: "Think about how Indigenous communities decided which trees to protect, and how they respected both nature and cultural beliefs.",
+          },
+          {
+            title: "Water Shortage Crisis",
+            story:
+              "<strong>Context:</strong> A village is facing repeated droughts, and its river dries up for months.<br>Many families travel far to fetch water, and some suggest expensive drilling projects.<br><strong>Which Indigenous Knowledge practice could help manage water better?</strong>",
+            image: "images/scenario3.jpg",
+            options: [
+              {
+                text: "Building traditional sand dams or rock catchments to store seasonal rainwater",
+                feedback:
+                  "Great choice! Sand dams and rock catchments are low-cost, community-built, and store rainwater underground for use during dry months, a method used for generations.",
+              },
+              {
+                text: "Diverting the river through large concrete channels",
+                feedback:
+                  "Not quite. Think about traditional ways of storing and protecting water that do not harm the environment or depend entirely on outsiders.",
+              },
+              {
+                text: "Buying bottled water from distant towns",
+                feedback:
+                  "Not quite. Think about traditional ways of storing and protecting water that do not harm the environment or depend entirely on outsiders.",
+              },
+              {
+                text: "Using water only for crops and stopping household use",
+                feedback:
+                  "Not quite. Think about traditional ways of storing and protecting water that do not harm the environment or depend entirely on outsiders.",
+              },
+            ],
+            correctIndices: [0],
+            hint: "Think about traditional ways of storing and protecting water that do not harm the environment or depend entirely on outsiders.",
+          },
+          {
+            title: "Overfishing in a Coastal Village",
+            story:
+              "<strong>Context:</strong> Fishermen are catching fewer fish than before. They fish every day, including during breeding seasons, to meet market demand.<br>Elders warn that the sea needs “rest days,” but younger fishers want more income now.<br><strong>Which Indigenous Knowledge practice could help fish stocks recover?</strong>",
+            image: "images/scenario4.jpg",
+            options: [
+              {
+                text: "Observing traditional fishing seasons and “no-fishing” periods during breeding",
+                feedback:
+                  "Exactly! Traditional no-fishing periods allow fish to breed and replenish stocks, ensuring fishing can continue for future generations.",
+              },
+              {
+                text: "Using bigger nets to catch more fish in less time",
+                feedback:
+                  "Not quite. Think about traditional ways communities ensured resources could renew themselves before taking more.",
+              },
+              {
+                text: "Fishing in deeper waters far from the coast",
+                feedback:
+                  "Not quite. Think about traditional ways communities ensured resources could renew themselves before taking more.",
+              },
+              {
+                text: "Building fish farms without considering local water conditions",
+                feedback:
+                  "Not quite. Think about traditional ways communities ensured resources could renew themselves before taking more.",
+              },
+            ],
+            correctIndices: [0],
+            hint: "Think about traditional ways communities ensured resources could renew themselves before taking more.",
+          },
+          {
+            title: "Community Disputes Over Land Boundaries",
+            story:
+              "<strong>Context:</strong> Two neighbouring communities are fighting over grazing land. The argument has lasted months, and tensions are rising.Some suggest going to court, while others want to involve the elders.<br><strong>Which Indigenous Knowledge practice could help resolve this dispute?</strong>",
+            image: "images/scenario5.jpg",
+            options: [
+              {
+                text: "Organizing a meeting led by respected elders to mediate and find a fair solution",
+                feedback:
+                  "Well done! Elders use customary law and dialogue to reach peaceful agreements, keeping harmony in the community.",
+              },
+              {
+                text: "Dividing the land in half without discussion",
+                feedback:
+                  "Not quite. Think about traditional ways of solving disputes that focus on dialogue, fairness, and unity.",
+              },
+              {
+                text: "Letting the strongest group take the land",
+                feedback:
+                  "Not quite. Think about traditional ways of solving disputes that focus on dialogue, fairness, and unity.",
+              },
+              {
+                text: "Asking outsiders with no local knowledge to decide",
+                feedback:
+                  "Not quite. Think about traditional ways of solving disputes that focus on dialogue, fairness, and unity.",
+              },
+            ],
+            correctIndices: [0],
+            hint: "Think about traditional ways of solving disputes that focus on dialogue, fairness, and unity.",
+          },
+        ],
+      };
+
+      let currentScenarioIndex = 0;
+      const totalScenarios = activityData.scenarios.length;
+      let selectedOptionIndex = null;
+      let introAudio, dingAudio, buzzAudio, outroAudio;
+
+      function initAudio() {
+        try {
+          introAudio = new Audio("audio/intro.mp3");
+          dingAudio = new Audio("audio/ding.mp3");
+          buzzAudio = new Audio("audio/buzz.mp3");
+          outroAudio = new Audio("audio/outro.mp3");
+        } catch (e) {
+          console.warn("Audio could not be loaded.");
+          const mockAudio = { play: () => {}, pause: () => {}, currentTime: 0 };
+          introAudio = dingAudio = buzzAudio = outroAudio = mockAudio;
+        }
+      }
+
+      function playSound(audio) {
+        if (audio) {
+          audio.currentTime = 0;
+          audio.play().catch((e) => {});
+        }
+      }
+      function stopSound(audio) {
+        if (audio) {
+          audio.pause();
+        }
+      }
+
+      function initGame() {
+        loadScenario();
+      }
+
+      function loadScenario() {
+        selectedOptionIndex = null;
+        const scenario = activityData.scenarios[currentScenarioIndex];
+
+        document.getElementById("scenario-title").textContent = scenario.title;
+        document.getElementById("scenario-story-text").innerHTML =
+          scenario.story;
+        document.getElementById("scenario-image").src = scenario.image;
+
+        const optionsContainer = document.getElementById("options-container");
+        optionsContainer.innerHTML = "";
+
+        const labels = ["A", "B", "C", "D"];
+
+        // Create a shuffled display order for options (Fisher-Yates)
+        const order = scenario.options.map((_, i) => i);
+        for (let i = order.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [order[i], order[j]] = [order[j], order[i]];
+        }
+
+        // Render buttons in shuffled order. Store original option index in data-option-index.
+        order.forEach((origIndex, displayIndex) => {
+          const option = scenario.options[origIndex];
+          const button = document.createElement("button");
+          button.className = "option-button";
+          button.setAttribute("data-option-index", origIndex);
+          button.innerHTML = `<span class="option-label-badge">${labels[displayIndex]}</span><span class="option-text">${option.text}</span>`;
+          button.onclick = () => selectOption(origIndex);
+          optionsContainer.appendChild(button);
+        });
+
+        updateProgress();
+      }
+
+      function selectOption(index) {
+        if (selectedOptionIndex !== null) return;
+        selectedOptionIndex = index;
+        const scenario = activityData.scenarios[currentScenarioIndex];
+        const buttons = document
+          .getElementById("options-container")
+          .querySelectorAll(".option-button");
+
+        buttons.forEach((btn) => (btn.disabled = true));
+
+        const chosenButton = document.querySelector(
+          `#options-container button[data-option-index="${index}"]`,
+        );
+
+        if (scenario.correctIndices.includes(index)) {
+          if (chosenButton) chosenButton.classList.add("correct");
+          playSound(dingAudio);
+          setTimeout(() => {
+            showFeedbackPopup("correct", scenario.options[index].feedback);
+          }, 500);
+        } else {
+          if (chosenButton) chosenButton.classList.add("incorrect");
+          playSound(buzzAudio);
+          setTimeout(() => {
+            showFeedbackPopup("incorrect", scenario.options[index].feedback);
+          }, 500);
+        }
+      }
+
+      function handleTryAgain() {
+        document
+          .getElementById("feedback-incorrect-overlay")
+          .classList.add("hidden");
+        const buttons = document
+          .getElementById("options-container")
+          .querySelectorAll(".option-button");
+        buttons.forEach((btn) => {
+          btn.disabled = false;
+          btn.classList.remove("incorrect");
+        });
+        selectedOptionIndex = null;
+      }
+
+      function goToNextScenario() {
+        const container = document.getElementById("scenario-container");
+        if (currentScenarioIndex < totalScenarios - 1) {
+          container.classList.add("fade-out");
+          setTimeout(() => {
+            currentScenarioIndex++;
+            loadScenario();
+            container.classList.remove("fade-out");
+          }, 300);
+        } else {
+          endActivity();
+        }
+      }
+
+      function updateProgress() {
+        const progress = currentScenarioIndex;
+        document.getElementById("progress-bar").style.width = `${
+          (progress / totalScenarios) * 100
+        }%`;
+        document.getElementById("progress-text").textContent =
+          `${progress} / ${totalScenarios}`;
+      }
+
+      function showFeedbackPopup(type, message) {
+        document.getElementById(`${type}-feedback-text`).innerHTML = message;
+        document
+          .getElementById(`feedback-${type}-overlay`)
+          .classList.remove("hidden");
+      }
+
+      function showActivityIntro() {
+        document.getElementById("start-screen").classList.add("hidden");
+        document.getElementById("game-screen").classList.remove("hidden");
+        document
+          .getElementById("activity-intro-overlay")
+          .classList.remove("hidden");
+        playSound(introAudio);
+        if (
+          typeof sendEvent !== "undefined" &&
+          typeof ActivityEvent !== "undefined"
+        ) {
+          sendEvent(ActivityEvent.START_ACTIVITY, {
+            activityName: "Traditional vs. Modern Dilemma",
+          });
+        }
+      }
+
+      function showInstructions() {
+        document
+          .getElementById("instructions-overlay")
+          .classList.remove("hidden");
+      }
+
+      function showHint() {
+        const hintText = activityData.scenarios[currentScenarioIndex].hint;
+        const defaultHint = "Think carefully about the choices.";
+        document.querySelector("#hint-overlay p").textContent =
+          hintText || defaultHint;
+        document.getElementById("hint-overlay").classList.remove("hidden");
+      }
+
+      function closeModal(id) {
+        document.getElementById(id).classList.add("hidden");
+        if (id === "activity-intro-overlay") {
+          stopSound(introAudio);
+          initGame();
+        }
+        if (id === "feedback-correct-overlay") {
+          goToNextScenario();
+        }
+      }
+
+      function endActivity() {
+        document.getElementById("progress-bar").style.width = `100%`;
+        document.getElementById("progress-text").textContent =
+          `${totalScenarios} / ${totalScenarios}`;
+
+        const gameWrapperEl = document.getElementById("game-wrapper");
+
+        document.getElementById("game-screen").classList.add("hidden");
+        document
+          .getElementById("completion-overlay")
+          .classList.remove("hidden");
+        playSound(outroAudio);
+
+        html2canvas(gameWrapperEl, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#fafbff",
+          onclone: (clonedDoc) => {
+            const clonedGameScreen = clonedDoc.getElementById("game-screen");
+            const modals = clonedDoc.querySelectorAll(".overlay");
+            modals.forEach((m) => (m.style.display = "none"));
+
+            if (clonedGameScreen) {
+              clonedGameScreen.classList.remove("hidden");
+              clonedGameScreen.style.position = "relative";
+              clonedGameScreen.style.height = gameWrapperEl.scrollHeight + "px";
+              clonedGameScreen.style.overflow = "visible";
+            }
+
+            const elementsToExpand = clonedDoc.querySelectorAll(
+              ".scenario-content, #scenario-container",
+            );
+            elementsToExpand.forEach((el) => {
+              el.style.opacity = "1";
+              el.style.transform = "none";
+              el.style.overflow = "visible";
+              el.style.maxHeight = "none";
+            });
+          },
+        })
+          .then((canvas) => {
+            const imgData = canvas.toDataURL("image/png");
+            document.getElementById("completion-image").src = imgData;
+          })
+          .catch((err) => {
+            console.error("Screenshot failed:", err);
+          });
+      }
+
+      function restartGame() {
+        stopSound(outroAudio);
+        document.getElementById("completion-overlay").classList.add("hidden");
+        currentScenarioIndex = 0;
+        document.getElementById("game-screen").classList.remove("hidden");
+        document
+          .getElementById("scenario-container")
+          .classList.remove("fade-out");
+        loadScenario();
+      }
+
+      function goToPreviousActivity() {
+        window.location.href = "../ACTIVITY2/index.html";
+        if (
+          typeof sendEvent !== "undefined" &&
+          typeof ActivityEvent !== "undefined"
+        ) {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: "Traditional vs. Modern Dilemma",
+          });
+        }
+      }
+
+       function nextActivity() {
+        window.location.href = "../ACTIVITY2/index.html";
+        if (
+          typeof sendEvent !== "undefined" &&
+          typeof ActivityEvent !== "undefined"
+        ) {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: "Traditional vs. Modern Dilemma",
+          });
+        }
+      }
+
+      function showTakeaways() {
+        stopSound(outroAudio);
+        document.getElementById("completion-overlay").classList.add("hidden");
+        document.getElementById("takeaways-overlay").classList.remove("hidden");
+        if (
+          typeof sendEvent !== "undefined" &&
+          typeof ActivityEvent !== "undefined"
+        ) {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: "Traditional vs. Modern Dilemma",
+          });
+        }
+      }
+
+      function endLesson() {
+        if (
+          typeof sendEvent !== "undefined" &&
+          typeof LessonEvent !== "undefined"
+        ) {
+          sendEvent(LessonEvent.END_LESSON, {
+            lessonName: "Traditional vs. Modern Dilemma",
+          });
+        }
+      }
+
+      window.onload = () => {
+        initAudio();
+      };
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity 1: Wisdom in Action</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1 id="start-title">Wisdom in Action</h1>
+          <button class="start-button" onclick="showActivityIntro()">
+            Start Activity
+          </button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Wisdom in Action</h1>
+            <div class="top-right-controls">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <span id="progress-text">0 / 6</span>
+              <div class="instructions-icon" onclick="showInstructions()">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div id="game-content-area">
+            <div class="carousel-container">
+              <button class="carousel-nav-btn" id="carousel-prev">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                </svg>
+              </button>
+              <div id="image-carousel-wrapper">
+                <div id="image-carousel"></div>
+              </div>
+              <button class="carousel-nav-btn" id="carousel-next">
+                <svg viewBox="0 0 24 24">
+                  <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <h2 class="completion-title-banner">Activity Conclusion</h2>
+          <img
+            id="completion-image"
+            src="images/complete.jpg"
+            alt="Key Takeaways Summary"
+            onerror="
+              this.src =
+                'https://via.placeholder.com/600x400?text=Conclusion+Image'
+            "
+          />
+          <div class="completion-buttons">
+            <button class="completion-btn btn-restart" onclick="restartGame()">
+              Restart Activity
+            </button>
+            <button class="completion-btn btn-previous" onclick="nextActivity()">
+              Next Activity
+            </button>
+          </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Activity Introduction</h2>
+            <p id="intro-text"></p>
+            <button onclick="closeModal('activity-intro-overlay')">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Learner Instructions</h2>
+            <p id="instructions-text" style="text-align: left;"></p>
+            <button onclick="closeModal('instructions-overlay')">
+              Got it!
+            </button>
+          </div>
+        </div>
+
+        <div id="image-details-overlay" class="overlay hidden">
+          <div class="modal">
+            <div id="details-content-new">
+              <div id="details-image-panel">
+                <div id="details-image-header">
+                  <span class="details-eyebrow" id="details-eyebrow">Practice Analysis</span>
+                  <h2 id="details-image-title">Practice View</h2>
+                </div>
+                <img id="details-image" src="" alt="Practice View" />
+              </div>
+              <div id="details-questions">
+                <div id="details-question-header"></div>
+                <h2 id="details-question-text">Question goes here</h2>
+                <div id="details-options-container"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="feedback-modal-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header">
+              <h2 id="feedback-title"></h2>
+            </div>
+            <p id="feedback-modal-text"></p>
+            <button
+              id="next-question-button"
+              class="feedback-btn"
+              onclick="handleFeedbackContinue()"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const activityData = {
+        title: "Wisdom in Action",
+        introduction:
+          "Let us take a moment to observe and appreciate the wisdom of Indigenous practices. You will see real examples of how people work, care, heal, and connect. For each image or video, click to explore what is happening. Then ask yourself: What value does this reflect? Is it innovation? Respect for nature? Cultural pride? Share your thoughts with your classmates!",
+        instructions:
+          "Look at each image showing a real Indigenous Knowledge practice.<br>Read a short description of what is happening.<br>Choose the value that best matches the practice from the multiple-choice options.<br>If your answer is not correct, read the feedback and think again before retrying.",
+            images: [
+          {
+            id: "1",
+            imageSrc: "images/herbalist.jpg",
+            title: "Herbal Medicine",
+            description: "A traditional healer preparing herbal medicine.",
+            question: "What value is best reflected in this practice?",
+            options: [
+              { text: "A. Community Cohesion", isCorrect: false },
+              { text: "B. Respect for Nature", isCorrect: true },
+              { text: "C. Innovation", isCorrect: false },
+              { text: "D. Cultural Identity", isCorrect: false }
+            ],
+            correctFeedback: "Exactly! Using herbs respects natural resources and traditional ecological knowledge.",
+            incorrectFeedback: "Not quite. Ask yourself: What role does nature play in this healing process?"
+          },
+          {
+            id: "2",
+            imageSrc: "images/tassa.jpg",
+            title: "Tassa Farming",
+            description: "A farmer using the tassa method to trap rainwater.",
+            question: "What value does this method represent?",
+            options: [
+              { text: "A. Innovation", isCorrect: true },
+              { text: "B. Cultural Identity", isCorrect: false },
+              { text: "C. Community Cohesion", isCorrect: false },
+              { text: "D. Spirituality", isCorrect: false }
+            ],
+            correctFeedback: "Correct! Tassa shows creative solutions to climate challenges, a brilliant innovation!",
+            incorrectFeedback: "Think deeper. Is the farmer doing something new to solve a practical issue?"
+          },
+          {
+            id: "3",
+            imageSrc: "images/ceremony.jpg",
+            title: "Community Ceremony",
+            description: "A traditional rite of passage dance.",
+            question: "What value is most visible here?",
+            options: [
+              { text: "A. Cultural Identity", isCorrect: true },
+              { text: "B. Innovation", isCorrect: false },
+              { text: "C. Sustainability", isCorrect: false },
+              { text: "D. Respect for Nature", isCorrect: false }
+            ],
+            correctFeedback: "Right! Ceremonies help preserve and express culture over generations.",
+            incorrectFeedback: "Try again! Is the group celebrating a belief, story, or tradition passed down over time?"
+          },
+          {
+            id: "4",
+            imageSrc: "images/sacred-grove.jpg",
+            title: "Sacred Grove",
+            description: "A sacred grove with elders and children tending it.",
+            question: "What is the main value seen here?",
+            options: [
+              { text: "A. Respect for Nature", isCorrect: true },
+              { text: "B. Innovation", isCorrect: false },
+              { text: "C. Community Cohesion", isCorrect: false },
+              { text: "D. Food Security", isCorrect: false }
+            ],
+            correctFeedback: "Perfect! Sacred groves are protected to preserve natural balance and spiritual connection.",
+            incorrectFeedback: "Close, but what is being protected? People or nature?"
+          },
+          {
+            id: "5",
+            imageSrc: "images/elder.jpg",
+            title: "Land Dispute",
+            description: "An elder settling a land dispute between two families.",
+            question: "Which value is being upheld in this act?",
+            options: [
+              { text: "A. Peacekeeping", isCorrect: true },
+              { text: "B. Sustainability", isCorrect: false },
+              { text: "C. Innovation", isCorrect: false },
+              { text: "D. Spirituality", isCorrect: false }
+            ],
+            correctFeedback: "Yes! Elders played a key role in keeping peace and resolving disputes fairly.",
+            incorrectFeedback: "Try again. What outcome does resolving a conflict bring to a community?"
+          },
+          {
+            id: "6",
+            imageSrc: "images/pottery.jpg",
+            title: "Artisan Shaping Clay",
+            description: "A potter shaping traditional clay pots.",
+            question: "This artistic process best represents…",
+            options: [
+              { text: "A. Innovation", isCorrect: false },
+              { text: "B. Cultural Identity", isCorrect: true },
+              { text: "C. Environmental Awareness", isCorrect: false },
+              { text: "D. Conflict Resolution", isCorrect: false }
+            ],
+            correctFeedback: "Correct! Crafting traditional pottery helps preserve cultural expression and techniques.",
+            incorrectFeedback: "Incorrect! Does this act express a tradition or create a solution to a challenge?"
+          }
+        ],
+      };
+
+      let currentImageId = null;
+      let completedImages = new Set();
+      let totalImages = activityData.images.length;
+      let introAudio, dingAudio, buzzAudio, outroAudio;
+      let hasPlayedIntro = false;
+      let initReadyResolve;
+      const initReady = new Promise((resolve) => {
+        initReadyResolve = resolve;
+      });
+
+      // ===== AUDIO HANDLING =====
+      function initAudio() {
+        try {
+          introAudio = new Audio("audio/intro.mp3");
+          dingAudio = new Audio("audio/ding.mp3");
+          buzzAudio = new Audio("audio/buzz.mp3");
+          outroAudio = new Audio("audio/outro.mp3");
+        } catch (e) {
+          console.warn("Audio could not be loaded.");
+          const mockAudio = { play: () => {}, pause: () => {}, currentTime: 0 };
+          introAudio = dingAudio = buzzAudio = outroAudio = mockAudio;
+        }
+      }
+      function playSound(audio) {
+        if (audio) {
+          audio.currentTime = 0;
+          audio.play().catch((e) => {});
+        }
+      }
+      function stopSound(audio) {
+        if (audio) {
+          audio.pause();
+        }
+      }
+
+      // ===== CAROUSEL LOGIC =====
+      function renderCarousel() {
+        const carousel = document.getElementById("image-carousel");
+        carousel.innerHTML = "";
+        activityData.images.forEach((imgData) => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "carousel-item-wrapper";
+          wrapper.dataset.id = imgData.id;
+          wrapper.onclick = () => showImageDetails(imgData.id);
+
+          const img = document.createElement("img");
+          img.onerror = function () {
+            this.src = "https://via.placeholder.com/300?text=Image+Missing";
+          };
+          img.src = imgData.imageSrc;
+          img.alt = imgData.title;
+          img.className = "carousel-image";
+
+          const check = document.createElement("div");
+          check.className = "completed-checkmark";
+          check.innerHTML = `<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
+
+          if (completedImages.has(imgData.id)) {
+            wrapper.classList.add("completed");
+          }
+
+          wrapper.appendChild(img);
+          wrapper.appendChild(check);
+          carousel.appendChild(wrapper);
+        });
+        updateCarouselFocus();
+      }
+
+      function setupCarouselNav() {
+        const carousel = document.getElementById("image-carousel");
+        const prevBtn = document.getElementById("carousel-prev");
+        const nextBtn = document.getElementById("carousel-next");
+
+        const scrollCarousel = (direction) => {
+          const focusedEl =
+            carousel.querySelector(".in-focus") || carousel.firstElementChild;
+          if (!focusedEl) return;
+
+          if (direction === "next") {
+            const targetEl = focusedEl.nextElementSibling;
+            if (targetEl)
+              targetEl.scrollIntoView({
+                behavior: "smooth",
+                inline: "center",
+                block: "nearest",
+              });
+            else
+              carousel.firstElementChild.scrollIntoView({
+                behavior: "smooth",
+                inline: "center",
+                block: "nearest",
+              });
+          } else {
+            const targetEl = focusedEl.previousElementSibling;
+            if (targetEl)
+              targetEl.scrollIntoView({
+                behavior: "smooth",
+                inline: "center",
+                block: "nearest",
+              });
+            else
+              carousel.lastElementChild.scrollIntoView({
+                behavior: "smooth",
+                inline: "center",
+                block: "nearest",
+              });
+          }
+        };
+
+        prevBtn.addEventListener("click", () => scrollCarousel("prev"));
+        nextBtn.addEventListener("click", () => scrollCarousel("next"));
+        carousel.addEventListener("scroll", updateCarouselFocus);
+      }
+
+      let scrollTimeout;
+      function updateCarouselFocus() {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          const carousel = document.getElementById("image-carousel");
+          if (!carousel) return;
+          const carouselRect = carousel.getBoundingClientRect();
+          const carouselCenter = carouselRect.left + carouselRect.width / 2;
+
+          let minDistance = Infinity;
+          let focusedChild = null;
+
+          [...carousel.children].forEach((child) => {
+            const childRect = child.getBoundingClientRect();
+            const childCenter = childRect.left + childRect.width / 2;
+            const distance = Math.abs(carouselCenter - childCenter);
+
+            child.classList.remove("in-focus");
+            if (distance < minDistance) {
+              minDistance = distance;
+              focusedChild = child;
+            }
+          });
+
+          if (focusedChild) focusedChild.classList.add("in-focus");
+        }, 100);
+      }
+
+      // ===== GAME LOGIC / HOTSPOTS =====
+      function showImageDetails(id) {
+        if (completedImages.has(id)) return;
+        currentImageId = id;
+
+        const imgData = activityData.images.find((i) => i.id === id);
+
+        const detailsImg = document.getElementById("details-image");
+        detailsImg.onerror = function () {
+          this.src = "https://via.placeholder.com/300?text=Image+Missing";
+        };
+        detailsImg.src = imgData.imageSrc;
+        detailsImg.alt = imgData.title;
+        document.getElementById("details-image-title").textContent = imgData.title;
+        
+        document.getElementById("details-question-header").innerHTML = `
+          <div class="tool-details-content" style="margin-bottom: 1.5rem;">
+            <p class="detail-text" style="font-weight: 500; font-size: 1.3rem;">${imgData.description}</p>
+          </div>
+        `;
+        document.getElementById("details-question-text").textContent = `${imgData.question}`;
+        
+        const optionsContainer = document.getElementById("details-options-container");
+        
+        let optionsHTML = "";
+        imgData.options.forEach((opt, index) => {
+            optionsHTML += `<button class="option-btn" onclick="checkAnswer(${index}, this)">${opt.text}</button>`;
+        });
+
+        optionsContainer.innerHTML = optionsHTML;
+        document.getElementById("image-details-overlay").classList.remove("hidden");
+      }
+
+      function checkAnswer(selectedIndex, btnElement) {
+        const imgData = activityData.images.find((i) => i.id === currentImageId);
+        const isCorrect = imgData.options[selectedIndex].isCorrect;
+        const optionButtons = document.querySelectorAll(
+          "#details-options-container .option-btn",
+        );
+
+        if (isCorrect) {
+            playSound(dingAudio);
+            btnElement.style.backgroundColor = "var(--correct-color)";
+            optionButtons.forEach((b) => {
+              b.disabled = true;
+            });
+            showFeedbackModal(true, imgData.correctFeedback, "complete");
+        } else {
+            playSound(buzzAudio);
+            btnElement.style.backgroundColor = "var(--incorrect-color)";
+            btnElement.disabled = true;
+            showFeedbackModal(false, imgData.incorrectFeedback, "retry");
+        }
+      }
+
+      function showFeedbackModal(isCorrect, message, action) {
+        const feedbackModalOverlay = document.getElementById(
+          "feedback-modal-overlay",
+        );
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackText = document.getElementById("feedback-modal-text");
+        const nextQuestionBtn = document.getElementById("next-question-button");
+
+        const titleText = isCorrect ? "Excellent!" : "Action Needed";
+        const iconSvg = isCorrect
+          ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
+          : '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+
+        feedbackTitle.innerHTML = `${iconSvg} <span>${titleText}</span>`;
+        feedbackText.textContent = message;
+
+        const feedbackHeader = feedbackModalOverlay.querySelector(
+          ".feedback-header",
+        );
+        feedbackHeader.className = isCorrect
+          ? "feedback-header correct"
+          : "feedback-header incorrect";
+
+        nextQuestionBtn.className = isCorrect
+          ? "feedback-btn correct"
+          : "feedback-btn incorrect";
+        nextQuestionBtn.dataset.action = action;
+
+        feedbackModalOverlay.className = isCorrect
+          ? "overlay correct-feedback"
+          : "overlay incorrect-feedback";
+      }
+
+      function handleFeedbackContinue() {
+        const feedbackModalOverlay = document.getElementById(
+          "feedback-modal-overlay",
+        );
+        const nextQuestionBtn = document.getElementById("next-question-button");
+        const action = nextQuestionBtn.dataset.action;
+
+        feedbackModalOverlay.className = "overlay hidden";
+
+        if (action === "retry") {
+          const optionButtons = document.querySelectorAll(
+            "#details-options-container .option-btn",
+          );
+          optionButtons.forEach((button) => {
+            button.disabled = false;
+            button.style.backgroundColor = "";
+          });
+        }
+
+        if (action === "complete") {
+          markCompleteAndContinue();
+        }
+      }
+
+      function findNextIncompleteItem() {
+        if (completedImages.size === totalImages) return null;
+        const currentIndex = activityData.images.findIndex(
+          (img) => img.id === currentImageId,
+        );
+        for (let i = 1; i < totalImages; i++) {
+          const nextIndex = (currentIndex + i) % totalImages;
+          const nextImgData = activityData.images[nextIndex];
+          if (!completedImages.has(nextImgData.id)) return nextImgData;
+        }
+        return null;
+      }
+
+      function updateProgress() {
+        const progress = completedImages.size;
+        document.getElementById("progress-bar").style.width =
+          `${(progress / totalImages) * 100}%`;
+        document.getElementById("progress-text").textContent =
+          `${progress} / ${totalImages}`;
+      }
+
+      function markCompleteAndContinue() {
+        completedImages.add(currentImageId);
+        updateProgress();
+        renderCarousel();
+        closeModal("image-details-overlay");
+
+        const nextItemToScroll = findNextIncompleteItem();
+        if (nextItemToScroll) {
+          const carouselElement = document.querySelector(
+            `#image-carousel .carousel-item-wrapper[data-id="${nextItemToScroll.id}"]`,
+          );
+          if (carouselElement) {
+            setTimeout(() => {
+              carouselElement.scrollIntoView({
+                behavior: "smooth",
+                inline: "center",
+                block: "nearest",
+              });
+            }, 100);
+          }
+        } else {
+          endActivity();
+        }
+      }
+
+      // ===== MODAL AND SCREEN LOGIC =====
+      function showActivityIntro() {
+        document.getElementById("start-screen").classList.add("hidden");
+        document.getElementById("game-screen").classList.remove("hidden");
+
+        if (typeof sendEvent !== "undefined") {
+          sendEvent(ActivityEvent.START_ACTIVITY, {
+            activityName: activityData.title,
+          });
+        }
+
+        initReady.then(() => {
+          if (!hasPlayedIntro) {
+            document
+              .getElementById("activity-intro-overlay")
+              .classList.remove("hidden");
+            playSound(introAudio);
+            hasPlayedIntro = true;
+          } else {
+            renderCarousel();
+          }
+        });
+      }
+
+      function showInstructions() {
+        document.getElementById("instructions-overlay").classList.remove("hidden");
+      }
+
+      function closeModal(id) {
+        document.getElementById(id).classList.add("hidden");
+
+        if (id === "activity-intro-overlay") {
+          stopSound(introAudio);
+          renderCarousel();
+          setTimeout(updateCarouselFocus, 150);
+        }
+      }
+
+      function endActivity() {
+        document.getElementById("progress-bar").style.width = `100%`;
+        document.getElementById("progress-text").textContent =
+          `${totalImages} / ${totalImages}`;
+        document.getElementById("game-screen").classList.add("hidden");
+        document.getElementById("completion-overlay").classList.remove("hidden");
+        
+        playSound(outroAudio);
+      }
+
+      function restartGame() {
+        stopSound(outroAudio);
+        document.getElementById("completion-overlay").classList.add("hidden");
+        document.getElementById("activity-intro-overlay").classList.add("hidden");
+        document.getElementById("image-details-overlay").classList.add("hidden");
+
+        completedImages.clear();
+        currentImageId = null;
+        hasPlayedIntro = true;
+
+        updateProgress();
+        document.getElementById("game-screen").classList.remove("hidden");
+
+        renderCarousel();
+        document.getElementById("image-carousel").scrollLeft = 0;
+        setTimeout(updateCarouselFocus, 150);
+      }
+
+      function nextActivity() {
+        if (typeof sendEvent !== "undefined") {
+          sendEvent(ActivityEvent.NAVIGATE_NEXT, {
+            currentActivity: activityData.title,
+          });
+        }
+        window.location.href = "../ACTIVITY2/index.html";
+      } 
+
+      function populateStaticContent() {
+        document.getElementById("start-title").textContent = activityData.title;
+        document.getElementById("game-title").textContent = activityData.title;
+        document.getElementById("intro-text").innerHTML = activityData.introduction;
+        document.getElementById("instructions-text").innerHTML = activityData.instructions;
+        document.getElementById("progress-text").textContent = `0 / ${totalImages}`;
+      }
+
+      window.onload = () => {
+        initAudio();
+        populateStaticContent();
+        setupCarouselNav();
+
+        if (typeof initReadyResolve === "function") initReadyResolve();
+      };
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

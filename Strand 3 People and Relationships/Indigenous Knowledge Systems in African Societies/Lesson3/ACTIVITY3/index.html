@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Knowledge Systems - Venn Diagram</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="../js/html2canvas.min.js"></script>
+    <script src="../js/anime.min.js"></script>
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        
+        <div id="start-screen" class="screen">
+          <h1>Knowledge Systems Comparison</h1>
+          <button class="start-button">Start Activity</button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Venn Diagram Challenge</h1>
+            <div class="top-right-controls">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <span id="progress-text">0 / 10</span>
+
+              <div class="instructions-icon" id="instructions-icon">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          
+          <div class="game-content">
+            <svg id="arrow-layer">
+              <defs>
+                <marker id="arrow-indigenous" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#f58220" />
+                </marker>
+                <marker id="arrow-modern" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#46b8da" />
+                </marker>
+                <marker id="arrow-both" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#9c27b0" />
+                </marker>
+              </defs>
+            </svg>
+
+            <div class="venn-workspace">
+              <div id="indigenous-matched" class="matched-col left"></div>
+
+              <div class="center-col">
+                <div id="venn-diagram-container">
+                  <svg id="venn-svg" viewBox="0 0 800 500">
+                    <circle id="indigenous-zone" class="drop-zone venn-zone indigenous-color" cx="300" cy="270" r="170" data-accepts="indigenous" />
+                    <circle id="modern-zone" class="drop-zone venn-zone modern-color" cx="500" cy="270" r="170" data-accepts="modern" />
+                    <path id="both-zone" class="drop-zone venn-zone both-color" d="M 400 132.53 A 170 170 0 0 0 400 407.47 A 170 170 0 0 0 400 132.53 Z" data-accepts="both" />
+                    
+                    <text x="230" y="65" class="venn-label indigenous-label">Indigenous</text>
+                    <text x="570" y="65" class="venn-label modern-label">Modern</text>
+                    <text x="400" y="270" class="venn-label both-label">Both</text>
+                  </svg>
+                </div>
+                
+                <div id="both-matched" class="matched-col bottom"></div>
+              </div>
+
+              <div id="modern-matched" class="matched-col right"></div>
+            </div>
+
+            <div id="drag-items-container"></div>
+          </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Activity Introduction</h2>
+            <p>
+              Let us compare two powerful knowledge systems: Indigenous and Modern. Both have helped people solve problems, grow food, and protect health but in different ways. Your task is to drag each statement to the correct section of the Venn diagram: Is it unique to Indigenous Knowledge, Modern Knowledge, or do they overlap? Let us discover how they connect!
+            </p>
+            <button id="close-intro-btn">Continue</button>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Learner Instructions</h2>
+            <ol>
+              <li>Drag each feature into the correct section of the Venn diagram.</li>
+              <li>Drop it into <strong>Indigenous</strong>, <strong>Modern</strong>, or <strong>Both</strong>.</li>
+              <li>Look closely at each phrase. Is it spiritual, scientific, or a mix of both?</li>
+            </ol>
+            <button id="close-instructions-btn">Got it!</button>
+          </div>
+        </div>
+
+        <div id="feedback-modal-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header">
+              <h2 id="feedback-title"></h2>
+            </div>
+            <p id="feedback-modal-text"></p>
+            <button id="next-question-button" class="feedback-btn">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <h2 class="completion-title-banner">Activity Conclusion</h2>
+          <div class="modal">
+            <img
+              id="completion-image"
+              src=""
+              alt="Completion celebration screenshot"
+            />
+          </div>
+          <div class="completion-buttons">
+            <button class="completion-btn" id="prev-activity-btn">
+              Previous Activity
+            </button>
+            <button class="completion-btn" id="restart-activity-btn">
+              Restart Activity
+            </button>
+            <button class="completion-btn" id="key-takeaways-btn" onclick="showTakeaways()">
+              Key Takeaways
+            </button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="overlay hidden">
+          <h2 class="takeaways-main-header">Lesson Complete</h2>
+          <div class="modal">
+            <div class="takeaways-header">
+              <h3>Key Takeaways</h3>
+            </div>
+            <table id="takeaways-table">
+              <thead>
+                <tr>
+                  <th>Concept</th>
+                  <th>Key Point</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <button
+            class="end-lesson-btn"
+            onclick="if(typeof sendEvent !== 'undefined' && typeof LessonEvent !== 'undefined') sendEvent(LessonEvent.END_LESSON, {lessonName: 'Compare Knowledge Systems'})"
+          >
+            Brain Power Checkpoint
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="complete-audio" src="audio/outro.mp3" preload="auto"></audio>
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="buzz-sound" src="audio/buzz.mp3" preload="auto"></audio>
+
+    <script>
+      const activityData = {
+        keyTakeaways: [
+          { rule: "Foundation", explanation: "Indigenous knowledge is experience-based; modern knowledge is science-based." },
+          { rule: "Decision-Making", explanation: "Effective decision-making benefits from using both indigenous and modern knowledge systems." },
+          { rule: "Indigenous Strengths", explanation: "Indigenous knowledge offers sustainable, community, tested solutions." },
+          { rule: "Modern Strengths", explanation: "Modern knowledge provides scientific understanding and new technologies." },
+          { rule: "Integration", explanation: "Combining them can lead to innovative and holistic approaches to problems." }
+        ]
+      };
+
+      function showTakeaways() {
+        document.getElementById("completion-overlay").classList.add("hidden");
+        [document.getElementById("intro-audio"), document.getElementById("complete-audio"), document.getElementById("ding-sound"), document.getElementById("buzz-sound")].forEach((audio) => {
+          if (audio) { audio.pause(); audio.currentTime = 0; }
+        });
+        document.getElementById("takeaways-overlay").classList.remove("hidden");
+        populateTakeawaysTable();
+        
+        if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: "Knowledge Systems Venn Diagram",
+          });
+        }
+      }
+
+      function populateTakeawaysTable() {
+        const tableBody = document
+          .getElementById("takeaways-table")
+          .querySelector("tbody");
+        tableBody.innerHTML = "";
+        activityData.keyTakeaways.forEach((item) => {
+          const row = tableBody.insertRow();
+          row.innerHTML = `<td><strong>${item.rule}</strong></td><td>${item.explanation}</td>`;
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const startScreen = document.getElementById("start-screen");
+        const gameScreen = document.getElementById("game-screen");
+        const startBtn = document.querySelector(".start-button");
+        const progressBar = document.getElementById("progress-bar");
+        const progressText = document.getElementById("progress-text");
+        const dragItemsContainer = document.getElementById("drag-items-container");
+        const arrowSvg = document.getElementById('arrow-layer');
+        const vennWorkspace = document.querySelector('.venn-workspace');
+        
+        const activityIntroOverlay = document.getElementById("activity-intro-overlay");
+        const instructionsOverlay = document.getElementById("instructions-overlay");
+        const feedbackModalOverlay = document.getElementById("feedback-modal-overlay");
+        const completionOverlay = document.getElementById("completion-overlay");
+
+        const closeIntroBtn = document.getElementById("close-intro-btn");
+        const instructionsIcon = document.getElementById("instructions-icon");
+        const closeInstructionsBtn = document.getElementById("close-instructions-btn");
+        const nextQuestionBtn = document.getElementById("next-question-button");
+        const restartActivityBtn = document.getElementById("restart-activity-btn");
+        const prevActivityBtn = document.getElementById("prev-activity-btn");
+
+        const feedbackHeader = feedbackModalOverlay.querySelector(".feedback-header");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackText = document.getElementById("feedback-modal-text");
+
+        const introAudio = document.getElementById("intro-audio");
+        const completeAudio = document.getElementById("complete-audio");
+        const dingSound = document.getElementById("ding-sound");
+        const buzzSound = document.getElementById("buzz-sound");
+
+        const icons = {
+          correct: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+          incorrect: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`,
+        };
+
+        const themeColors = {
+            indigenous: '#f58220',
+            modern: '#46b8da',
+            both: '#9c27b0'
+        };
+
+        const gameData = [
+          {
+            id: "oral", part: "Passed down orally through stories and songs", type: "indigenous",
+            feedback: { correct: "Yes! Oral storytelling is a key Indigenous method passed across generations.", incorrect: "Not quite. Was this shared through books or stories told by elders?" }
+          },
+          {
+            id: "digital", part: "Uses digital tools, sensors, and satellites", type: "modern",
+            feedback: { correct: "Correct! These are hallmarks of modern scientific methods.", incorrect: "Try again! Does this involve tech or natural observation?" }
+          },
+          {
+            id: "harmony", part: "Focuses on harmony with nature", type: "indigenous",
+            feedback: { correct: "Yes! Indigenous practices often focus on living in balance with nature.", incorrect: "Close, but which system was built around coexisting with nature?" }
+          },
+          {
+            id: "lab", part: "Tested in laboratories and peer, reviewed", type: "modern",
+            feedback: { correct: "Right! Lab testing and peer reviews are features of modern science.", incorrect: "That is not right! Would traditional healers publish findings or pass them orally?" }
+          },
+          {
+            id: "weather", part: "Used for weather prediction", type: "both",
+            feedback: { correct: "Good job! Both Indigenous and modern systems offer weather forecasts.", incorrect: "Try again! Do both elders and apps help predict the weather?" }
+          },
+          {
+            id: "farming", part: "Helps in farming decisions", type: "both",
+            feedback: { correct: "Exactly! Both systems guide when, what, and how to plant.", incorrect: "Think: Did both systems guide farmers?" }
+          },
+          {
+            id: "observation", part: "Based on long-term observation and experience", type: "both",
+            feedback: { correct: "Well done! Careful observation is key to both systems.", incorrect: "Incorrect! Who observes? Scientists, elders, or both?" }
+          },
+          {
+            id: "spiritual", part: "Relies on spiritual beliefs or taboos", type: "indigenous",
+            feedback: { correct: "Yes! Many Indigenous practices are guided by spiritual traditions.", incorrect: "Not quite! Which system includes sacred groves or spiritual practices?" }
+          },
+          {
+            id: "schools", part: "Taught in schools and universities", type: "modern",
+            feedback: { correct: "Correct! Formal education systems focus on modern knowledge.", incorrect: "Try again! Where would you find textbooks and blackboards?" }
+          },
+          {
+            id: "community", part: "Solves problems and improves community life", type: "both",
+            feedback: { correct: "Absolutely! Both aim to help people live better, healthier lives.", incorrect: "Think: Do both systems help solve real-world problems?" }
+          }
+        ];
+
+        let matchedItemsList = [];
+        const totalTasks = gameData.length;
+        let draggedItem = null;
+        let touchClone = null;
+
+        function shuffleArray(array) {
+          for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+          }
+        }
+
+        function initializeGame() {
+          matchedItemsList = [];
+          document.getElementById('indigenous-matched').innerHTML = '';
+          document.getElementById('modern-matched').innerHTML = '';
+          document.getElementById('both-matched').innerHTML = '';
+          
+          dragItemsContainer.style.display = 'flex';
+          vennWorkspace.style.overflowY = 'auto';
+
+          const defs = arrowSvg.querySelector('defs');
+          arrowSvg.innerHTML = '';
+          if(defs) arrowSvg.appendChild(defs);
+
+          updateProgressBar();
+          loadItems();
+        }
+
+        function loadItems() {
+          dragItemsContainer.innerHTML = "";
+          let items = [...gameData];
+          shuffleArray(items);
+
+          items.forEach((item) => {
+            const dragItem = document.createElement("div");
+            dragItem.className = "drag-item";
+            dragItem.draggable = true;
+            dragItem.dataset.id = item.id;
+            dragItem.dataset.type = item.type;
+            dragItem.dataset.correctFeedback = item.feedback.correct;
+            dragItem.dataset.incorrectFeedback = item.feedback.incorrect;
+            dragItem.innerHTML = `<span>${item.part}</span>`;
+            addDragListeners(dragItem);
+            dragItemsContainer.appendChild(dragItem);
+          });
+
+          document.querySelectorAll('.venn-zone').forEach(zone => {
+             addDropListeners(zone);
+          });
+        }
+
+        function addDragListeners(item) {
+          item.addEventListener("dragstart", (e) => {
+            if (item.classList.contains("matched-item")) { e.preventDefault(); return; }
+            draggedItem = item;
+            setTimeout(() => item.classList.add("dragging"), 0);
+          });
+          item.addEventListener("dragend", () => {
+            item.classList.remove("dragging");
+            draggedItem = null;
+          });
+
+          let offsetX, offsetY;
+          item.addEventListener("touchstart", (e) => {
+            if (item.classList.contains("matched-item")) return;
+            if (e.cancelable) e.preventDefault();
+            draggedItem = item;
+            const touch = e.touches[0];
+            const rect = item.getBoundingClientRect();
+            offsetX = touch.clientX - rect.left;
+            offsetY = touch.clientY - rect.top;
+            touchClone = item.cloneNode(true);
+            touchClone.classList.add("touch-clone");
+            touchClone.style.width = `${rect.width}px`;
+            touchClone.style.height = `${rect.height}px`;
+            touchClone.style.left = `${touch.clientX - offsetX}px`;
+            touchClone.style.top = `${touch.clientY - offsetY}px`;
+            document.body.appendChild(touchClone);
+            item.classList.add("dragging");
+          }, { passive: false });
+
+          item.addEventListener("touchmove", (e) => {
+            if (!touchClone) return;
+            if (e.cancelable) e.preventDefault();
+            const touch = e.touches[0];
+            touchClone.style.left = `${touch.clientX - offsetX}px`;
+            touchClone.style.top = `${touch.clientY - offsetY}px`;
+            
+            let elementUnderTouch = document.elementFromPoint(touch.clientX, touch.clientY);
+            let dropZoneUnderTouch = elementUnderTouch ? elementUnderTouch.closest(".drop-zone") : null;
+            document.querySelectorAll(".drop-zone").forEach((zone) => {
+              zone.classList.toggle("drag-over", zone === dropZoneUnderTouch);
+            });
+          }, { passive: false });
+
+          item.addEventListener("touchend", (e) => {
+            if (!draggedItem) return;
+            const touch = e.changedTouches[0];
+            let dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+            let dropZone = dropTarget ? dropTarget.closest(".drop-zone") : null;
+            
+            if (dropZone) handleDrop(dropZone);
+            
+            if (touchClone) touchClone.remove();
+            touchClone = null;
+            if (draggedItem) draggedItem.classList.remove("dragging");
+            draggedItem = null;
+            document.querySelectorAll(".drop-zone").forEach((zone) => zone.classList.remove("drag-over"));
+          });
+        }
+
+        function addDropListeners(zone) {
+          zone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            zone.classList.add("drag-over");
+          });
+          zone.addEventListener("dragleave", () => zone.classList.remove("drag-over"));
+          zone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            zone.classList.remove("drag-over");
+            handleDrop(zone);
+          });
+        }
+
+        function handleDrop(zone) {
+          if (!draggedItem || draggedItem.classList.contains("matched-item")) return;
+          
+          const expectedType = draggedItem.dataset.type;
+          const targetZoneType = zone.dataset.accepts;
+          
+          if (expectedType === targetZoneType) {
+            draggedItem.classList.remove("dragging");
+            draggedItem.classList.add("matched-item");
+            draggedItem.draggable = false;
+            
+            const destContainer = document.getElementById(`${expectedType}-matched`);
+            destContainer.appendChild(draggedItem);
+            
+            const itemObj = { element: draggedItem, zone: expectedType, id: draggedItem.dataset.id };
+            matchedItemsList.push(itemObj);
+            
+            updateProgressBar();
+            showFeedback(true, draggedItem.dataset.correctFeedback);
+            
+            requestAnimationFrame(() => { 
+              updateAllArrows(); 
+              drawAnimatedLine(itemObj); 
+            });
+          } else {
+            showFeedback(false, draggedItem.dataset.incorrectFeedback);
+          }
+        }
+
+        function getLineCoords(item) {
+          const svgRect = arrowSvg.getBoundingClientRect();
+          const elRect = item.element.getBoundingClientRect();
+          let targetElement = document.getElementById(`${item.zone}-zone`);
+          let targetRect = targetElement.getBoundingClientRect();
+          
+          const startX = elRect.left + elRect.width / 2 - svgRect.left;
+          const startY = elRect.top + elRect.height / 2 - svgRect.top;
+
+          let targetCenterX = targetRect.left + targetRect.width / 2 - svgRect.left;
+          let targetCenterY = targetRect.top + targetRect.height / 2 - svgRect.top;
+
+          if (item.zone === 'indigenous') targetCenterX += 20;
+          if (item.zone === 'modern') targetCenterX -= 20;
+          if (item.zone === 'both') targetCenterY += 15;
+
+          const dx = targetCenterX - startX;
+          const dy = targetCenterY - startY;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          let radiusOffset = (item.zone === 'indigenous' || item.zone === 'modern') ? (targetRect.width / 2 - 20) : 45; 
+          
+          const ratio = Math.max(0, (distance - radiusOffset) / distance);
+          const endX = startX + dx * ratio;
+          const endY = startY + dy * ratio;
+
+          return { startX, startY, endX, endY };
+        }
+
+        function drawAnimatedLine(item) {
+          const coords = getLineCoords(item);
+          
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('id', `line-${item.id}`);
+          line.setAttribute('x1', coords.startX);
+          line.setAttribute('y1', coords.startY);
+          line.setAttribute('x2', coords.endX);
+          line.setAttribute('y2', coords.endY);
+          line.setAttribute('stroke', themeColors[item.zone]);
+          line.setAttribute('stroke-width', '3');
+          line.setAttribute('marker-end', `url(#arrow-${item.zone})`);
+          line.setAttribute('class', 'connection-line');
+          
+          arrowSvg.appendChild(line);
+
+          const length = Math.sqrt(Math.pow(coords.endX - coords.startX, 2) + Math.pow(coords.endY - coords.startY, 2));
+          line.setAttribute('stroke-dasharray', length);
+          line.setAttribute('stroke-dashoffset', length);
+          
+          anime({
+            targets: line,
+            strokeDashoffset: [anime.setDashoffset, 0],
+            easing: 'easeInOutSine',
+            duration: 600,
+            delay: 100
+          });
+        }
+
+        function updateAllArrows() {
+          matchedItemsList.forEach(item => {
+            const line = document.getElementById(`line-${item.id}`);
+            if (line) {
+              const coords = getLineCoords(item);
+              line.setAttribute('x1', coords.startX);
+              line.setAttribute('y1', coords.startY);
+              line.setAttribute('x2', coords.endX);
+              line.setAttribute('y2', coords.endY);
+              line.removeAttribute('stroke-dasharray');
+              line.removeAttribute('stroke-dashoffset');
+            }
+          });
+        }
+
+        window.addEventListener('resize', updateAllArrows);
+        vennWorkspace.addEventListener('scroll', updateAllArrows);
+
+        function updateProgressBar() {
+          const percentage = (matchedItemsList.length / totalTasks) * 100;
+          progressBar.style.width = `${percentage}%`;
+          progressText.textContent = `${matchedItemsList.length} / ${totalTasks}`;
+        }
+
+        function showFeedback(isCorrect, message) {
+          const titleText = isCorrect ? "Correct!" : "Not Quite...";
+          feedbackTitle.innerHTML = ` ${isCorrect ? icons.correct : icons.incorrect} ${titleText}`;
+          feedbackText.textContent = message;
+          feedbackHeader.className = isCorrect ? "feedback-header correct" : "feedback-header incorrect";
+          nextQuestionBtn.className = isCorrect ? "feedback-btn correct" : "feedback-btn incorrect";
+          feedbackModalOverlay.className = isCorrect ? "overlay correct-feedback" : "overlay incorrect-feedback";
+          playSound(isCorrect ? dingSound : buzzSound);
+          feedbackModalOverlay.classList.remove("hidden");
+        }
+
+        function checkGameCompletion() {
+          if (matchedItemsList.length === totalTasks) {
+            setTimeout(() => {
+              dragItemsContainer.style.display = 'none';
+              vennWorkspace.style.overflowY = 'visible';
+              
+              updateAllArrows();
+
+              setTimeout(() => {
+                const targetNode = document.querySelector('#game-screen');
+                html2canvas(targetNode, { 
+                  backgroundColor: "#f0f4f8",
+                  scale: 1.5,
+                  scrollY: 0
+                }).then(canvas => {
+                  const imgData = canvas.toDataURL("image/png");
+                  document.getElementById('completion-image').src = imgData;
+                  
+                  gameScreen.classList.add("hidden");
+                  completionOverlay.classList.remove("hidden");
+                  playSound(completeAudio);
+                }).catch(err => {
+                  gameScreen.classList.add("hidden");
+                  completionOverlay.classList.remove("hidden");
+                  playSound(completeAudio);
+                });
+              }, 150);
+            }, 600);
+          }
+        }
+
+        function playSound(sound) {
+          if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch((e) => console.error("Audio play failed:", e));
+          }
+        }
+
+        function stopAllAudio() {
+          [introAudio, completeAudio, dingSound, buzzSound].forEach((audio) => {
+            if (audio) {
+              audio.pause();
+              audio.currentTime = 0;
+            }
+          });
+        }
+
+        startBtn.addEventListener("click", () => {
+          startScreen.classList.add("hidden");
+          gameScreen.classList.remove("hidden");
+          activityIntroOverlay.classList.remove("hidden");
+          playSound(introAudio);
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.START_ACTIVITY, { activityName: "Knowledge Systems Venn Diagram" });
+          }
+        });
+
+        closeIntroBtn.addEventListener("click", () => {
+          stopAllAudio();
+          activityIntroOverlay.classList.add("hidden");
+          initializeGame();
+        });
+
+        instructionsIcon.addEventListener("click", () => instructionsOverlay.classList.remove("hidden"));
+        closeInstructionsBtn.addEventListener("click", () => instructionsOverlay.classList.add("hidden"));
+        nextQuestionBtn.addEventListener("click", () => {
+          feedbackModalOverlay.classList.add("hidden");
+          checkGameCompletion();
+        });
+        restartActivityBtn.addEventListener("click", () => {
+          stopAllAudio();
+          completionOverlay.classList.add("hidden");
+          gameScreen.classList.remove("hidden");
+          initializeGame();
+        });
+        prevActivityBtn.addEventListener("click", () => {
+            window.location.href = "../ACTIVITY2/index.html"; 
+        });
+      });
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>
