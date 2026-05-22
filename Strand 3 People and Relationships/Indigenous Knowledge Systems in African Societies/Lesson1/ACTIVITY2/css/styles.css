@@ -695,7 +695,6 @@ body {
   background: transparent;
   box-shadow: none;
   width: auto;
-  max-width: 800px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -705,8 +704,7 @@ body {
 }
 
 #completion-image {
-  width: clamp(300px, 75%, 800px);
-  max-width: 85%;
+  width: 100%;
   height: auto;
   border: 3px solid var(--secondary-color);
   border-radius: 15px;

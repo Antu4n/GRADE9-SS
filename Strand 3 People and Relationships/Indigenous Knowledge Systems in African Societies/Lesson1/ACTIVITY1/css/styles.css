@@ -512,9 +512,9 @@ button {
   flex: 0 0 auto;
 }
 .info-item p {
-  color: var(--text-color-dark);
-  font-size: 1.3rem;
-  line-height: 1.5;
+    color: var(--text-color-dark);
+    font-size: 1.2rem;
+    line-height: 1.3;
 }
 #scenario-title {
   font-size: 2.35rem;
@@ -594,7 +594,6 @@ button {
   gap: 1rem;
   max-width: 80rem;
   padding: 0 2rem;
-  margin-top: 2rem;
 }
 .completion-text {
   font-size: 1.5rem;

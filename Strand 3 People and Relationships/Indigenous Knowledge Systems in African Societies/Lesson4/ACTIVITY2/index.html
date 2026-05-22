@@ -112,7 +112,7 @@
               id="completion-screenshot"
               src=""
               alt="Activity Complete Screenshot"
-            />Appreciate the Indigenous Knowledge Systems in the Society
+            />
           </div>
           
           <div class="completion-buttons nav-buttons">
@@ -385,7 +385,8 @@
           progressText.textContent = "1 / 1";
 
           setTimeout(() => {
-            const targetContainer = document.getElementById("game-screen");
+            // Target the exact same container as the Save functionality
+            const targetContainer = document.getElementById("journal-container");
             
             // Replace form elements with static text
             const ids = ['entry1', 'entry2', 'entry3', 'entry4'];
