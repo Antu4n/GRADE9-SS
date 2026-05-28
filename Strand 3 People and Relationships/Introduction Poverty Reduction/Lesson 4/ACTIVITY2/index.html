@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Who Did What?</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Who Did What?</h1>
+          <button class="start-button">Start Activity</button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Drag-and-Drop Matching</h1>
+            <div class="top-right-controls">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <span id="progress-text">0 / 4</span>
+
+              <div class="icon-btn instructions-icon" id="instructions-icon" title="Instructions">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="game-content" id="game-content-area">
+            <div id="drop-zones-container" data-current-page="1"></div>
+            <div id="drag-items-container"></div>
+          </div>
+
+          <div class="hint-icon" id="hint-icon">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Activity Introduction</h2>
+            <p>
+              Excellent sorting, thinker! You have just seen how solving poverty does not only help one person. It improves schools, jobs, peace, and health for entire communities. Poverty reduction is powerful because it lifts everyone; one family, one society, one future at a time.
+            </p>
+            <button id="close-intro-btn">Continue</button>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Learner Instructions</h2>
+            <ol>
+              <li>Match each organization to the strategy it uses to reduce poverty. Drag the strategy card and drop it onto the correct organization’s space.</li>
+              <li>Think about what each group is best known for, making laws, protecting the environment, giving small business support, or funding health programs.</li>
+              <li>Keep matching until every strategy finds its rightful changemaker!</li>
+            </ol>
+            <button id="close-instructions-btn">Got it!</button>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Here is a hint</h2>
+            <p></p>
+            <button onclick="closeModal('hint-overlay')">Got it!</button>
+          </div>
+        </div>
+
+        <div id="feedback-modal-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header">
+              <h2 id="feedback-title"></h2>
+            </div>
+            <p id="feedback-modal-text"></p>
+            <button id="next-question-button" class="feedback-btn">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <h2 class="completion-title-banner">Activity Conclusion</h2>
+          <div class="modal">
+            <img
+              id="completion-image"
+              src="images/complete.jpg"
+              alt="Completion celebration"
+              onerror="this.src='https://placehold.co/400x300/5d04b2/ffffff?text=Fantastic+Job!'; this.onerror=null;"
+            />
+          </div>
+          <div class="completion-buttons">
+            <button class="completion-btn" id="previous-activity-btn">
+              Previous Activity
+            </button>
+            <button class="completion-btn" id="restart-activity-btn">
+              Restart Activity
+            </button>
+            <button class="completion-btn" id="next-activity-btn">
+              Next Activity
+            </button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="overlay hidden">
+          <h2 class="takeaways-main-header">Lesson Complete</h2>
+          <div class="modal">
+            <div class="takeaways-header">
+              <h3>Key Takeaways</h3>
+            </div>
+            <table id="takeaways-table">
+              <thead>
+                <tr>
+                  <th>Concept</th>
+                  <th>Detail</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Indigenous Knowledge Systems</td>
+                  <td>Traditional practices and wisdom passed down through generations.</td>
+                </tr>
+                <tr>
+                  <td>Major Types</td>
+                  <td>Include Medicine, Agriculture, Religion, Climate prediction, Education, Technology, Environmental Conservation, Arts, and Astronomy.</td>
+                </tr>
+                <tr>
+                  <td>Importance</td>
+                  <td>These systems are crucial for understanding cultural identity and heritage.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button class="end-lesson-btn" id="end-lesson-btn">
+            Brain Power Checkpoint
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="complete-audio" src="audio/outro.mp3" preload="auto"></audio>
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="buzz-sound" src="audio/buzz.mp3" preload="auto"></audio>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const startScreen = document.getElementById("start-screen");
+        const gameScreen = document.getElementById("game-screen");
+        const startBtn = document.querySelector(".start-button");
+        const progressBar = document.getElementById("progress-bar");
+        const progressText = document.getElementById("progress-text");
+        const dragItemsContainer = document.getElementById("drag-items-container");
+        const dropZonesContainer = document.getElementById("drop-zones-container");
+        
+        const activityIntroOverlay = document.getElementById("activity-intro-overlay");
+        const instructionsOverlay = document.getElementById("instructions-overlay");
+        const hintOverlay = document.getElementById("hint-overlay");
+        const feedbackModalOverlay = document.getElementById("feedback-modal-overlay");
+        const completionOverlay = document.getElementById("completion-overlay");
+        const takeawaysOverlay = document.getElementById("takeaways-overlay");
+        
+        const closeIntroBtn = document.getElementById("close-intro-btn");
+        const instructionsIcon = document.getElementById("instructions-icon");
+        const closeInstructionsBtn = document.getElementById("close-instructions-btn");
+        const hintIcon = document.getElementById("hint-icon");
+        const nextQuestionBtn = document.getElementById("next-question-button");
+        const restartActivityBtn = document.getElementById("restart-activity-btn");
+        const nextActivityBtn = document.getElementById("next-activity-btn");
+        const endLessonBtn = document.getElementById("end-lesson-btn");
+        
+        const feedbackHeader = feedbackModalOverlay.querySelector(".feedback-header");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackText = document.getElementById("feedback-modal-text");
+        
+        const introAudio = document.getElementById("intro-audio");
+        const completeAudio = document.getElementById("complete-audio");
+        const dingSound = document.getElementById("ding-sound");
+        const buzzSound = document.getElementById("buzz-sound");
+
+        const icons = {
+          correct: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+          incorrect: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`,
+        };
+
+        const gameData = [
+          {
+            id: "gov",
+            challenge: "Free Primary Education",
+            solution: "<strong>Government of Kenya</strong>",
+            feedback: {
+              correct: "Correct! The government introduced free primary education to help every child go to school and reduce inequality.",
+              incorrect: "Not quite. Which group has the power to change national rules and offer free services?"
+            }
+          },
+          {
+            id: "youth",
+            challenge: "Tree Planting Projects",
+            solution: "<strong>Youth Groups</strong>",
+            feedback: {
+              correct: "That is right! Youth groups are taking action by planting trees, protecting the environment, and earning income.",
+              incorrect: "Try again. Who usually takes part in local environmental or volunteer projects?"
+            }
+          },
+          {
+            id: "ngo",
+            challenge: "Microloans for Small Businesses",
+            solution: "<strong>NGOs (Non-Governmental Orgs)</strong>",
+            feedback: {
+              correct: "Well done! Many NGOs support people by giving small loans to help start businesses and reduce poverty.",
+              incorrect: "Think: Which group supports communities directly without needing to pass laws?"
+            }
+          },
+          {
+            id: "global",
+            challenge: "Supporting Health Programs",
+            solution: "<strong>Global Fund</strong>",
+            feedback: {
+              correct: "Great match! The Global Fund partners with countries to provide medicines and improve public health.",
+              incorrect: "Incorrect. Which organization helps fight diseases like malaria, HIV/AIDS, and TB globally?"
+            }
+          }
+        ];
+
+        const hintMessage =
+          "Think about what each group is best known for, making laws, protecting the environment, giving small business support, or funding health programs.";
+
+        let completedTasks = 0;
+        const totalTasks = gameData.length;
+        let draggedItem = null;
+        let touchClone = null;
+
+        function shuffleArray(array) {
+          for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+          }
+        }
+
+        function initializeGame() {
+          completedTasks = 0;
+          updateProgressBar();
+          dropZonesContainer.dataset.currentPage = "1";
+          loadItems();
+        }
+
+        function loadItems() {
+          dragItemsContainer.innerHTML = "";
+          dropZonesContainer.innerHTML = "";
+          
+          let challenges = [...gameData];
+          let solutions = [...gameData];
+          shuffleArray(challenges);
+          shuffleArray(solutions);
+
+          challenges.forEach((item) => {
+            const dragItem = document.createElement("div");
+            dragItem.className = "drag-item";
+            dragItem.draggable = true;
+            dragItem.dataset.id = item.id;
+            dragItem.dataset.correctFeedback = item.feedback.correct;
+            dragItem.dataset.incorrectFeedback = item.feedback.incorrect;
+            dragItem.textContent = item.challenge;
+            addDragListeners(dragItem);
+            dragItemsContainer.appendChild(dragItem);
+          });
+
+          const isNarrow = window.matchMedia && window.matchMedia("(max-width: 991px)").matches;
+          solutions.forEach((item, index) => {
+            const dropZone = document.createElement("div");
+            dropZone.className = "drop-zone";
+            dropZone.dataset.accepts = item.id;
+            // For small screens (<=991px) keep all drop zones on the same page.
+            // Otherwise assign the first 2 zones to page 1, the remaining to page 2 (Pagination)
+            dropZone.dataset.page = isNarrow ? "1" : (index < 2 ? "1" : "2");
+            dropZone.innerHTML = `
+                <div class="solution-text">${item.solution}</div>
+                <div class="element-name-placeholder"></div>
+            `;
+            addDropListeners(dropZone);
+            dropZonesContainer.appendChild(dropZone);
+          });
+        }
+
+        function addDragListeners(item) {
+          item.addEventListener("dragstart", (e) => {
+            if (item.classList.contains("inactive")) {
+              e.preventDefault();
+              return;
+            }
+            draggedItem = item;
+            setTimeout(() => item.classList.add("dragging"), 0);
+          });
+          item.addEventListener("dragend", () => {
+            item.classList.remove("dragging");
+            draggedItem = null;
+          });
+
+          let offsetX, offsetY;
+          item.addEventListener("touchstart", (e) => {
+            if (item.classList.contains("inactive")) return;
+            if (e.cancelable) e.preventDefault();
+            draggedItem = item;
+            const touch = e.touches[0];
+            const rect = item.getBoundingClientRect();
+            offsetX = touch.clientX - rect.left;
+            offsetY = touch.clientY - rect.top;
+            touchClone = item.cloneNode(true);
+            touchClone.classList.add("touch-clone");
+            touchClone.style.width = `${rect.width}px`;
+            touchClone.style.height = `${rect.height}px`;
+            touchClone.style.left = `${touch.clientX - offsetX}px`;
+            touchClone.style.top = `${touch.clientY - offsetY}px`;
+            document.body.appendChild(touchClone);
+            item.classList.add("dragging");
+          }, { passive: false });
+
+          item.addEventListener("touchmove", (e) => {
+            if (!touchClone) return;
+            if (e.cancelable) e.preventDefault();
+            const touch = e.touches[0];
+            touchClone.style.left = `${touch.clientX - offsetX}px`;
+            touchClone.style.top = `${touch.clientY - offsetY}px`;
+            let elementUnderTouch = document.elementFromPoint(touch.clientX, touch.clientY);
+            let dropZoneUnderTouch = elementUnderTouch ? elementUnderTouch.closest(".drop-zone") : null;
+            document.querySelectorAll(".drop-zone").forEach((zone) => {
+              zone.classList.toggle("drag-over", zone === dropZoneUnderTouch && !zone.classList.contains("matched"));
+            });
+          }, { passive: false });
+
+          item.addEventListener("touchend", (e) => {
+            if (!draggedItem) return;
+            const touch = e.changedTouches[0];
+            let dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+            let dropZone = dropTarget ? dropTarget.closest(".drop-zone") : null;
+            if (dropZone) handleDrop(dropZone);
+            if (touchClone) touchClone.remove();
+            touchClone = null;
+            if (draggedItem) draggedItem.classList.remove("dragging");
+            draggedItem = null;
+            document.querySelectorAll(".drop-zone").forEach((zone) => zone.classList.remove("drag-over"));
+          });
+        }
+
+        function addDropListeners(zone) {
+          zone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            if (!zone.classList.contains("matched")) zone.classList.add("drag-over");
+          });
+          zone.addEventListener("dragleave", () => zone.classList.remove("drag-over"));
+          zone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            zone.classList.remove("drag-over");
+            handleDrop(zone);
+          });
+        }
+
+        function handleDrop(zone) {
+          if (!draggedItem || zone.classList.contains("matched")) return;
+          const isCorrect = draggedItem.dataset.id === zone.dataset.accepts;
+          if (isCorrect) {
+            completedTasks++;
+            updateProgressBar();
+            const placeholder = zone.querySelector(".element-name-placeholder");
+            placeholder.appendChild(draggedItem);
+            zone.classList.add("matched");
+            draggedItem.classList.add("inactive");
+            draggedItem.draggable = false;
+
+            // Pagination Logic: advance only if there are additional pages (page 2 exists).
+            const page1Matched = document.querySelectorAll('.drop-zone[data-page="1"].matched').length;
+            const page1Total = document.querySelectorAll('.drop-zone[data-page="1"]').length;
+            const hasPage2 = document.querySelectorAll('.drop-zone[data-page="2"]').length > 0;
+            if (hasPage2 && page1Matched === page1Total) {
+              dropZonesContainer.dataset.currentPage = "2";
+            }
+
+            showFeedback(true, draggedItem.dataset.correctFeedback);
+          } else {
+            showFeedback(false, draggedItem.dataset.incorrectFeedback);
+          }
+        }
+
+        function updateProgressBar() {
+          const percentage = (completedTasks / totalTasks) * 100;
+          progressBar.style.width = `${percentage}%`;
+          progressText.textContent = `${completedTasks} / ${totalTasks}`;
+        }
+
+        function showFeedback(isCorrect, message) {
+          const titleText = isCorrect ? "Correct!" : "Not Quite...";
+          feedbackTitle.innerHTML = ` ${isCorrect ? icons.correct : icons.incorrect} ${titleText}`;
+          feedbackText.textContent = message;
+          feedbackHeader.className = isCorrect ? "feedback-header correct" : "feedback-header incorrect";
+          nextQuestionBtn.className = isCorrect ? "feedback-btn correct" : "feedback-btn incorrect";
+          feedbackModalOverlay.className = isCorrect ? "overlay correct-feedback" : "overlay incorrect-feedback";
+
+          const soundToPlay = isCorrect ? dingSound : buzzSound;
+          playSound(soundToPlay);
+
+          feedbackModalOverlay.classList.remove("hidden");
+        }
+
+        function playSound(sound) {
+          if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch((e) => console.error("Audio play failed:", e));
+          }
+        }
+
+        function stopAllAudio() {
+          [introAudio, completeAudio, dingSound, buzzSound].forEach((audio) => {
+            if (audio) {
+              audio.pause();
+              audio.currentTime = 0;
+            }
+          });
+        }
+
+        startBtn.addEventListener("click", () => {
+          startScreen.classList.add("hidden");
+          gameScreen.classList.remove("hidden");
+          activityIntroOverlay.classList.remove("hidden");
+          playSound(introAudio);
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.START_ACTIVITY, { activityName: "Activity 2: Who Did What? Match the Strategy to the Changemaker" });
+          }
+        });
+
+        closeIntroBtn.addEventListener("click", () => {
+          stopAllAudio();
+          activityIntroOverlay.classList.add("hidden");
+          initializeGame();
+        });
+
+        // Instructions button remains clickable and does not interrupt playing audio
+        instructionsIcon.addEventListener("click", () => instructionsOverlay.classList.remove("hidden"));
+        closeInstructionsBtn.addEventListener("click", () => instructionsOverlay.classList.add("hidden"));
+
+        window.showHint = () => {
+          document.querySelector("#hint-overlay p").innerHTML = hintMessage;
+          hintOverlay.classList.remove("hidden");
+        };
+
+        window.closeModal = (id) => {
+          document.getElementById(id).classList.add("hidden");
+        };
+
+        // Hint button disabled when voiced audio is playing
+        hintIcon.addEventListener("click", () => {
+          if (!introAudio.paused && !introAudio.ended) return;
+          window.showHint();
+        });
+
+        nextQuestionBtn.addEventListener("click", () => {
+          feedbackModalOverlay.classList.add("hidden");
+          if (completedTasks === totalTasks) {
+            setTimeout(() => {
+              gameScreen.classList.add("hidden");
+              completionOverlay.classList.remove("hidden");
+              playSound(completeAudio);
+            }, 500);
+          }
+        });
+
+        // Zero-delay restart directly to main game screen
+        restartActivityBtn.addEventListener("click", () => {
+          stopAllAudio();
+          completionOverlay.classList.add("hidden");
+          gameScreen.classList.remove("hidden");
+          initializeGame();
+        });
+
+        document.getElementById("previous-activity-btn").addEventListener("click", () => {
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.END_ACTIVITY, { activityName: "Activity 2: Who Did What? Match the Strategy to the Changemaker" });
+          }
+          window.location.href = "../ACTIVITY1/index.html";
+        });
+
+        // Navigate directly to Next Activity
+        nextActivityBtn.addEventListener("click", () => {
+          completionOverlay.classList.add("hidden");
+          stopAllAudio();
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.END_ACTIVITY, {
+              activityName: "Activity 2: Who Did What? Match the Strategy to the Changemaker",
+            });
+          }
+          window.location.href = "../ACTIVITY3/index.html";
+        });
+
+        endLessonBtn.addEventListener("click", () => {
+          if (typeof sendEvent !== "undefined" && typeof LessonEvent !== "undefined") {
+            sendEvent(LessonEvent.END_LESSON, {
+              lessonName: "Identify Types of Indigenous Knowledge Systems in African Societies for Self, Identity",
+            });
+          }
+        });
+
+      });
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

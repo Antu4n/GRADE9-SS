@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity 3: Strategy Success Chart</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        
+        <div id="start-screen" class="screen">
+          <h1>Strategy Success Chart</h1>
+          <button
+            class="start-button"
+            onclick="
+              startGame();
+              if(typeof sendEvent === 'function') sendEvent(ActivityEvent.START_ACTIVITY, { activityName: 'Activity 3: Strategy Success Chart' });
+            "
+          >
+            Start Activity
+          </button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Poverty Reduction Strategies</h1>
+            <div class="progress-wrapper">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <div id="progress-text">0 / 5</div>
+              <div class="instructions-icon" onclick="showGameInstructions()">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          
+          <div class="lab-game-area" id="lab-game-area">
+            </div>
+        </div>
+
+        <div id="activity-description-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Activity Introduction</h2>
+            <div class="intro-content">
+              <p>
+                Poverty reduction takes teamwork and strategy! You have explored how different actions, from education to infrastructure, help lift people out of poverty. 
+                Now, let us complete this chart by adding the right contribution each strategy makes to a better society. Read each strategy and select what it leads to from the dropdown!
+              </p>
+            </div>
+            <button class="modal-close-btn" onclick="closeActivityDescription()">Continue</button>
+          </div>
+        </div>
+
+        <div id="game-instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Learner Instructions</h2>
+            <ul>
+              <li>Read each poverty reduction strategy on the left side of the chart.</li>
+              <li>Click the dropdown menu next to it and select the correct expected contribution.</li>
+              <li>Think about the real-world results of each action and what changes it brings to people's lives.</li>
+              <li>Submit correct answers for all 5 strategies to complete your chart.</li>
+            </ul>
+            <button class="modal-close-btn" onclick="closeGameInstructions()">Got It!</button>
+          </div>
+        </div>
+
+        <div id="feedback-overlay" class="overlay hidden">
+          <div class="modal" id="feedback-modal">
+            <h2 class="modal-title" id="feedback-title">Feedback</h2>
+            <div class="intro-content" style="text-align: center; border-left: none; background: transparent;">
+              <p id="feedback-text"></p>
+            </div>
+            <button class="modal-close-btn" id="feedback-close-btn" onclick="closeFeedback()">Continue</button>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <div class="completion-title-banner">Activity Conclusion</div>
+          <div class="modal">
+            <img
+              id="completion-image"
+              src="images/complete.jpg"
+              alt="Activity Complete"
+              onerror="this.style.display='none'"
+            />
+          </div>
+          <div class="completion-buttons">
+            <button
+              class="completion-btn btn-prev"
+              onclick="goToPreviousActivity()"
+            >
+              Previous Activity
+            </button>
+            <button class="completion-btn btn-restart" onclick="restartGame()">
+              Restart Activity
+            </button>
+            <button class="completion-btn btn-next" onclick="showTakeaways()">
+              Key Takeaways
+            </button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="overlay takeaways-overlay hidden">
+          <div class="takeaways-container-wrapper">
+              <h2 class="takeaways-main-title">Lesson Complete</h2>
+              <div class="takeaways-card">
+                  <h3>Key Takeaways</h3>
+                  <table>
+                      <thead>
+                          <tr>
+                              <th>Aspect</th>
+                              <th>Detail</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr>
+                              <td>Key Strategies</td>
+                              <td>Strategies like education, healthcare, and loans help reduce poverty.</td>
+                          </tr>
+                          <tr>
+                              <td>Individual Impact</td>
+                              <td>Poverty reduction strategies contribute enormously to individual well-being (better food, health, education).</td>
+                          </tr>
+                          <tr>
+                              <td>Societal Impact</td>
+                              <td>They also strengthen the entire society (economic growth, security, reduced conflict).</td>
+                          </tr>
+                          <tr>
+                              <td>Ripple Effect</td>
+                              <td>Investing in people creates a ripple effect of positive change.</td>
+                          </tr>
+                          <tr>
+                              <td>Crucial Parts</td>
+                              <td>Every strategy, from infrastructure to education to good governance, plays a crucial part.</td>
+                          </tr>
+                          <tr>
+                              <td>Personal Action</td>
+                              <td>Everyone can take part in making change happen.</td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <button class="end-lesson-btn" id="btn-end-lesson" onclick="endLesson()">Brain Power Checkpoint</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="buzz-sound" src="audio/buzz.mp3" preload="auto"></audio>
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="outro-audio" src="audio/outro.mp3" preload="auto"></audio>
+
+    <script>
+      // --- DATA ---
+      const activityData = [
+        {
+          id: "s1", 
+          strategy: "1. Improving Infrastructure", 
+          correctAnswer: "Easier transport of goods, better access to markets and services.",
+          correctFeedback: "Excellent! Roads, bridges, and electricity help businesses grow and connect communities.",
+          incorrectFeedback: "Think long-term. What happens when goods can move faster and people access services easily?"
+        },
+        {
+          id: "s2", 
+          strategy: "2. Ensuring Quality Healthcare", 
+          correctAnswer: "Healthier population, reduced medical costs for families.",
+          correctFeedback: "Spot on! Good healthcare keeps families strong and reduces poverty from hospital bills.",
+          incorrectFeedback: "Think long-term. Who benefits most when diseases are prevented or treated? How does that affect income?"
+        },
+        {
+          id: "s3", 
+          strategy: "3. Access to Education", 
+          correctAnswer: "Skilled workforce, better job opportunities, breaking the poverty cycle.",
+          correctFeedback: "Yes! Education opens doors to employment and self-reliance.",
+          incorrectFeedback: "Think long-term. What does learning do for young people's future opportunities?"
+        },
+        {
+          id: "s4", 
+          strategy: "4. Community Self-Help Groups", 
+          correctAnswer: "Shared resources, income-generating activities, and mutual support.",
+          correctFeedback: "Well done! Working together helps families earn more and support each other.",
+          incorrectFeedback: "Think long-term. What happens when people pool money or ideas in a group?"
+        },
+        {
+          id: "s5", 
+          strategy: "5. Anti-Corruption Laws", 
+          correctAnswer: "Fair distribution of resources, more trust in leaders, better services.",
+          correctFeedback: "Great insight! Fighting corruption ensures money reaches schools, clinics, and roads.",
+          incorrectFeedback: "Think long-term. Why is it important for public money to be used properly?"
+        }
+      ];
+
+      const icons = {
+        correct: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feedback-icon"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+        incorrect: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feedback-icon"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`,
+      };
+
+      const TOTAL_ACTIVITIES = activityData.length;
+      let completedActivities = new Set();
+      let usedAnswers = new Set();
+      let isActivityComplete = false;
+
+      const dropdownOptions = activityData.map(a => a.correctAnswer).sort(() => Math.random() - 0.5);
+
+      // --- DOM ELEMENTS ---
+      const startScreen = document.getElementById("start-screen");
+      const gameScreen = document.getElementById("game-screen");
+      const labGameArea = document.getElementById("lab-game-area");
+      const progressBar = document.getElementById("progress-bar");
+      const progressText = document.getElementById("progress-text");
+      const overlays = {
+        activityDescription: document.getElementById("activity-description-overlay"),
+        gameInstructions: document.getElementById("game-instructions-overlay"),
+        feedback: document.getElementById("feedback-overlay"),
+        completion: document.getElementById("completion-overlay"),
+        takeaways: document.getElementById("takeaways-overlay"),
+      };
+      const sounds = {
+        ding: document.getElementById("ding-sound"),
+        buzz: document.getElementById("buzz-sound"),
+        intro: document.getElementById("intro-audio"),
+        outro: document.getElementById("outro-audio"),
+      };
+
+      // --- INITIALIZATION ---
+      document.addEventListener("DOMContentLoaded", initializeGame);
+
+      function initializeGame() {
+        let gridHTML = `<div class="comparison-grid-wrapper"><div class="strategy-grid">`;
+        
+        gridHTML += `<div class="grid-header-cell theme-header">Poverty Reduction Strategy</div>`;
+        gridHTML += `<div class="grid-header-cell period-header">Expected Contribution</div>`;
+
+        activityData.forEach((item) => {
+          gridHTML += `
+            <div class="grid-cell static-cell">
+              <div class="cell-content">
+                <span class="summary-text" style="text-align: left; width: 100%;">${item.strategy}</span>
+              </div>
+            </div>`;
+          
+          gridHTML += `
+            <div class="grid-cell interactive-cell" id="cell-${item.id}">
+              <select class="strategy-dropdown" onchange="handleSelection(this, '${item.id}')">
+              </select>
+            </div>
+          `;
+        });
+
+        gridHTML += `</div></div>`;
+        labGameArea.innerHTML = gridHTML;
+        
+        updateDropdowns();
+        updateProgress();
+      }
+
+      function updateDropdowns() {
+        document.querySelectorAll('.strategy-dropdown').forEach(dropdown => {
+            if (!dropdown.disabled) {
+                const currentValue = dropdown.value;
+                let optionsHTML = `<option value="" disabled ${currentValue === "" ? "selected" : ""}>Select expected contribution...</option>`;
+                
+                dropdownOptions.forEach(opt => {
+                    if (!usedAnswers.has(opt) || opt === currentValue) {
+                        optionsHTML += `<option value="${opt}" ${opt === currentValue ? "selected" : ""}>${opt}</option>`;
+                    }
+                });
+                dropdown.innerHTML = optionsHTML;
+            }
+        });
+      }
+
+      // --- GAME FLOW ---
+      function startGame() {
+        startScreen.classList.add("hidden");
+        gameScreen.classList.remove("hidden");
+        setTimeout(() => {
+          overlays.activityDescription.classList.remove("hidden");
+          if (sounds.intro) playSound(sounds.intro);
+        }, 500);
+      }
+
+      function closeActivityDescription() {
+        overlays.activityDescription.classList.add("hidden");
+        if (sounds.intro) sounds.intro.pause();
+      }
+
+      function handleSelection(selectElement, activityId) {
+        const selectedValue = selectElement.value;
+        const activity = activityData.find(a => a.id === activityId);
+        
+        if (selectedValue === activity.correctAnswer) {
+            playSound(sounds.ding);
+            showFeedback(true, activity);
+            selectElement.disabled = true;
+            selectElement.closest('.interactive-cell').classList.add('completed');
+            
+            if (!completedActivities.has(activityId)) {
+                completedActivities.add(activityId);
+                usedAnswers.add(selectedValue);
+                updateDropdowns();
+                updateProgress();
+            }
+        } else {
+            playSound(sounds.buzz);
+            showFeedback(false, activity);
+            selectElement.value = ""; 
+        }
+      }
+
+      function showFeedback(isCorrect, activity) {
+        const modal = document.getElementById("feedback-modal");
+        const title = document.getElementById("feedback-title");
+        const text = document.getElementById("feedback-text");
+        const btn = document.getElementById("feedback-close-btn");
+
+        modal.classList.remove('modal-correct', 'modal-incorrect');
+
+        if (isCorrect) {
+            modal.classList.add('modal-correct');
+            title.innerHTML = `${icons.correct} <span>Correct!</span>`;
+            text.textContent = activity.correctFeedback;
+            btn.textContent = "Continue";
+        } else {
+            modal.classList.add('modal-incorrect');
+            title.innerHTML = `${icons.incorrect} <span>Not Quite...</span>`;
+            text.textContent = activity.incorrectFeedback;
+            btn.textContent = "Try Again";
+        }
+
+        overlays.feedback.classList.remove("hidden");
+      }
+
+      function closeFeedback() {
+        overlays.feedback.classList.add("hidden");
+        
+        if (completedActivities.size >= TOTAL_ACTIVITIES && !isActivityComplete) {
+            isActivityComplete = true;
+            setTimeout(() => {
+                overlays.completion.classList.remove("hidden");
+                if (sounds.outro) playSound(sounds.outro);
+            }, 400);
+        }
+      }
+
+      function restartGame() {
+        if (sounds.outro) sounds.outro.pause();
+        completedActivities.clear();
+        usedAnswers.clear();
+        isActivityComplete = false;
+        
+        document.querySelectorAll('.strategy-dropdown').forEach(dropdown => {
+          dropdown.disabled = false;
+          dropdown.value = "";
+          dropdown.closest('.interactive-cell').classList.remove('completed');
+        });
+
+        updateDropdowns();
+        overlays.completion.classList.add("hidden");
+        updateProgress();
+      }
+
+      function showTakeaways() {
+        if (sounds.outro) {
+            sounds.outro.pause();
+            sounds.outro.currentTime = 0;
+        }
+        overlays.completion.classList.add("hidden");
+        overlays.takeaways.classList.remove("hidden");
+        if (typeof sendEvent === "function") {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: "Activity 3: Strategy Success Chart",
+          });
+        }
+      }
+      
+      function goToPreviousActivity() {
+        window.location.href = "../ACTIVITY2/index.html"; 
+        if(typeof sendEvent !== 'undefined') {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: "Activity 3: Strategy Success Chart",
+          });
+        }
+      }
+
+      function endLesson() {
+        if (typeof sendEvent !== "undefined" && typeof LessonEvent !== "undefined") {
+            sendEvent(LessonEvent.END_LESSON, { lessonName: "Appreciate the Indigenous Knowledge Systems in the Society" });
+        }
+      }
+
+      function updateProgress() {
+        let displayCount = Math.min(completedActivities.size, TOTAL_ACTIVITIES);
+        const progress = (displayCount / TOTAL_ACTIVITIES) * 100;
+        progressBar.style.width = `${progress}%`;
+        progressText.textContent = `${displayCount} / ${TOTAL_ACTIVITIES}`;
+      }
+
+      function showGameInstructions() { overlays.gameInstructions.classList.remove("hidden"); }
+      function closeGameInstructions() { overlays.gameInstructions.classList.add("hidden"); }
+
+      function playSound(audioEl) {
+        if (audioEl) {
+          audioEl.currentTime = 0;
+          audioEl.play().catch((e) => console.error("Audio play failed:", e));
+        }
+      }
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity 2: Local Heroes, Local Solutions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="../js/html2canvas.min.js"></script>
+</head>
+<body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Local Heroes, Local Solutions</h1>
+          <button class="start-button" onclick="showActivityIntro();">
+            Start Activity
+          </button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Scenario-Based Decision</h1>
+            <div class="top-right-controls">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <span id="progress-text">0 / 5</span>
+              <div class="instructions-icon" onclick="showInstructions()">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="scenario-content">
+            <div class="scenario-card" id="scenario-container">
+              <div class="left-col">
+                <img id="scenario-image" src="" alt="Question Diagram" class="scenario-image">
+              </div>
+              <div class="right-col">
+                <div class="info-card">
+                  <p class="scenario-story" id="scenario-story-text"></p>
+                </div>
+                <p class="question-text" id="scenario-prompt-text"></p>
+                <div class="question-section">
+                  <div class="options-container" id="options-container"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hint-icon" id="hint-icon" onclick="showHint()">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <div class="completion-title-banner">Activity Conclusion</div>
+          <div class="modal">
+            <img
+              id="completion-image"
+              src="images/complete.jpg"
+              alt="Activity Complete"
+              onerror="this.style.display='none'"
+            />
+          </div>
+          <div class="completion-buttons">
+            <button
+              class="completion-btn btn-prev"
+              onclick="goToPreviousActivity()"
+            >
+              Previous Activity
+            </button>
+            <button class="completion-btn btn-restart" onclick="restartGame()">
+              Restart Activity
+            </button>
+            <button class="completion-btn btn-next" id="nextActivityBtn" onclick="nextActivity()">
+              Next Activity
+            </button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="overlay takeaways-overlay hidden">
+            <div class="takeaways-container-wrapper">
+                <h2 class="takeaways-main-title">Lesson Complete</h2>
+                <div class="takeaways-card">
+                    <h3>Key Takeaways</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Aspect</th>
+                                <th>Detail</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Sustainable Impact</td>
+                                <td>Teaching skills and spreading knowledge creates lasting, long-term benefits for the entire community.</td>
+                            </tr>
+                            <tr>
+                                <td>Income Security</td>
+                                <td>Choosing projects that provide consistent, year-round yields are often more reliable than seasonal ones.</td>
+                            </tr>
+                            <tr>
+                                <td>Community Care</td>
+                                <td>Balancing income generation with compassion for those in need strengthens social bonds and community health.</td>
+                            </tr>
+                            <tr>
+                                <td>Shared Benefits</td>
+                                <td>Investing in essential needs like clean water or shared tools benefits the collective group rather than just individuals.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="end-lesson-btn" id="btn-end-lesson" onclick="endLesson()">Brain Power Checkpoint</button>
+            </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Activity Introduction</h2>
+            <p>
+              Across Kenya, everyday heroes are transforming their communities through smart, practical actions. You will meet youth groups, women's cooperatives, and others who turn challenges into opportunities. Step into their shoes, explore their ideas, and decide the best next move to reduce poverty where they live.
+            </p>
+            <button onclick="closeModal('activity-intro-overlay')">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Learner Instructions</h2>
+            <ol>
+              <li>Read the background story for each local hero or community group.</li>
+              <li>Think about their goals, challenges, and resources.</li>
+              <li>Choose the option you believe will have the greatest long-term impact on reducing poverty.</li>
+              <li>Read the feedback to see how your choice compares to the possible outcomes.</li>
+              <li>Complete all 5 scenarios!</li>
+            </ol>
+            <button onclick="closeModal('instructions-overlay')">
+              Got it!
+            </button>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Here is a Hint</h2>
+            <p style="text-align: center;"></p>
+            <button onclick="closeModal('hint-overlay')">Got it!</button>
+          </div>
+        </div>
+
+        <div id="feedback-correct-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header correct">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <h2>Correct</h2>
+            </div>
+            <p id="correct-feedback-text"></p>
+            <button
+              class="feedback-btn correct"
+              onclick="closeModal('feedback-correct-overlay')"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="feedback-incorrect-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header incorrect">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+              </svg>
+              <h2>Not Quite</h2>
+            </div>
+            <p id="incorrect-feedback-text"></p>
+            <button class="feedback-btn incorrect" onclick="handleTryAgain()">
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const activityData = {
+        scenarios: [
+          {
+            title: "Scenario 1",
+            story: "<strong>Background:</strong> A youth group collects plastic waste and turns it into eco-bricks for building low-cost houses and classrooms. They’ve saved enough money to make a decision.",
+            prompt: "What should they do next to maximize their impact?",
+            image: "images/scenario1.jpg",
+            options: [
+              { text: "Expand their training workshops to teach other youth groups", feedback: "Excellent choice! Teaching others spreads the solution far and wide. More youth groups can earn income and clean their communities. That is sustainable impact!" },
+              { text: "Open a small shop to sell their eco-brick products", feedback: "A shop is a good step for income, but think long-term. What could reach more people and create more jobs?" }
+            ],
+            correctIndices: [0],
+            hint: "Think about which option empowers more people and creates a larger ripple effect across the community."
+          },
+          {
+            title: "Scenario 2",
+            story: "<strong>Background:</strong> A rural women’s group meets weekly to save money and offer small loans. They've saved enough to start a joint project.",
+            prompt: "Which project will provide the best long-term benefit for the group and community?",
+            image: "images/scenario2.jpg",
+            options: [
+              { text: "Building a group greenhouse to grow vegetables year-round", feedback: "Great thinking! A greenhouse means year-round income, food security, and shared farming roles. Plus, it is more sustainable over time." },
+              { text: "Buying livestock to raise and sell meat and milk", feedback: "Raising livestock can help but it also needs a lot of care and food. Is it the most reliable option for group income?" }
+            ],
+            correctIndices: [0],
+            hint: "Consider which project offers consistent returns regardless of seasons and is easier to manage collectively."
+          },
+          {
+            title: "Scenario 3",
+            story: "<strong>Background:</strong> Learners from a 4K Club are growing vegetables at school. Their harvest is doing well!",
+            prompt: "What should they do with their harvest?",
+            image: "images/scenario3.jpg",
+            options: [
+              { text: "Donate a portion to help feed classmates in need", feedback: "Compassionate choice! Feeding classmates improves nutrition and builds a caring school community." },
+              { text: "Sell the vegetables at the local market", feedback: "Selling brings in money but could miss the chance to help classmates directly. Which option supports both social care and sustainability?" }
+            ],
+            correctIndices: [0],
+            hint: "Think about how the harvest can directly support the well-being of the school community."
+          },
+          {
+            title: "Scenario 4",
+            story: "<strong>Background:</strong> A rural savings group has saved enough money for a community project.",
+            prompt: "Which investment will have the broadest positive impact?",
+            image: "images/scenario4.jpg",
+            options: [
+              { text: "Pay for mobile phone repair training for youth", feedback: "Useful skill, but will it benefit the whole group? Think of a broader community impact." },
+              { text: "Buy and install rainwater harvesting tanks", feedback: "Smart move! Clean water improves health, saves time, and supports farming." }
+            ],
+            correctIndices: [1],
+            hint: "Look for the option that addresses a fundamental, everyday need for everyone in the group."
+          },
+          {
+            title: "Scenario 5",
+            story: "<strong>Background:</strong> A local church group wants to help out-of-school youth.",
+            prompt: "Which choice improves long-term income and independence?",
+            image: "images/scenario5.jpg",
+            options: [
+              { text: "Start a small tailoring and beadwork workshop", feedback: "Excellent! Skills training opens job doors and supports self-employment." },
+              { text: "Build a youth entertainment centre", feedback: "It is fun, but does it help youth earn or grow skills? Which choice improves long-term income and independence?" }
+            ],
+            correctIndices: [0],
+            hint: "Focus on the option that provides practical tools for self-reliance and job creation."
+          }
+        ],
+      };
+
+      let currentScenarioIndex = 0;
+      const totalScenarios = activityData.scenarios.length;
+      let selectedOptionIndex = null;
+      let introAudio, dingAudio, buzzAudio, outroAudio;
+
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+
+      function initAudio() {
+        try {
+          introAudio = new Audio("audio/intro.mp3");
+          dingAudio = new Audio("audio/ding.mp3");
+          buzzAudio = new Audio("audio/buzz.mp3");
+          outroAudio = new Audio("audio/outro.mp3");
+        } catch (e) {
+          console.warn("Audio could not be loaded.");
+          const mockAudio = { play: () => {}, pause: () => {}, currentTime: 0 };
+          introAudio = dingAudio = buzzAudio = outroAudio = mockAudio;
+        }
+      }
+
+      function playSound(audio) {
+        if (audio) {
+          audio.currentTime = 0;
+          audio.play().catch((e) => {});
+        }
+      }
+      function stopSound(audio) {
+        if (audio) {
+          audio.pause();
+        }
+      }
+
+      function initGame() {
+        loadScenario();
+      }
+
+      function loadScenario() {
+        selectedOptionIndex = null;
+        const scenario = activityData.scenarios[currentScenarioIndex];
+        const shuffledOptions = shuffleArray(
+          scenario.options.map((option, originalIndex) => ({
+            ...option,
+            originalIndex,
+          })),
+        );
+
+        document.getElementById("scenario-story-text").innerHTML = scenario.story;
+        document.getElementById("scenario-prompt-text").textContent = scenario.prompt;
+        document.getElementById("scenario-image").src = scenario.image;
+
+        const optionsContainer = document.getElementById("options-container");
+        optionsContainer.innerHTML = "";
+        
+        const labels = ['A', 'B', 'C', 'D'];
+        
+        shuffledOptions.forEach((option, index) => {
+          const button = document.createElement("button");
+          button.className = "option-button";
+          // Matching mockup text style directly without the badge
+          button.innerHTML = `<span class="option-text">${labels[index]}) ${option.text}</span>`;
+          button.onclick = () => selectOption(option, index);
+          optionsContainer.appendChild(button);
+        });
+
+        updateProgress();
+      }
+
+      function selectOption(option, displayIndex) {
+        if (selectedOptionIndex !== null) return;
+        selectedOptionIndex = displayIndex;
+        const scenario = activityData.scenarios[currentScenarioIndex];
+        const buttons = document
+          .getElementById("options-container")
+          .querySelectorAll(".option-button");
+
+        buttons.forEach((btn) => (btn.disabled = true));
+
+        if (scenario.correctIndices.includes(option.originalIndex)) {
+          buttons[displayIndex].classList.add("correct");
+          playSound(dingAudio);
+          setTimeout(() => {
+            showFeedbackPopup("correct", option.feedback);
+          }, 500);
+        } else {
+          buttons[displayIndex].classList.add("incorrect");
+          playSound(buzzAudio);
+          setTimeout(() => {
+            showFeedbackPopup("incorrect", option.feedback);
+          }, 500);
+        }
+      }
+
+      function handleTryAgain() {
+        document
+          .getElementById("feedback-incorrect-overlay")
+          .classList.add("hidden");
+        const buttons = document
+          .getElementById("options-container")
+          .querySelectorAll(".option-button");
+        buttons.forEach((btn) => {
+          btn.disabled = false;
+          btn.classList.remove("incorrect");
+        });
+        selectedOptionIndex = null;
+      }
+
+      function goToNextScenario() {
+        const container = document.getElementById("scenario-container");
+        if (currentScenarioIndex < totalScenarios - 1) {
+          container.classList.add("fade-out");
+          setTimeout(() => {
+            currentScenarioIndex++;
+            loadScenario();
+            container.classList.remove("fade-out");
+          }, 300);
+        } else {
+          endActivity();
+        }
+      }
+
+      function updateProgress() {
+        const progress = currentScenarioIndex;
+        document.getElementById("progress-bar").style.width = `${
+          (progress / totalScenarios) * 100
+        }%`;
+        document.getElementById(
+          "progress-text"
+        ).textContent = `${progress} / ${totalScenarios}`;
+      }
+
+      function showFeedbackPopup(type, message) {
+        document.getElementById(`${type}-feedback-text`).innerHTML = message;
+        document
+          .getElementById(`feedback-${type}-overlay`)
+          .classList.remove("hidden");
+      }
+
+      function showActivityIntro() {
+        document.getElementById("start-screen").classList.add("hidden");
+        document.getElementById("game-screen").classList.remove("hidden");
+        document
+          .getElementById("activity-intro-overlay")
+          .classList.remove("hidden");
+        playSound(introAudio);
+        if (typeof sendEvent !== 'undefined' && typeof ActivityEvent !== 'undefined') {
+            sendEvent(ActivityEvent.START_ACTIVITY, { activityName: "Local Heroes, Local Solutions" });
+        }
+      }
+
+      function showInstructions() {
+        document
+          .getElementById("instructions-overlay")
+          .classList.remove("hidden");
+      }
+
+      function showHint() {
+        const hintText = activityData.scenarios[currentScenarioIndex].hint;
+        const defaultHint = "Think carefully about the choices.";
+        document.querySelector("#hint-overlay p").textContent = hintText || defaultHint;
+        document.getElementById("hint-overlay").classList.remove("hidden");
+      }
+
+      function closeModal(id) {
+        document.getElementById(id).classList.add("hidden");
+        if (id === "activity-intro-overlay") {
+          stopSound(introAudio);
+          initGame();
+        }
+        if (id === "feedback-correct-overlay") {
+          goToNextScenario();
+        }
+      }
+
+      function endActivity() {
+        document.getElementById("progress-bar").style.width = `100%`;
+        document.getElementById(
+          "progress-text"
+        ).textContent = `${totalScenarios} / ${totalScenarios}`;
+
+        const gameWrapperEl = document.getElementById('game-wrapper');
+
+        document.getElementById("game-screen").classList.add("hidden");
+        document.getElementById("completion-overlay").classList.remove("hidden");
+        playSound(outroAudio);
+
+        html2canvas(gameWrapperEl, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#fafbff',
+          onclone: (clonedDoc) => {
+            const clonedGameScreen = clonedDoc.getElementById('game-screen');
+            const modals = clonedDoc.querySelectorAll('.overlay');
+            modals.forEach(m => m.style.display = 'none');
+
+            if (clonedGameScreen) {
+              clonedGameScreen.classList.remove('hidden');
+              clonedGameScreen.style.position = 'relative';
+              clonedGameScreen.style.height = gameWrapperEl.scrollHeight + 'px';
+              clonedGameScreen.style.overflow = 'visible';
+            }
+
+            const elementsToExpand = clonedDoc.querySelectorAll('.scenario-content, #scenario-container');
+            elementsToExpand.forEach(el => {
+              el.style.opacity = '1';
+              el.style.transform = 'none';
+              el.style.overflow = 'visible';
+              el.style.maxHeight = 'none';
+            });
+          }
+        }).then(canvas => {
+          const imgData = canvas.toDataURL('image/png');
+          document.getElementById('completion-image').src = imgData;
+        }).catch(err => {
+          console.error('Screenshot failed:', err);
+        });
+      }
+
+      function restartGame() {
+        stopSound(outroAudio);
+        document.getElementById("completion-overlay").classList.add("hidden");
+        currentScenarioIndex = 0;
+        document.getElementById("game-screen").classList.remove("hidden");
+        document
+          .getElementById("scenario-container")
+          .classList.remove("fade-out");
+        loadScenario();
+      }
+
+      function goToPreviousActivity() {
+        window.location.href = "../ACTIVITY1/index.html";
+        if (typeof sendEvent !== 'undefined' && typeof ActivityEvent !== 'undefined') {
+            sendEvent(ActivityEvent.END_ACTIVITY, { activityName: "Local Heroes, Local Solutions" });
+        }
+      }
+      
+      function nextActivity() {
+        window.location.href = "../ACTIVITY3/index.html";
+        if (typeof sendEvent !== 'undefined' && typeof ActivityEvent !== 'undefined') {
+            sendEvent(ActivityEvent.END_ACTIVITY, { activityName: "Local Heroes, Local Solutions" });
+        }
+      }
+
+      function showTakeaways() {
+        stopSound(outroAudio);
+        document.getElementById("completion-overlay").classList.add("hidden");
+        document.getElementById("takeaways-overlay").classList.remove("hidden");
+        if (typeof sendEvent !== 'undefined' && typeof ActivityEvent !== 'undefined') {
+            sendEvent(ActivityEvent.END_ACTIVITY, { activityName: "Local Heroes, Local Solutions" });
+        }
+      }
+
+      function endLesson() {
+        if (typeof sendEvent !== "undefined" && typeof LessonEvent !== "undefined") {
+            sendEvent(LessonEvent.END_LESSON, { lessonName: "Local Heroes, Local Solutions" });
+        }
+      }
+
+      window.onload = () => {
+        initAudio();
+      };
+    </script>
+    <script src="../eventSender.js"></script>
+</body>
+</html>

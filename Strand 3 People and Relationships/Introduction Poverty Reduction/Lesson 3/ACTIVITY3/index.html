@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity 3: Creative Solutions Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="../js/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Creative Solutions Builder</h1>
+          <button class="start-button" onclick="showActivityIntro();">
+            Start Activity
+          </button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Activity 3: Creative Solutions Builder</h1>
+            <div class="top-right-controls">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <span id="progress-text">0 / 6</span>
+              <div class="instructions-icon" onclick="showInstructions()">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="scenario-content">
+            <div class="scenario-container" id="scenario-container">
+              
+              <div id="selection-view" class="view-section">
+                <h3 class="selection-subtitle">Drag a floating challenge to the idea board to solve it!</h3>
+                <div class="drag-drop-container">
+                  
+                  <div class="idea-board" id="idea-board" 
+                       ondragover="allowDrop(event)" 
+                       ondrop="handleDrop(event)"
+                       ondragenter="handleDragEnter(event)"
+                       ondragleave="handleDragLeave(event)">
+                    <span>Drop a challenge here!</span>
+                  </div>
+
+                  <div class="pieces-pool" id="pieces-pool">
+                    </div>
+                </div>
+              </div>
+
+              <div id="question-view" class="view-section hidden">
+                <div class="scenario-layout">
+                  <div class="scenario-left">
+                    <img id="scenario-char-img" src="" alt="Scenario Image" />
+                  </div>
+                  <div class="scenario-right">
+                    <div class="scenario-context" id="scenario-context-text">
+                       </div>
+                    <div class="scenario-prompt" id="scenario-prompt-text">
+                       </div>
+                    <div class="scenario-options" id="scenario-options-container">
+                       </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="hint-icon" id="hint-icon" onclick="showHint()">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <div class="completion-title-banner">Activity Conclusion</div>
+          <div class="modal">
+            <img
+              id="completion-image"
+              src="images/complete.jpg"
+              alt="Activity Complete"
+              onerror="this.style.display='none'"
+            />
+          </div>
+          <div class="completion-buttons">
+            <button
+              class="completion-btn btn-prev"
+              onclick="goToPreviousActivity()"
+            >
+              Previous Activity
+            </button>
+            <button class="completion-btn btn-restart" onclick="restartGame()">
+              Restart Activity
+            </button>
+            <button class="completion-btn btn-next" onclick="nextActivity()">
+              Next Activity
+            </button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="overlay takeaways-overlay hidden">
+            <div class="takeaways-container-wrapper">
+                <h2 class="takeaways-main-title">Lesson Complete</h2>
+                <div class="takeaways-card">
+                    <h3>Key Takeaways</h3>
+                    <p style="text-align:center; margin-bottom:1rem; font-size:1.1rem; font-weight:600; color:var(--text-color-dark);">
+                      Wow! You have just proved that creativity can solve real-life challenges. Real change starts with one small idea!
+                    </p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Challenge</th>
+                                <th>Creative Local Solution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Unemployment</td>
+                                <td>Starting a boda-boda cooperative for shared profit.</td>
+                            </tr>
+                            <tr>
+                                <td>Lack of Education</td>
+                                <td>Using village halls for weekend learning clubs.</td>
+                            </tr>
+                            <tr>
+                                <td>Poor Healthcare</td>
+                                <td>Setting up mobile health clinics using local nurses.</td>
+                            </tr>
+                            <tr>
+                                <td>Food Insecurity</td>
+                                <td>Setting up backyard gardens and seed banks.</td>
+                            </tr>
+                            <tr>
+                                <td>Youth Idleness</td>
+                                <td>Starting youth clubs with training in trades.</td>
+                            </tr>
+                            <tr>
+                                <td>Waste Pollution</td>
+                                <td>Organizing community plastic recycling craft projects.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="end-lesson-btn" id="btn-end-lesson" onclick="endLesson()">Brain Power Checkpoint</button>
+            </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Activity Introduction</h2>
+            <p>
+              Ready to solve real problems using your creativity? Each puzzle piece on the board represents a challenge that leads to poverty. Drag a piece to the centre and unlock a creative mission! Your goal: come up with a powerful local solution using what you know, see, and imagine in your community. Let us build a better future one idea at a time.
+            </p>
+            <button onclick="closeModal('activity-intro-overlay')">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Learner Instructions</h2>
+            <ol>
+              <li>Look at the puzzle pieces, each one shows a poverty-related challenge.</li>
+              <li>Drag one puzzle piece to the centre of the board to reveal its question.</li>
+              <li>Read the challenge and choose the best solution from the four options.</li>
+              <li>If you are not sure, think about local resources, skills, and teamwork before answering.</li>
+              <li>Complete all puzzle pieces to finish the activity and see your final feedback.</li>
+            </ol>
+            <button onclick="closeModal('instructions-overlay')">
+              Got it!
+            </button>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Here is a hint</h2>
+            <p id="dynamic-hint-text"></p>
+            <button onclick="closeModal('hint-overlay')">Got it!</button>
+          </div>
+        </div>
+
+        <div id="feedback-correct-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header correct">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <h2>Correct!</h2>
+            </div>
+            <p id="correct-feedback-text"></p>
+            <button class="feedback-btn correct" onclick="closeModal('feedback-correct-overlay')">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="feedback-incorrect-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header incorrect">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+              </svg>
+              <h2>Think Again</h2>
+            </div>
+            <p id="incorrect-feedback-text"></p>
+            <button class="feedback-btn incorrect" onclick="handleTryAgain()">
+              Try Again
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script>
+      const puzzleData = [
+        {
+          id: "unemployment",
+          title: "Unemployment",
+          imageSrc: "images/unemployment.jpg", // Placeholder images, adapt paths as needed
+          context: "<strong>Challenge:</strong> Unemployment is a major factor leading to poverty in our communities, leaving families without stable incomes.",
+          prompt: "What is a creative way to help people in your area earn an income?",
+          options: [
+            { letter: "A", text: "A) Open a big supermarket in town" },
+            { letter: "B", text: "B) Start a boda-boda cooperative" },
+            { letter: "C", text: "C) Encourage youth to migrate to cities" },
+            { letter: "D", text: "D) Hire people to clean roads once a year" }
+          ],
+          correctAnswer: "B",
+          feedbackCorrect: "Great choice! A cooperative means shared profit and access for many.",
+          feedbackIncorrect: "Think about how people in your area could earn money without needing a big company. Are there shared tools, skills, or natural resources that can be used together?",
+          hint: "Focus on solutions that utilize teamwork, local resources, and shared benefits rather than relying on massive outside companies."
+        },
+        {
+          id: "education",
+          title: "Lack of Education",
+          imageSrc: "images/education.jpg",
+          context: "<strong>Challenge:</strong> Without proper education, youth struggle to find opportunities, trapping generations in poverty.",
+          prompt: "How can we help children learn when schools are far or expensive?",
+          options: [
+            { letter: "A", text: "A) Use the village hall to run weekend learning clubs" },
+            { letter: "B", text: "B) Wait for the government to build a school" },
+            { letter: "C", text: "C) Ask older siblings to stop learning and start working" },
+            { letter: "D", text: "D) Make school uniforms optional" }
+          ],
+          correctAnswer: "A",
+          feedbackCorrect: "Smart use of local space and peer tutoring, accessible and creative!",
+          feedbackIncorrect: "What if school is too far or expensive? What local places or people could help children keep learning closer to home?",
+          hint: "Think about what community spaces already exist that can be utilized creatively."
+        },
+        {
+          id: "healthcare",
+          title: "Poor Healthcare",
+          imageSrc: "images/healthcare.jpg",
+          context: "<strong>Challenge:</strong> Limited medical access means easily treatable diseases can severely impact families and livelihoods.",
+          prompt: "How can we improve access to healthcare in rural communities?",
+          options: [
+            { letter: "A", text: "A) Build a new hospital (even without staff)" },
+            { letter: "B", text: "B) Set up mobile health clinics using local nurses" },
+            { letter: "C", text: "C) Only treat people with insurance" },
+            { letter: "D", text: "D) Start a fitness club for the youth" }
+          ],
+          correctAnswer: "B",
+          feedbackCorrect: "Well done! Mobile clinics take care of the people!",
+          feedbackIncorrect: "Try again! If there is no hospital nearby, what mobile or community-based ideas could bring healthcare closer to people?",
+          hint: "If the people cannot go to the healthcare, how can the healthcare go to the people?"
+        },
+        {
+          id: "food",
+          title: "Food Insecurity",
+          imageSrc: "images/food.jpg",
+          context: "<strong>Challenge:</strong> Unpredictable weather and poor resources make it hard for families to put food on the table.",
+          prompt: "How can we make sure everyone has enough food?",
+          options: [
+            { letter: "A", text: "A) Set up backyard gardens and seed banks" },
+            { letter: "B", text: "B) Import food from other countries" },
+            { letter: "C", text: "C) Give each family a bag of flour monthly" },
+            { letter: "D", text: "D) Close all fast-food places" }
+          ],
+          correctAnswer: "A",
+          feedbackCorrect: "Local gardens feed families and teach sustainability. Well done!",
+          feedbackIncorrect: "That is not right. What can people grow, store, or share in the community to make sure everyone has enough to eat?",
+          hint: "Look for a solution that empowers communities to grow their own sustenance long-term."
+        },
+        {
+          id: "youth",
+          title: "Youth Idleness",
+          imageSrc: "images/youth.jpg",
+          context: "<strong>Challenge:</strong> Without jobs or activities, youth lose motivation and miss out on developing crucial life skills.",
+          prompt: "How can we keep youth engaged and productive?",
+          options: [
+            { letter: "A", text: "A) Start a youth club with training in trades and skills" },
+            { letter: "B", text: "B) Give youth extra holidays" },
+            { letter: "C", text: "C) Set up a village soccer league" },
+            { letter: "D", text: "D) Make them attend long lectures weekly" }
+          ],
+          correctAnswer: "A",
+          feedbackCorrect: "Excellent! Skills clubs give youth direction and opportunities.",
+          feedbackIncorrect: "Close, but idle youth are full of energy. What fun and skill-building activities could give them purpose and prepare them for jobs?",
+          hint: "Choose an option that blends community engagement with learning practical, future-ready skills."
+        },
+        {
+          id: "waste",
+          title: "Waste Pollution",
+          imageSrc: "images/waste.jpg",
+          context: "<strong>Challenge:</strong> Trash build-up damages health and harms the local environment that communities rely on.",
+          prompt: "What is a smart way to reduce pollution and use waste?",
+          options: [
+            { letter: "A", text: "A) Organize a community plastic recycling craft project" },
+            { letter: "B", text: "B) Burn all the trash once a month" },
+            { letter: "C", text: "C) Dump waste far from the village" },
+            { letter: "D", text: "D) Wait for the county government to act" }
+          ],
+          correctAnswer: "A",
+          feedbackCorrect: "Turning waste into income? Genius! Clean and creative!",
+          feedbackIncorrect: "Try again. How can we turn waste into something useful? Is there a way to clean the environment and make income from it?",
+          hint: "What option takes a problem (waste) and turns it into an economic opportunity?"
+        }
+      ];
+
+      let completedChallenges = [];
+      let currentPuzzleIndex = null;
+      let introAudio, dingAudio, buzzAudio, outroAudio;
+
+      // Touch drag state
+      let activeTouchGhost = null;
+      let activeTouchIndex = null;
+
+      function initAudio() {
+        try {
+          introAudio = new Audio("audio/intro.mp3");
+          dingAudio = new Audio("audio/ding.mp3");
+          buzzAudio = new Audio("audio/buzz.mp3");
+          outroAudio = new Audio("audio/outro.mp3");
+        } catch (e) {
+          console.warn("Audio could not be loaded.");
+          const mockAudio = { play: () => {}, pause: () => {}, currentTime: 0 };
+          introAudio = dingAudio = buzzAudio = outroAudio = mockAudio;
+        }
+      }
+
+      function playSound(audio) {
+        if (audio) {
+          audio.currentTime = 0;
+          audio.play().catch((e) => {});
+        }
+      }
+      function stopSound(audio) {
+        if (audio) {
+          audio.pause();
+        }
+      }
+
+      function initGame() {
+        completedChallenges = [];
+        renderPiecesPool();
+        showSelectionView();
+        updateProgress();
+      }
+
+      function renderPiecesPool() {
+        const pool = document.getElementById("pieces-pool");
+        pool.innerHTML = "";
+        
+        // Find how many items are active to distribute them evenly
+        const activePieces = [];
+        puzzleData.forEach((puzzle, index) => {
+          if (!completedChallenges.includes(index)) {
+            activePieces.push({ puzzle, index });
+          }
+        });
+
+        const total = activePieces.length;
+        
+        // Increase horizontal spread so pieces clear the center board on landscape
+        const isSmallLandscape = window.innerWidth <= 991 && window.innerHeight <= 499;
+        const radiusX = isSmallLandscape ? 42 : 35;
+        const radiusY = isSmallLandscape ? 36 : 35; 
+
+        activePieces.forEach((item, i) => {
+          const piece = document.createElement("div");
+          piece.className = "puzzle-piece";
+          piece.draggable = true;
+          piece.id = `piece-${item.index}`;
+          
+          // Calculate elliptical positioning coordinates around the board
+          const angle = (i / total) * (2 * Math.PI);
+          const leftPos = 50 + radiusX * Math.cos(angle);
+          const topPos = 50 + radiusY * Math.sin(angle);
+          
+          piece.style.left = `${leftPos}%`;
+          piece.style.top = `${topPos}%`;
+          piece.style.animationDelay = `${(i * 0.5) % 2}s`; // Vary bobbing
+
+          // Standard Drag & Drop
+          piece.ondragstart = (e) => handleDragStart(e, item.index);
+          piece.ondragend = (e) => handleDragEnd(e);
+          
+          // Custom Touch Drag & Drop for Mobile/Tablet
+          piece.addEventListener("touchstart", (e) => handleTouchStart(e, item.index, piece), { passive: false });
+          piece.addEventListener("touchmove", handleTouchMove, { passive: false });
+          piece.addEventListener("touchend", handleTouchEnd);
+          
+          piece.innerHTML = `<img src="${item.puzzle.imageSrc}" alt="${item.puzzle.title}" onerror="this.src='images/placeholder.jpg'" />`;
+          pool.appendChild(piece);
+        });
+      }
+
+      /* Desktop Drag and Drop Handlers */
+      function handleDragStart(e, index) {
+        e.dataTransfer.setData("text/plain", index);
+        setTimeout(() => e.target.style.opacity = '0.5', 0);
+      }
+      function handleDragEnd(e) {
+        e.target.style.opacity = '1';
+      }
+      function allowDrop(e) {
+        e.preventDefault();
+      }
+      function handleDragEnter(e) {
+        e.preventDefault();
+        document.getElementById("idea-board").classList.add("drag-over");
+      }
+      function handleDragLeave(e) {
+        e.preventDefault();
+        document.getElementById("idea-board").classList.remove("drag-over");
+      }
+      function handleDrop(e) {
+        e.preventDefault();
+        document.getElementById("idea-board").classList.remove("drag-over");
+        const index = e.dataTransfer.getData("text/plain");
+        if(index !== "") {
+          activateChallenge(parseInt(index));
+        }
+      }
+
+      /* Mobile Touch Drag and Drop Handlers */
+      function handleTouchStart(e, index, piece) {
+        e.preventDefault(); // Stop page scroll
+        activeTouchIndex = index;
+        const touch = e.touches[0];
+        
+        // Hide original to mimic native drag behaviour
+        piece.style.opacity = '0.3';
+        
+        // Create ghost element
+        activeTouchGhost = piece.cloneNode(true);
+        activeTouchGhost.className = "touch-ghost"; // Strip normal class, apply ghost styles
+        activeTouchGhost.style.opacity = "0.9";
+        document.body.appendChild(activeTouchGhost);
+        
+        positionGhost(touch.clientX, touch.clientY);
+      }
+
+      function handleTouchMove(e) {
+        if (!activeTouchGhost) return;
+        e.preventDefault();
+        const touch = e.touches[0];
+        positionGhost(touch.clientX, touch.clientY);
+
+        // Check if over dropzone using elementFromPoint
+        // Ghost has pointer-events: none, so elementFromPoint hits what's underneath
+        const overElement = document.elementFromPoint(touch.clientX, touch.clientY);
+        const board = document.getElementById("idea-board");
+        
+        if (board.contains(overElement) || board === overElement) {
+            board.classList.add("drag-over");
+        } else {
+            board.classList.remove("drag-over");
+        }
+      }
+
+      function handleTouchEnd(e) {
+        if (!activeTouchGhost) return;
+        
+        const touch = e.changedTouches[0];
+        const overElement = document.elementFromPoint(touch.clientX, touch.clientY);
+        const board = document.getElementById("idea-board");
+        
+        board.classList.remove("drag-over");
+        
+        // Restore opacity to original piece (it will be destroyed anyway if correct)
+        const originalPiece = document.getElementById(`piece-${activeTouchIndex}`);
+        if(originalPiece) originalPiece.style.opacity = '1';
+
+        // Check drop
+        if (board.contains(overElement) || board === overElement) {
+            activateChallenge(activeTouchIndex);
+        }
+        
+        // Cleanup ghost
+        activeTouchGhost.remove();
+        activeTouchGhost = null;
+        activeTouchIndex = null;
+      }
+
+      function positionGhost(x, y) {
+        if (!activeTouchGhost) return;
+        activeTouchGhost.style.left = x + "px";
+        activeTouchGhost.style.top = y + "px";
+      }
+
+      /* Activity Flow */
+      function showSelectionView() {
+        currentPuzzleIndex = null;
+        document.getElementById("selection-view").classList.remove("hidden");
+        document.getElementById("question-view").classList.add("hidden");
+
+        const hintIconHide = document.getElementById("hint-icon");
+        if (hintIconHide) hintIconHide.classList.add("hidden");
+
+        updateProgress();
+      }
+
+      function activateChallenge(index) {
+        currentPuzzleIndex = index;
+        
+        document.getElementById("selection-view").classList.add("hidden");
+        document.getElementById("question-view").classList.remove("hidden");
+        
+        const hintIconShow = document.getElementById("hint-icon");
+        if (hintIconShow) hintIconShow.classList.remove("hidden");
+
+        loadScenario();
+      }
+
+      function loadScenario() {
+        const puzzle = puzzleData[currentPuzzleIndex];
+
+        // Populate Scenario UI (Matches scenario-design.jpeg layout)
+        document.getElementById("scenario-char-img").src = puzzle.imageSrc;
+        document.getElementById("scenario-char-img").alt = puzzle.title;
+        
+        document.getElementById("scenario-context-text").innerHTML = puzzle.context;
+        document.getElementById("scenario-prompt-text").textContent = puzzle.prompt;
+        
+        const optionsContainer = document.getElementById("scenario-options-container");
+        optionsContainer.innerHTML = "";
+        
+        puzzle.options.forEach(opt => {
+          const btn = document.createElement("button");
+          btn.className = "option-btn";
+          btn.dataset.letter = opt.letter;
+          btn.textContent = opt.text;
+          btn.onclick = () => submitAnswer(opt.letter, btn);
+          optionsContainer.appendChild(btn);
+        });
+        
+        // Update dynamic hint
+        document.getElementById("dynamic-hint-text").innerHTML = puzzle.hint;
+      }
+
+      function submitAnswer(selectedLetter, selectedButton) {
+        const puzzle = puzzleData[currentPuzzleIndex];
+        
+        // Disable buttons temporarily
+        const buttons = document.querySelectorAll(".option-btn");
+        buttons.forEach(b => b.disabled = true);
+
+        if (selectedLetter === puzzle.correctAnswer) {
+          selectedButton.classList.add("selected-correct");
+          playSound(dingAudio);
+          setTimeout(() => {
+            showFeedbackPopup("correct", puzzle.feedbackCorrect);
+          }, 300);
+        } else {
+          selectedButton.classList.add("selected-incorrect");
+          playSound(buzzAudio);
+          setTimeout(() => {
+            showFeedbackPopup("incorrect", puzzle.feedbackIncorrect);
+          }, 300);
+        }
+      }
+
+      function resetOptionButtons() {
+        const buttons = document.querySelectorAll(".option-btn");
+        buttons.forEach(button => {
+          button.disabled = false;
+          button.classList.remove("selected-correct", "selected-incorrect");
+        });
+      }
+
+      function handleTryAgain() {
+        document.getElementById("feedback-incorrect-overlay").classList.add("hidden");
+        resetOptionButtons();
+      }
+
+      function handleCorrectContinue() {
+        completedChallenges.push(currentPuzzleIndex);
+        updateProgress();
+        
+        if (completedChallenges.length === puzzleData.length) {
+          endActivity();
+        } else {
+          renderPiecesPool();
+          showSelectionView();
+        }
+      }
+
+      function updateProgress() {
+        const total = puzzleData.length;
+        const current = completedChallenges.length;
+        document.getElementById("progress-bar").style.width = `${(current / total) * 100}%`;
+        document.getElementById("progress-text").textContent = `${current} / ${total}`;
+      }
+
+      function showFeedbackPopup(type, message) {
+        document.getElementById(`${type}-feedback-text`).innerHTML = message;
+        document.getElementById(`feedback-${type}-overlay`).classList.remove("hidden");
+      }
+
+      function showActivityIntro() {
+        document.getElementById("start-screen").classList.add("hidden");
+        document.getElementById("game-screen").classList.remove("hidden");
+        document.getElementById("activity-intro-overlay").classList.remove("hidden");
+        playSound(introAudio);
+        if(typeof sendEvent !== 'undefined') {
+          sendEvent(ActivityEvent.START_ACTIVITY, {
+            activityName: "Activity 3: Creative Solutions Builder",
+          });
+        }
+      }
+
+      function showInstructions() {
+        document.getElementById("instructions-overlay").classList.remove("hidden");
+      }
+
+      function showHint() {
+        document.getElementById("hint-overlay").classList.remove("hidden");
+      }
+
+      function closeModal(id) {
+        document.getElementById(id).classList.add("hidden");
+        if (id === "activity-intro-overlay") {
+          stopSound(introAudio);
+          initGame();
+        }
+        if (id === "feedback-incorrect-overlay" || id === "feedback-correct-overlay") {
+          resetOptionButtons();
+        }
+        if (id === "feedback-correct-overlay") {
+          setTimeout(handleCorrectContinue, 300);
+        }
+      }
+
+      function endActivity() {
+        document.getElementById("progress-bar").style.width = `100%`;
+        document.getElementById("progress-text").textContent = `${puzzleData.length} / ${puzzleData.length}`;
+        
+        const gameScreen = document.getElementById("game-screen");
+
+        html2canvas(gameScreen, {
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          scale: window.devicePixelRatio || 2,
+        }).then(canvas => {
+          const imgData = canvas.toDataURL("image/png");
+          const completionImage = document.getElementById("completion-image");
+          completionImage.src = imgData;
+          completionImage.style.display = 'block';
+
+          gameScreen.classList.add("hidden");
+          document.getElementById("completion-overlay").classList.remove("hidden");
+          playSound(outroAudio);
+        }).catch(err => {
+          console.warn("Screenshot generation failed", err);
+          gameScreen.classList.add("hidden");
+          document.getElementById("completion-overlay").classList.remove("hidden");
+          playSound(outroAudio);
+        });
+      }
+
+      function restartGame() {
+        stopSound(outroAudio);
+        document.getElementById("completion-overlay").classList.add("hidden");
+        document.getElementById("game-screen").classList.remove("hidden");
+        document.getElementById("scenario-container").classList.remove("fade-out");
+        
+        document.getElementById("completion-image").src = "images/complete.jpg";
+        
+        initGame();
+      }
+
+      function showTakeaways() {
+        stopSound(outroAudio);
+        document.getElementById("completion-overlay").classList.add("hidden");
+        document.getElementById("takeaways-overlay").classList.remove("hidden");
+        sendEvent(ActivityEvent.END_ACTIVITY, {
+          activityName: "Activity 3: Creative Solutions Builder",
+        });
+      }
+
+      function endLesson() {
+        if (typeof sendEvent !== "undefined" && typeof LessonEvent !== "undefined") {
+            sendEvent(LessonEvent.END_LESSON, { lessonName: "Apply Problem Solving Skills in Addressing Effects of Climate Change on the Environment" });
+        }
+      }
+
+      function goToPreviousActivity() {
+        window.location.href = "../ACTIVITY2/index.html";
+        if(typeof sendEvent !== 'undefined') {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: "Activity 3: Creative Solutions Builder",
+          });
+        }
+      }
+      function nextActivity() {
+         window.location.href = "../ACTIVITY4/index.html";
+        if(typeof sendEvent !== 'undefined') {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: "Activity 3: Creative Solutions Builder",
+          });
+        }
+      }
+
+      // Re-render pieces when orientation switches
+      window.addEventListener('resize', () => {
+        const view = document.getElementById('selection-view');
+        if (view && !view.classList.contains('hidden')) {
+          renderPiecesPool();
+        }
+      });
+
+      window.onload = () => {
+        initAudio();
+      };
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

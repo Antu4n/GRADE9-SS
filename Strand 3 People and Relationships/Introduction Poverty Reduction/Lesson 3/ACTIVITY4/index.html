@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity 4: Idea Builder – Design a Poverty Solution</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="../js/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Idea Builder</h1>
+          <button class="start-button" onclick="showActivityIntro();">
+            Start Activity
+          </button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Activity 4: Idea Builder</h1>
+            <div class="top-right-controls">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <span id="progress-text">0 / 4</span>
+              <div class="instructions-icon" onclick="showInstructions()">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <h2 class="scenario-title" id="scenario-title"></h2>
+
+          <div class="scenario-content">
+            <div class="scenario-container" id="scenario-container">
+              
+              <div id="step-1-view" class="view-section">
+                <h3 class="selection-subtitle">Select a poverty-related challenge:</h3>
+                <div class="character-grid" id="problem-grid"></div>
+              </div>
+
+              <div id="step-2-view" class="view-section hidden">
+                <div class="scenario-details full-width">
+                  <p class="scenario-story" id="step-2-story-text"></p>
+                  <div class="question-section">
+                    <div class="input-container">
+                      <input type="text" id="idea-0" class="scene-input" placeholder="Idea 1 (Required)..." />
+                      <input type="text" id="idea-1" class="scene-input" placeholder="Idea 2 (Required)..." />
+                      <input type="text" id="idea-2" class="scene-input" placeholder="Idea 3 (Optional)..." />
+                      <button class="submit-scene-btn" onclick="submitStep2()">Continue to Evaluation</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="step-3-view" class="view-section hidden">
+                <div class="scenario-details full-width eval-full-width">
+                  <p class="scenario-story" id="step-3-story-text"></p>
+                  <div class="evaluation-container" id="evaluation-container">
+                    </div>
+                  <button class="submit-scene-btn mt-2" onclick="submitStep3()">Select Best Idea</button>
+                </div>
+              </div>
+
+              <div id="step-4-view" class="view-section hidden">
+                <div class="scenario-details full-width">
+                  <p class="scenario-story" id="step-4-story-text"></p>
+                  <div class="radio-list-container" id="radio-list-container">
+                    </div>
+                  <div class="question-section mt-2">
+                    <div class="input-container">
+                      <textarea id="final-explanation" class="scene-textarea" placeholder="Briefly explain why this is the best choice..."></textarea>
+                      <button class="submit-scene-btn" onclick="submitStep4()">Share & Finish Activity</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="hint-icon" id="hint-icon" onclick="showHint()">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <div class="completion-title-banner">Activity Conclusion</div>
+          <div class="modal">
+            <img
+              id="completion-image"
+              src="images/complete.jpg"
+              alt="Activity Complete"
+              onerror="this.style.display='none'"
+            />
+          </div>
+          <div class="completion-buttons">
+            <button
+              class="completion-btn btn-prev"
+              onclick="goToPreviousActivity()"
+            >
+              Previous Activity
+            </button>
+            <button class="completion-btn btn-restart" onclick="restartGame()">
+              Restart Activity
+            </button>
+            <button class="completion-btn btn-next" onclick="showTakeaways()">
+              Key Takeaways
+            </button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="overlay takeaways-overlay hidden">
+            <div class="takeaways-container-wrapper">
+                <h2 class="takeaways-main-title">Lesson Complete</h2>
+                <div class="takeaways-card">
+                    <h3>Key Takeaways</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Aspect</th>
+                                <th>Detail</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Creative Thinking</td>
+                                <td>Creative thinking means looking at problems differently and finding original solutions.</td>
+                            </tr>
+                            <tr>
+                                <td>Local Resources</td>
+                                <td>Recycling, entrepreneurship, and community involvement can create jobs and income.</td>
+                            </tr>
+                            <tr>
+                                <td>Application</td>
+                                <td>You can apply these skills by brainstorming solutions for challenges like unemployment or lack of education.</td>
+                            </tr>
+                            <tr>
+                                <td>Personal Action</td>
+                                <td>Everyone can contribute with small, creative actions in their community to reduce poverty.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="end-lesson-btn" id="btn-end-lesson" onclick="endLesson()">Brain Power Checkpoint</button>
+            </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Activity Introduction</h2>
+            <p>
+              Ready to be an innovator?
+              In this activity, you will become a solution designer. You will go Step-By-Step to solve a poverty-related challenge using your creativity, thinking, and teamwork. Drag and drop ideas, evaluate them, and pick the best solution. Let us build something amazing together!
+            </p>
+            <button onclick="closeModal('activity-intro-overlay')">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Learner Instructions</h2>
+            <ol>
+              <li><strong>Pick a problem:</strong> Choose a poverty-related challenge that matters most to you.</li>
+              <li><strong>Brainstorm solutions:</strong> Come up with at least 2–3 creative ideas.</li>
+              <li><strong>Evaluate your ideas:</strong> Rate each idea for cost, impact, and sustainability.</li>
+              <li><strong>Select the best solution:</strong> Choose your top idea and explain why.</li>
+              <li><strong>Share it:</strong> Submit your idea so others can be inspired!</li>
+            </ol>
+            <button onclick="closeModal('instructions-overlay')">
+              Got it!
+            </button>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Here is a hint</h2>
+            <p id="dynamic-hint-text"></p>
+            <button onclick="closeModal('hint-overlay')">Got it!</button>
+          </div>
+        </div>
+
+        <div id="feedback-correct-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header correct">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <h2>Great Job!</h2>
+            </div>
+            <p id="correct-feedback-text"></p>
+            <button
+              class="feedback-btn correct"
+              onclick="closeModal('feedback-correct-overlay')"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="feedback-incorrect-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header incorrect">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+              </svg>
+              <h2>Needs More Detail</h2>
+            </div>
+            <p id="incorrect-feedback-text"></p>
+            <button class="feedback-btn incorrect" onclick="handleTryAgain()">
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const problemsData = [
+        { id: "water", imgSrc: "images/water.jpg", title: "Lack of clean water" },
+        { id: "youth", imgSrc: "images/youth.jpg", title: "Youth unemployment" },
+        { id: "sanitation", imgSrc: "images/sanitation.jpg", title: "Poor sanitation" },
+        { id: "food", imgSrc: "images/food.jpg", title: "Food waste during harvest" },
+        { id: "school", imgSrc: "images/school.jpg", title: "School dropout (fees)" }
+      ];
+
+      const stepData = [
+        {
+          title: "Step 1: Identify the Problem",
+          hint: "Which problem do you want to tackle? Pick the one that affects your community the most."
+        },
+        {
+          title: "Step 2: Brainstorm Ideas",
+          hint: "Think outside the box! Try to use local resources to come up with ideas."
+        },
+        {
+          title: "Step 3: Evaluate Ideas",
+          hint: "Sometimes simple ideas that use local resources work best! Rate them based on cost, impact, and sustainability."
+        },
+        {
+          title: "Step 4: Pick the Best Solution",
+          hint: "Select the most powerful idea and tell us why it is your top pick."
+        }
+      ];
+
+      let currentStepIndex = 1;
+      let selectedProblem = null;
+      let brainstormedIdeas = [];
+      let ideaRatings = []; // Array of objects { cost, impact, sust }
+      
+      let introAudio, dingAudio, buzzAudio, outroAudio;
+
+      function initAudio() {
+        try {
+          introAudio = new Audio("audio/intro.mp3");
+          dingAudio = new Audio("audio/ding.mp3");
+          buzzAudio = new Audio("audio/buzz.mp3");
+          outroAudio = new Audio("audio/outro.mp3");
+        } catch (e) {
+          console.warn("Audio could not be loaded.");
+          const mockAudio = { play: () => {}, pause: () => {}, currentTime: 0 };
+          introAudio = dingAudio = buzzAudio = outroAudio = mockAudio;
+        }
+      }
+
+      function playSound(audio) {
+        if (audio) {
+          audio.currentTime = 0;
+          audio.play().catch((e) => {});
+        }
+      }
+      function stopSound(audio) {
+        if (audio) {
+          audio.pause();
+        }
+      }
+
+      function initGame() {
+        currentStepIndex = 1;
+        selectedProblem = null;
+        brainstormedIdeas = [];
+        ideaRatings = [];
+        
+        // Reset Inputs
+        document.getElementById("idea-0").value = "";
+        document.getElementById("idea-1").value = "";
+        document.getElementById("idea-2").value = "";
+        document.getElementById("final-explanation").value = "";
+
+        showStep1();
+      }
+
+      function hideAllViews() {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+      }
+
+      function updateUIForStep() {
+        document.getElementById("scenario-title").textContent = stepData[currentStepIndex - 1].title;
+        document.getElementById("dynamic-hint-text").textContent = stepData[currentStepIndex - 1].hint;
+        document.getElementById("hint-icon").classList.remove("hidden");
+        
+        document.getElementById("progress-bar").style.width = `${(currentStepIndex / 4) * 100}%`;
+        document.getElementById("progress-text").textContent = `${currentStepIndex} / 4`;
+      }
+
+      function showStep1() {
+        hideAllViews();
+        document.getElementById("step-1-view").classList.remove("hidden");
+        document.getElementById("hint-icon").classList.add("hidden");
+        
+        document.getElementById("scenario-title").textContent = stepData[0].title;
+        document.getElementById("progress-bar").style.width = `25%`;
+        document.getElementById("progress-text").textContent = `1 / 4`;
+
+        const grid = document.getElementById("problem-grid");
+        grid.innerHTML = "";
+
+        problemsData.forEach((prob, index) => {
+          const card = document.createElement("div");
+          card.className = `character-card`;
+          card.innerHTML = `
+            <div class="card-image-container">
+              <img src="${prob.imgSrc}" alt="${prob.title}" class="card-image" onerror="this.src='images/placeholder.jpg'">
+            </div>
+            <div class="card-title">${prob.title}</div>
+          `;
+          card.onclick = () => handleProblemSelection(index);
+          grid.appendChild(card);
+        });
+      }
+
+      function handleProblemSelection(index) {
+        selectedProblem = problemsData[index];
+        currentStepIndex = 2;
+        transitionToStep(() => showStep2());
+      }
+
+      function showStep2() {
+        hideAllViews();
+        document.getElementById("step-2-view").classList.remove("hidden");
+        updateUIForStep();
+
+        document.getElementById("step-2-story-text").innerHTML = 
+          `<strong>Selected Challenge:</strong> ${selectedProblem.title}<br/><br/>
+          Come up with at least 2 creative ideas to solve this problem in your community.`;
+      }
+
+      function submitStep2() {
+        const inputs = [
+          document.getElementById("idea-0").value.trim(),
+          document.getElementById("idea-1").value.trim(),
+          document.getElementById("idea-2").value.trim()
+        ];
+
+        // Ensure ONLY the filled-in ideas are transferred over to the evaluation step
+        brainstormedIdeas = inputs.filter(idea => idea.length > 0);
+
+        if (brainstormedIdeas.length < 2) {
+          playSound(buzzAudio);
+          showFeedbackPopup("incorrect", "Please provide at least 2 creative ideas before continuing.");
+          return;
+        }
+
+        // Initialize ratings matching EXACTLY the number of inputted ideas
+        ideaRatings = brainstormedIdeas.map(() => ({ cost: 0, impact: 0, sust: 0 }));
+        
+        playSound(dingAudio);
+        currentStepIndex = 3;
+        showFeedbackPopup("correct", "Great ideas! Now let's evaluate them to see which is best.");
+      }
+
+      function showStep3() {
+        hideAllViews();
+        document.getElementById("step-3-view").classList.remove("hidden");
+        updateUIForStep();
+
+        document.getElementById("step-3-story-text").innerHTML = 
+          `Rate each idea using the stars (1 to 3).<br/>
+          <strong>Cost</strong>, <strong>Impact</strong>, and <strong>Sustainability</strong>.`;
+
+        const container = document.getElementById("evaluation-container");
+        container.innerHTML = "";
+
+        // Dynamically build the evaluation grid using strictly the ideas entered
+        brainstormedIdeas.forEach((idea, idx) => {
+          const card = document.createElement("div");
+          card.className = "eval-card";
+          card.innerHTML = `
+            <h4 class="eval-idea-title">Idea ${idx + 1}: ${idea}</h4>
+            <div class="rating-grid">
+              ${createRatingRow(idx, 'cost', 'Cost')}
+              ${createRatingRow(idx, 'impact', 'Impact')}
+              ${createRatingRow(idx, 'sust', 'Sustainability')}
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      }
+
+      function createRatingRow(ideaIdx, metric, label) {
+        const starSvg = `<svg viewBox="0 0 24 24" class="star-icon"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
+        return `
+          <div class="rating-row">
+            <span class="rating-label">${label}</span>
+            <div class="stars" id="rating-${ideaIdx}-${metric}">
+              <span class="rating-star" onclick="setRating(${ideaIdx}, '${metric}', 1)">${starSvg}</span>
+              <span class="rating-star" onclick="setRating(${ideaIdx}, '${metric}', 2)">${starSvg}</span>
+              <span class="rating-star" onclick="setRating(${ideaIdx}, '${metric}', 3)">${starSvg}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      function setRating(ideaIdx, metric, value) {
+        ideaRatings[ideaIdx][metric] = value;
+        const container = document.getElementById(`rating-${ideaIdx}-${metric}`);
+        const stars = container.querySelectorAll('.rating-star');
+        stars.forEach((star, i) => {
+          if (i < value) star.classList.add('active');
+          else star.classList.remove('active');
+        });
+      }
+
+      function submitStep3() {
+        let allRated = true;
+        ideaRatings.forEach(rating => {
+          if (rating.cost === 0 || rating.impact === 0 || rating.sust === 0) {
+            allRated = false;
+          }
+        });
+
+        if (!allRated) {
+          playSound(buzzAudio);
+          showFeedbackPopup("incorrect", "Please provide a rating for Cost, Impact, and Sustainability for all your ideas.");
+          return;
+        }
+
+        playSound(dingAudio);
+        currentStepIndex = 4;
+        transitionToStep(() => showStep4());
+      }
+
+      function showStep4() {
+        hideAllViews();
+        document.getElementById("step-4-view").classList.remove("hidden");
+        updateUIForStep();
+
+        document.getElementById("step-4-story-text").innerHTML = 
+          `Based on your ratings, select the most powerful idea and explain why it is the best pick.`;
+
+        const container = document.getElementById("radio-list-container");
+        container.innerHTML = "";
+
+        brainstormedIdeas.forEach((idea, idx) => {
+          const totalScore = ideaRatings[idx].cost + ideaRatings[idx].impact + ideaRatings[idx].sust;
+          const label = document.createElement("label");
+          label.className = "radio-item";
+          label.innerHTML = `
+            <input type="radio" name="bestIdea" value="${idx}">
+            <div class="radio-content">
+              <strong>Idea ${idx + 1}:</strong> ${idea} 
+              <span class="score-badge">Score: ${totalScore}/9</span>
+            </div>
+          `;
+          container.appendChild(label);
+        });
+      }
+
+      function submitStep4() {
+        const radios = document.getElementsByName("bestIdea");
+        let selectedIdx = -1;
+        for (let i = 0; i < radios.length; i++) {
+          if (radios[i].checked) {
+            selectedIdx = i;
+            break;
+          }
+        }
+
+        const explanation = document.getElementById("final-explanation").value.trim();
+
+        if (selectedIdx === -1 || explanation.length < 5) {
+          playSound(buzzAudio);
+          showFeedbackPopup("incorrect", "Please select your best idea and write a brief explanation of why you chose it.");
+          return;
+        }
+
+        playSound(dingAudio);
+        
+        const textAreas = document.querySelectorAll("textarea");
+        textAreas.forEach(ta => ta.style.backgroundColor = "#ffffff");
+
+        setTimeout(() => {
+          endActivity();
+        }, 500);
+      }
+
+      function downloadSnapshot(canvas) {
+        const snapshotName = `activity-4-snapshot-${new Date().toISOString().slice(0, 19).replace(/[T:]/g, "-")}.png`;
+
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            return;
+          }
+
+          const downloadUrl = URL.createObjectURL(blob);
+          const downloadLink = document.createElement("a");
+          downloadLink.href = downloadUrl;
+          downloadLink.download = snapshotName;
+          downloadLink.style.display = "none";
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+
+          setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+        }, "image/png");
+      }
+
+      function transitionToStep(callback) {
+        const container = document.getElementById("scenario-container");
+        container.classList.add("fade-out");
+        setTimeout(() => {
+          callback();
+          container.classList.remove("fade-out");
+        }, 300);
+      }
+
+      function showFeedbackPopup(type, message) {
+        document.getElementById(`${type}-feedback-text`).innerHTML = message;
+        document.getElementById(`feedback-${type}-overlay`).classList.remove("hidden");
+      }
+
+      function handleTryAgain() {
+        document.getElementById("feedback-incorrect-overlay").classList.add("hidden");
+      }
+
+      function handleCorrectContinue() {
+        if (currentStepIndex === 3) {
+           transitionToStep(() => showStep3());
+        }
+      }
+
+      function showActivityIntro() {
+        document.getElementById("start-screen").classList.add("hidden");
+        document.getElementById("game-screen").classList.remove("hidden");
+        document.getElementById("activity-intro-overlay").classList.remove("hidden");
+        playSound(introAudio);
+        if(typeof sendEvent !== 'undefined') {
+          sendEvent(ActivityEvent.START_ACTIVITY, {
+            activityName: "Activity 4: Idea Builder – Design a Poverty Solution",
+          });
+        }
+      }
+
+      function showInstructions() {
+        document.getElementById("instructions-overlay").classList.remove("hidden");
+      }
+
+      function showHint() {
+        document.getElementById("hint-overlay").classList.remove("hidden");
+      }
+
+      function closeModal(id) {
+        document.getElementById(id).classList.add("hidden");
+        if (id === "activity-intro-overlay") {
+          stopSound(introAudio);
+          initGame();
+        }
+        if (id === "feedback-correct-overlay") {
+          setTimeout(handleCorrectContinue, 300);
+        }
+      }
+
+      function endActivity() {
+        const gameScreen = document.getElementById("game-screen");
+
+        html2canvas(gameScreen, {
+          useCORS: true, 
+          backgroundColor: "#ffffff", 
+          scale: window.devicePixelRatio || 2, 
+          onclone: function(clonedDoc) {
+            const textarea = clonedDoc.getElementById("final-explanation");
+            if (textarea) {
+              textarea.style.backgroundColor = "#ffffff";
+              textarea.style.color = "#333333";
+              textarea.style.boxShadow = "none";
+              textarea.removeAttribute("disabled"); 
+            }
+            
+            // Fix scrolling capture issues on certain browsers
+            const scenarioContent = clonedDoc.querySelector(".scenario-content");
+            if (scenarioContent) {
+              scenarioContent.style.overflow = "visible";
+              scenarioContent.style.height = "auto";
+            }
+          }
+        }).then(canvas => {
+          const imgData = canvas.toDataURL("image/png");
+          const completionImage = document.getElementById("completion-image");
+          completionImage.src = imgData;
+          completionImage.style.display = 'block';
+
+          downloadSnapshot(canvas);
+
+          gameScreen.classList.add("hidden");
+          document.getElementById("completion-overlay").classList.remove("hidden");
+          playSound(outroAudio);
+        }).catch(err => {
+          console.warn("Screenshot generation failed, proceeding to fallback", err);
+          gameScreen.classList.add("hidden");
+          document.getElementById("completion-overlay").classList.remove("hidden");
+          playSound(outroAudio);
+        });
+      }
+
+      function restartGame() {
+        stopSound(outroAudio);
+        document.getElementById("completion-overlay").classList.add("hidden");
+        document.getElementById("game-screen").classList.remove("hidden");
+        document.getElementById("scenario-container").classList.remove("fade-out");
+        
+        document.getElementById("completion-image").src = "images/complete.jpg";
+        
+        initGame();
+      }
+
+      function showTakeaways() {
+        stopSound(outroAudio);
+        document.getElementById("completion-overlay").classList.add("hidden");
+        document.getElementById("takeaways-overlay").classList.remove("hidden");
+        sendEvent(ActivityEvent.END_ACTIVITY, {
+          activityName: "Activity 4: Idea Builder – Design a Poverty Solution",
+        });
+      }
+
+      function endLesson() {
+        if (typeof sendEvent !== "undefined" && typeof LessonEvent !== "undefined") {
+            sendEvent(LessonEvent.END_LESSON, { lessonName: "Apply Creative Thinking Skills to Reduce Poverty in the Society" });
+        }
+      }
+
+      function goToPreviousActivity() {
+        window.location.href = "../ACTIVITY3/index.html";
+        if(typeof sendEvent !== 'undefined') {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: "Activity 4: Idea Builder – Design a Poverty Solution",
+          });
+        }
+      }
+
+      window.onload = () => {
+        initAudio();
+      };
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>
