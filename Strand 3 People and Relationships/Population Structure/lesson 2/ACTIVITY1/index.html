@@ -1,0 +1,766 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity 1: Factor Force</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="../js/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Factor Force</h1>
+          <button id="start-btn" class="start-button">Start Activity</button>
+        </div>
+
+        <div id="game-screen" class="screen hidden layout-with-header">
+          <div class="game-top-section" id="game-top-section">
+            <h1 id="game-title">Comparing Age Structures in 2026</h1>
+            <div class="progress-wrapper" id="progress-wrapper">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <div id="progress-text">0 / 6</div>
+              <div class="instructions-icon" id="btn-show-instructions">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div id="game-content" class="game-content-scrollable">
+            <div class="game-main-layout two-column-layout" id="main-layout">
+              <div class="chart-container pyramid-layout" id="kenya-chart">
+                <div class="pyramid-headers">
+                  <div class="gender-label male-color">Male</div>
+                  <div class="chart-title-box kenya-title">Kenya</div>
+                  <div class="gender-label right-align female-color">Female</div>
+                </div>
+
+                <div class="chart-main-area">
+                  <div class="pyramid-bars" id="kenya-bars-container"></div>
+
+                  <div
+                    class="hotspot-trigger trigger-birth"
+                    id="trigger-kenya-birth"
+                    onclick="handleTrigger('kenya', 'birth')"
+                  >
+                    Birth Rate
+                  </div>
+                  <div
+                    class="hotspot-trigger trigger-migration"
+                    id="trigger-kenya-migration"
+                    onclick="handleTrigger('kenya', 'migration')"
+                  >
+                    Migration
+                  </div>
+                  <div
+                    class="hotspot-trigger trigger-death"
+                    id="trigger-kenya-death"
+                    onclick="handleTrigger('kenya', 'death')"
+                  >
+                    Death Rate / Longevity
+                  </div>
+
+                  <div
+                    class="pointer-box left-side pointer-birth"
+                    id="pointer-kenya-birth"
+                  >
+                    <span class="pointer-text">Birth Rate</span>
+                    <div class="pointer-line"></div>
+                  </div>
+                  <div
+                    class="pointer-box left-side pointer-migration"
+                    id="pointer-kenya-migration"
+                  >
+                    <span class="pointer-text">Migration</span>
+                    <div class="pointer-line"></div>
+                  </div>
+                  <div
+                    class="pointer-box left-side pointer-death"
+                    id="pointer-kenya-death"
+                  >
+                    <span class="pointer-text">Death Rate / Longevity</span>
+                    <div class="pointer-line"></div>
+                  </div>
+                </div>
+
+                <div class="pyramid-x-axis">
+                  <div class="axis-side left-axis">
+                    <span>3</span><span>2</span><span>1</span><span>0</span>
+                  </div>
+                  <div class="axis-center">Age</div>
+                  <div class="axis-side right-axis">
+                    <span>0</span><span>1</span><span>2</span><span>3</span>
+                  </div>
+                </div>
+                <div class="pyramid-x-axis-labels">
+                  <div class="label-side full-width-center">
+                    Population (Millions)
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="chart-container pyramid-layout"
+                id="germany-chart"
+                style="display: none"
+              >
+                <div class="pyramid-headers">
+                  <div class="gender-label male-color">Male</div>
+                  <div class="chart-title-box germany-title">Germany</div>
+                  <div class="gender-label right-align female-color">Female</div>
+                </div>
+
+                <div class="chart-main-area">
+                  <div class="pyramid-bars" id="germany-bars-container"></div>
+
+                  <div
+                    class="hotspot-trigger trigger-birth"
+                    id="trigger-germany-birth"
+                    onclick="handleTrigger('germany', 'birth')"
+                  >
+                    Birth Rate
+                  </div>
+                  <div
+                    class="hotspot-trigger trigger-migration"
+                    id="trigger-germany-migration"
+                    onclick="handleTrigger('germany', 'migration')"
+                  >
+                    Migration
+                  </div>
+                  <div
+                    class="hotspot-trigger trigger-death"
+                    id="trigger-germany-death"
+                    onclick="handleTrigger('germany', 'death')"
+                  >
+                    Death Rate / Longevity
+                  </div>
+
+                  <div
+                    class="pointer-box right-side pointer-birth"
+                    id="pointer-germany-birth"
+                  >
+                    <div class="pointer-line"></div>
+                    <span class="pointer-text">Birth Rate</span>
+                  </div>
+                  <div
+                    class="pointer-box right-side pointer-migration"
+                    id="pointer-germany-migration"
+                  >
+                    <div class="pointer-line"></div>
+                    <span class="pointer-text">Migration</span>
+                  </div>
+                  <div
+                    class="pointer-box right-side pointer-death"
+                    id="pointer-germany-death"
+                  >
+                    <div class="pointer-line"></div>
+                    <span class="pointer-text">Death Rate / Longevity</span>
+                  </div>
+                </div>
+
+                <div class="pyramid-x-axis">
+                  <div class="axis-side left-axis">
+                    <span>3</span><span>2</span><span>1</span><span>0</span>
+                  </div>
+                  <div class="axis-center">Age</div>
+                  <div class="axis-side right-axis">
+                    <span>0</span><span>1</span><span>2</span><span>3</span>
+                  </div>
+                </div>
+                <div class="pyramid-x-axis-labels">
+                  <div class="label-side full-width-center">
+                    Population (Millions)
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              id="summary-action-area"
+              class="hidden"
+              style="
+                margin-top: 1rem;
+                margin-bottom: 2rem;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+              "
+            >
+              <button id="btn-continue-summary" class="summary-continue-btn">
+                Continue
+              </button>
+            </div>
+          </div>
+          
+          <div class="hint-icon" id="btn-show-hint" style="display: flex">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="activity-description-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Activity Introduction</h2>
+            <p>
+              Get ready to uncover the invisible forces shaping the people of
+              Kenya, Germany, and beyond! In this activity, you will explore how
+              birth rate, death rate, and migration work together like puzzle
+              pieces to shape a country's population. Just click the glowing
+              hotspots on the population pyramids to reveal animations,
+              definitions, and real-world examples. Watch how each factor
+              changes the pyramid's shape, making it wide, narrow, or shifting
+              in the middle.
+            </p>
+            <button class="modal-close-btn" id="btn-close-description">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="game-instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Learner Instructions</h2>
+            <p style="text-align: left; margin-bottom: 1rem">
+              Click the glowing hotspots on the Kenya and Germany population
+              pyramids to explore how birth rate, death rate, and migration
+              shape their structures. Watch animations, read explanations, and
+              compare how each factor changes the base, middle, or top of the
+              pyramid. Visit all three hotspots to unlock the full picture!
+            </p>
+            <button class="modal-close-btn" id="btn-close-instructions">
+              Got It!
+            </button>
+          </div>
+        </div>
+
+        <div id="bar-info-overlay" class="overlay hidden">
+          <div class="modal info-modal">
+            <div class="info-modal-header">
+              <h2 class="modal-title" id="bar-info-year-title">Factor</h2>
+            </div>
+            <div class="info-modal-body">
+              <p
+                id="bar-info-text-content"
+                style="
+                  font-size: 1.4rem;
+                  text-align: center;
+                  margin-bottom: 2rem;
+                  color: #444;
+                  line-height: 1.5;
+                "
+              ></p>
+              <button class="modal-close-btn" id="btn-close-bar-info">
+                Reveal Section
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Here is a hint</h2>
+            <ul id="hint-text"></ul>
+            <button class="modal-close-btn" id="btn-close-hint">Got It!</button>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="screen hidden scrollable">
+          <div class="completion-title">Activity Conclusion</div>
+          <div class="completion-image-container">
+            <img
+              id="completion-image"
+              src=""
+              alt="Activity Complete"
+              class="completion-image"
+            />
+          </div>
+          <div class="completion-buttons-footer">
+            <button class="completion-btn" id="btn-restart">
+              Restart Activity
+            </button>
+            <button id="btn-next-activity" class="completion-btn">
+              Next Activity
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="outro-audio" src="audio/outro.mp3" preload="auto"></audio>
+
+    <script>
+      // --- DATA ---
+      const ageGroups = [
+        "0 - 4",
+        "5 - 9",
+        "10 - 14",
+        "15 - 19",
+        "20 - 24",
+        "25 - 29",
+        "30 - 34",
+        "35 - 39",
+        "40 - 44",
+        "45 - 49",
+        "50 - 54",
+        "55 - 59",
+        "60 - 64",
+        "65 - 69",
+        "70 - 74",
+        "75 - 79",
+        "80 - 84",
+        "85+",
+      ];
+
+      const kenyaData = [
+        { m: 2.8, f: 2.7 },
+        { m: 2.7, f: 2.6 },
+        { m: 2.5, f: 2.4 },
+        { m: 2.3, f: 2.2 },
+        { m: 2.1, f: 2.0 },
+        { m: 1.9, f: 1.8 },
+        { m: 1.7, f: 1.6 },
+        { m: 1.5, f: 1.4 },
+        { m: 1.3, f: 1.2 },
+        { m: 1.1, f: 1.0 },
+        { m: 0.9, f: 0.8 },
+        { m: 0.7, f: 0.6 },
+        { m: 0.6, f: 0.5 },
+        { m: 0.5, f: 0.4 },
+        { m: 0.3, f: 0.3 },
+        { m: 0.2, f: 0.2 },
+        { m: 0.1, f: 0.1 },
+        { m: 0.05, f: 0.05 },
+      ];
+
+      const germanyData = [
+        { m: 0.8, f: 0.7 },
+        { m: 0.9, f: 0.8 },
+        { m: 0.9, f: 0.8 },
+        { m: 1.0, f: 0.9 },
+        { m: 1.1, f: 1.0 },
+        { m: 1.2, f: 1.1 },
+        { m: 1.3, f: 1.2 },
+        { m: 1.4, f: 1.3 },
+        { m: 1.3, f: 1.2 },
+        { m: 1.5, f: 1.4 },
+        { m: 1.7, f: 1.6 },
+        { m: 1.8, f: 1.7 },
+        { m: 1.6, f: 1.5 },
+        { m: 1.3, f: 1.4 },
+        { m: 1.1, f: 1.2 },
+        { m: 0.9, f: 1.1 },
+        { m: 0.6, f: 0.8 },
+        { m: 0.4, f: 0.6 },
+      ];
+
+      const sequence = [
+        {
+          country: "kenya",
+          metric: "birth",
+          title: "Birth Rate (Kenya)",
+          rows: [0, 1, 2],
+          info: "Birth rate is the number of babies born per 1,000 people in a year. In Kenya, the birth rate is high, which means more children are born, resulting in a wide base on the population pyramid. This creates a youthful population with a high dependency ratio.",
+        },
+        {
+          country: "kenya",
+          metric: "migration",
+          title: "Migration (Kenya)",
+          rows: [3, 4, 5, 6, 7, 8, 9, 10, 11],
+          info: "Migration is the movement of people into or out of a country. Kenya experiences some emigration, especially of youth and professionals moving abroad. This can reduce the number of skilled workers in the middle-age groups.",
+        },
+        {
+          country: "kenya",
+          metric: "death",
+          title: "Death Rate (Kenya)",
+          rows: [12, 13, 14, 15, 16, 17],
+          info: "Death rate refers to the number of deaths per 1,000 people each year. In Kenya, the death rate is higher, especially among older populations, leading to a narrow top with fewer elderly citizens.",
+        },
+        {
+          country: "germany",
+          metric: "birth",
+          title: "Birth Rate (Germany)",
+          rows: [0, 1, 2],
+          info: "In Germany, the birth rate is low, which leads to fewer children and a narrow base. This contributes to an ageing population with fewer young people entering the workforce.",
+        },
+        {
+          country: "germany",
+          metric: "migration",
+          title: "Migration (Germany)",
+          rows: [3, 4, 5, 6, 7, 8, 9, 10, 11],
+          info: "Germany often sees immigration of working-age adults who come in search of jobs and opportunities. This slightly boosts the middle of the population pyramid and helps balance its ageing population.",
+        },
+        {
+          country: "germany",
+          metric: "death",
+          title: "Death Rate (Germany)",
+          rows: [12, 13, 14, 15, 16, 17],
+          info: "In Germany, the death rate is low due to excellent healthcare and longer life expectancy. This results in a wider top on the pyramid with more elderly people.",
+        },
+      ];
+
+      const hints = [
+        "Pay attention to the base of the pyramids to understand birth rates.",
+        "The middle sections show the working-age population, affected by migration.",
+        "The top of the pyramid reveals longevity and death rates.",
+      ];
+
+      // --- STATE ---
+      let currentStep = 0;
+      let isActivityComplete = false;
+      let chartSwitchTimeout = null;
+      const MAX_X_VALUE = 3.5;
+
+      // --- DOM ELEMENTS ---
+      const startScreen = document.getElementById("start-screen");
+      const gameScreen = document.getElementById("game-screen");
+      const completionOverlay = document.getElementById("completion-overlay");
+      const progressBar = document.getElementById("progress-bar");
+      const progressText = document.getElementById("progress-text");
+
+      const overlays = {
+        activityDescription: document.getElementById(
+          "activity-description-overlay",
+        ),
+        gameInstructions: document.getElementById("game-instructions-overlay"),
+        barInfo: document.getElementById("bar-info-overlay"),
+        hint: document.getElementById("hint-overlay"),
+      };
+
+      const sounds = {
+        ding: document.getElementById("ding-sound"),
+        intro: document.getElementById("intro-audio"),
+        outro: document.getElementById("outro-audio"),
+      };
+
+      // --- INITIALIZATION ---
+      document.addEventListener("DOMContentLoaded", () => {
+        renderCharts();
+        bindEvents();
+      });
+
+      function bindEvents() {
+        document.getElementById("start-btn").addEventListener("click", () => {
+          startGame();
+          if (
+            typeof sendEvent === "function" &&
+            typeof ActivityEvent !== "undefined"
+          ) {
+            sendEvent(ActivityEvent.START_ACTIVITY, {
+              activityName: "Factor Force",
+            });
+          }
+        });
+
+        document
+          .getElementById("btn-show-instructions")
+          .addEventListener("click", () =>
+            overlays.gameInstructions.classList.remove("hidden"),
+          );
+        document
+          .getElementById("btn-close-instructions")
+          .addEventListener("click", () =>
+            overlays.gameInstructions.classList.add("hidden"),
+          );
+
+        document
+          .getElementById("btn-show-hint")
+          .addEventListener("click", showHint);
+        document
+          .getElementById("btn-close-hint")
+          .addEventListener("click", () =>
+            overlays.hint.classList.add("hidden"),
+          );
+
+        document
+          .getElementById("btn-close-description")
+          .addEventListener("click", () => {
+            overlays.activityDescription.classList.add("hidden");
+            if (sounds.intro) sounds.intro.pause();
+          });
+
+        document
+          .getElementById("btn-close-bar-info")
+          .addEventListener("click", closeBarInfo);
+
+        document
+          .getElementById("btn-continue-summary")
+          .addEventListener("click", triggerCompletion);
+
+        document
+          .getElementById("btn-restart")
+          .addEventListener("click", restartGame);
+
+        document
+          .getElementById("btn-next-activity")
+          .addEventListener("click", () => {
+            if (
+              typeof sendEvent === "function" &&
+              typeof ActivityEvent !== "undefined"
+            ) {
+              sendEvent(ActivityEvent.NEXT_ACTIVITY, {
+                activityName: "Factor Force",
+              });
+            }
+            window.location.href = "../ACTIVITY2/index.html";
+          });
+      }
+
+      function renderCharts() {
+        buildPyramid("kenya", kenyaData);
+        buildPyramid("germany", germanyData);
+        updateTriggers();
+        updateProgress();
+      }
+
+      function buildPyramid(countryPrefix, dataArr) {
+        const container = document.getElementById(
+          `${countryPrefix}-bars-container`,
+        );
+        container.innerHTML = "";
+
+        dataArr.forEach((data, index) => {
+          const malePercent = (data.m / MAX_X_VALUE) * 100;
+          const femalePercent = (data.f / MAX_X_VALUE) * 100;
+
+          const rowWrapper = document.createElement("div");
+          rowWrapper.className = `pyramid-row`;
+          rowWrapper.id = `${countryPrefix}-row-${index}`;
+
+          rowWrapper.innerHTML = `
+            <div class="male-side">
+               <div class="bar-fill male" id="${countryPrefix}-m-fill-${index}" style="width: 0%;" data-target="${malePercent}%"></div>
+            </div>
+            <div class="age-label-wrapper">
+                <div class="age-label">${ageGroups[index]}</div>
+            </div>
+            <div class="female-side">
+               <div class="bar-fill female" id="${countryPrefix}-f-fill-${index}" style="width: 0%;" data-target="${femalePercent}%"></div>
+            </div>
+          `;
+          container.appendChild(rowWrapper);
+        });
+      }
+
+      function updateTriggers() {
+        document
+          .querySelectorAll(".hotspot-trigger")
+          .forEach((el) => el.classList.remove("active"));
+
+        if (chartSwitchTimeout) {
+          clearTimeout(chartSwitchTimeout);
+          chartSwitchTimeout = null;
+        }
+
+        const kenyaChart = document.getElementById("kenya-chart");
+        const germanyChart = document.getElementById("germany-chart");
+
+        if (currentStep < 3) {
+          kenyaChart.style.display = "flex";
+          germanyChart.style.display = "none";
+          kenyaChart.classList.remove("fade-out");
+          germanyChart.classList.remove("fade-in");
+        } else if (currentStep < 6) {
+          if (kenyaChart.style.display !== "none") {
+            chartSwitchTimeout = setTimeout(() => {
+              kenyaChart.classList.add("fade-out");
+              
+              setTimeout(() => {
+                kenyaChart.style.display = "none";
+                germanyChart.style.display = "flex";
+                germanyChart.classList.add("fade-in");
+                
+                chartSwitchTimeout = null;
+                
+                const seq = sequence[currentStep];
+                const trigger = document.getElementById(
+                  `trigger-${seq.country}-${seq.metric}`
+                );
+                if (trigger) trigger.classList.add("active");
+              }, 500); 
+            }, 3000); 
+            return;
+          } else {
+            germanyChart.style.display = "flex";
+          }
+        }
+
+        if (currentStep < sequence.length) {
+          const seq = sequence[currentStep];
+          const trigger = document.getElementById(
+            `trigger-${seq.country}-${seq.metric}`,
+          );
+          if (trigger) trigger.classList.add("active");
+        } else {
+          setTimeout(() => {
+            showSummaryScreen();
+          }, 3000);
+        }
+      }
+
+      window.handleTrigger = function (country, metric) {
+        if (
+          sequence[currentStep].country !== country ||
+          sequence[currentStep].metric !== metric
+        )
+          return;
+
+        const seq = sequence[currentStep];
+        document.getElementById("bar-info-year-title").textContent = seq.title;
+        document.getElementById("bar-info-text-content").textContent = seq.info;
+
+        overlays.barInfo.classList.remove("hidden");
+      };
+
+      function closeBarInfo() {
+        overlays.barInfo.classList.add("hidden");
+        const seq = sequence[currentStep];
+
+        seq.rows.forEach((rowIndex) => {
+          const mFill = document.getElementById(
+            `${seq.country}-m-fill-${rowIndex}`,
+          );
+          const fFill = document.getElementById(
+            `${seq.country}-f-fill-${rowIndex}`,
+          );
+          if (mFill) mFill.style.width = mFill.dataset.target;
+          if (fFill) fFill.style.width = fFill.dataset.target;
+
+          const rowWrapper = document.getElementById(
+            `${seq.country}-row-${rowIndex}`,
+          );
+          if (rowWrapper) rowWrapper.classList.add("revealed");
+        });
+
+        const pointer = document.getElementById(
+          `pointer-${seq.country}-${seq.metric}`,
+        );
+        if (pointer) pointer.classList.add("visible");
+
+        playSound(sounds.ding);
+        currentStep++;
+        updateProgress();
+        updateTriggers();
+      }
+
+      function showSummaryScreen() {
+        isActivityComplete = true;
+        document.getElementById("progress-wrapper").classList.add("hidden");
+        document.getElementById("game-title").textContent =
+          "Side-by-Side Comparison";
+        
+        const kenyaChart = document.getElementById("kenya-chart");
+        kenyaChart.style.display = "flex";
+        kenyaChart.classList.remove("fade-out");
+        
+        const germanyChart = document.getElementById("germany-chart");
+        germanyChart.style.display = "flex";
+        germanyChart.classList.remove("fade-in");
+        
+        document.getElementById("btn-show-hint").style.display = "none";
+        document.getElementById("main-layout").classList.add("summary-active");
+        document
+          .getElementById("summary-action-area")
+          .classList.remove("hidden");
+      }
+
+      function triggerCompletion() {
+        document.getElementById("summary-action-area").classList.add("hidden");
+        
+        const contentArea = document.getElementById("game-content");
+        if(contentArea) {
+           contentArea.style.overflow = "visible";
+        }
+
+        setTimeout(() => {
+          html2canvas(document.getElementById("game-screen"), {
+            backgroundColor: "#fafafa",
+            useCORS: true,
+            onclone: (clonedDocument) => {
+              clonedDocument
+                .querySelectorAll(
+                  ".chart-container, .completion-image-container, .completion-image",
+                )
+                .forEach((element) => {
+                  element.style.boxShadow = "none";
+                });
+            },
+          }).then((canvas) => {
+            const imgData = canvas.toDataURL("image/png");
+            document.getElementById("completion-image").src = imgData;
+
+            if(contentArea) {
+               contentArea.style.overflow = "auto";
+            }
+
+            gameScreen.classList.add("hidden");
+            completionOverlay.classList.remove("hidden");
+            if (sounds.outro) playSound(sounds.outro);
+          });
+        }, 300);
+      }
+
+      function startGame() {
+        startScreen.classList.add("hidden");
+        gameScreen.classList.remove("hidden");
+        setTimeout(() => {
+          overlays.activityDescription.classList.remove("hidden");
+          if (sounds.intro) playSound(sounds.intro);
+        }, 500);
+      }
+
+      function showHint() {
+        const hintList = document.getElementById("hint-text");
+        hintList.innerHTML = hints.map((hint) => `<li>${hint}</li>`).join("");
+        overlays.hint.classList.remove("hidden");
+      }
+
+      function updateProgress() {
+        const progress = (currentStep / sequence.length) * 100;
+        progressBar.style.width = `${progress}%`;
+        progressText.textContent = `${currentStep} / ${sequence.length}`;
+      }
+
+      function restartGame() {
+        if (sounds.outro) sounds.outro.pause();
+        currentStep = 0;
+        isActivityComplete = false;
+
+        document.getElementById("progress-wrapper").classList.remove("hidden");
+        document.getElementById("game-title").textContent =
+          "Comparing Age Structures in 2026";
+        document.getElementById("btn-show-hint").style.display = "flex";
+        document
+          .getElementById("main-layout")
+          .classList.remove("summary-active");
+        document.getElementById("summary-action-area").classList.add("hidden");
+
+        completionOverlay.classList.add("hidden");
+        document
+          .querySelectorAll(".pointer-box")
+          .forEach((el) => el.classList.remove("visible"));
+        gameScreen.classList.remove("hidden");
+        renderCharts();
+      }
+
+      function playSound(audioEl) {
+        if (audioEl) {
+          audioEl.currentTime = 0;
+          audioEl.play().catch((e) => console.error("Audio play failed:", e));
+        }
+      }
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

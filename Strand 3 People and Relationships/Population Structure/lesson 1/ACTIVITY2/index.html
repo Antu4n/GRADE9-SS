@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Activity 2: Data Dive Flowchart</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Data Dive Flowchart</h1>
+          <button class="start-button">Start Activity</button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Interactive Flowchart</h1>
+            <div class="header-right-group">
+              <div class="progress-area">
+                <div id="progress-container">
+                  <div id="progress-bar"></div>
+                </div>
+                <div id="progress-text">0 / 4</div>
+              </div>
+              <div class="instructions-icon" id="instructions-icon">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="game-content">
+            <div id="game-board"></div>
+          </div>
+          <div class="hint-icon" id="hint-icon">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="activity-description-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="modal-title">Activity Introduction</div>
+              <p class="modal-text">
+                Welcome to Data Dive, where we trace the journey of population
+                data from your neighbourhood all the way to the people in
+                charge! In this activity, you will click through the steps of a
+                real data flow, from the moment it is collected during a census
+                or birth registration, to when it is cleaned and organized, and
+                finally to when it is shared in reports and dashboards. Each
+                step is like a link in a chain and every link is important.
+              </p>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-btn" id="continue-btn">Continue</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="modal-title">Learner Instructions</div>
+              <ol>
+                <li>
+                  Click each stage in the flowchart to follow the journey of
+                  population data, from collection, to processing, to
+                  publication, and finally to its use in decision-making.
+                </li>
+                <li>
+                  Explore how each step transforms raw facts into valuable
+                  information. Complete all stages to reveal the full data
+                  trail!
+                </li>
+              </ol>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-btn" id="close-instructions-btn">
+                Got it!
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="modal-title">Here is a Hint</div>
+              <ul
+                style="
+                  text-align: left;
+                  padding-left: 1.5rem;
+                  font-size: 1.2rem;
+                  line-height: 1.6;
+                  color: var(--text-color-dark);
+                "
+              >
+                <li>Start from the very first step at the top.</li>
+                <li>
+                  Click the highlighted, active step to reveal the information.
+                </li>
+                <li>
+                  You must unlock the current step to access the next one.
+                </li>
+              </ul>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-btn" id="close-hint-btn">Got it</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="feedback-modal-overlay" class="modal-overlay hidden">
+          <div id="feedback-modal">
+            <div class="modal-content">
+              <div class="modal-body">
+                <div id="feedback-title" class="modal-title"></div>
+                <p id="feedback-modal-text" class="modal-text"></p>
+              </div>
+              <div class="modal-buttons">
+                <button id="next-question-button" class="modal-btn">
+                  Continue
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <h2 class="completion-title-banner">Activity Conclusion</h2>
+          <div class="modal">
+            <img
+              id="completion-image"
+              src="images/complete.jpg"
+              alt="Completion celebration"
+              onerror="
+                this.src =
+                  'https://placehold.co/400x300/7c3aed/ffffff?text=Complete!';
+                this.onerror = null;
+              "
+            />
+          </div>
+          <div class="completion-buttons">
+            <button class="completion-btn" id="prev-activity-btn">
+              Previous Activity
+            </button>
+            <button class="completion-btn" id="restart-activity-btn">
+              Restart Activity
+            </button>
+            <button class="completion-btn" id="key-takeaways-btn">
+              Key Takeaways
+            </button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="modal-overlay hidden">
+          <h2 class="takeaways-main-header">Lesson Complete</h2>
+          <div
+            class="modal"
+            style="
+              background: #fff;
+              border-radius: 12px;
+              box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            "
+          >
+            <div class="takeaways-header">
+              <h3>Key Takeaways</h3>
+            </div>
+            <table id="takeaways-table">
+              <thead>
+                <tr>
+                  <th>Concept</th>
+                  <th>Detail</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Importance</td>
+                  <td>
+                    Population data is essential for understanding a country's
+                    people.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Main Sources</td>
+                  <td>
+                    Censuses, Government Agencies (KNBS, Destatis), Vital
+                    Statistics, Sample Surveys (DHS), Administrative Records,
+                    International Publications.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Accuracy</td>
+                  <td>
+                    Combining multiple sources often gives the most accurate
+                    picture.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button class="end-lesson-btn" id="end-lesson-btn">
+            Brain Power Checkpoint
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="complete-audio" src="audio/outro.mp3" preload="auto"></audio>
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="buzz-sound" src="audio/buzz.mp3" preload="auto"></audio>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // --- DOM Elements ---
+        const startScreen = document.getElementById("start-screen");
+        const gameScreen = document.getElementById("game-screen");
+        const gameContainer = document.getElementById("game-container");
+        const startBtn = document.querySelector(".start-button");
+        const progressBar = document.getElementById("progress-bar");
+        const progressText = document.getElementById("progress-text");
+        const gameBoard = document.getElementById("game-board");
+
+        // --- Modal Elements ---
+        const activityDescriptionOverlay = document.getElementById(
+          "activity-description-overlay",
+        );
+        const instructionsOverlay = document.getElementById(
+          "instructions-overlay",
+        );
+        const hintOverlay = document.getElementById("hint-overlay");
+        const feedbackModalOverlay = document.getElementById(
+          "feedback-modal-overlay",
+        );
+        const completionOverlay = document.getElementById("completion-overlay");
+        const takeawaysOverlay = document.getElementById("takeaways-overlay");
+
+        // --- Button Elements ---
+        const continueBtn = document.getElementById("continue-btn");
+        const instructionsIcon = document.getElementById("instructions-icon");
+        const closeInstructionsBtn = document.getElementById(
+          "close-instructions-btn",
+        );
+        const hintIcon = document.getElementById("hint-icon");
+        const closeHintBtn = document.getElementById("close-hint-btn");
+        const nextQuestionBtn = document.getElementById("next-question-button");
+        const prevActivityBtn = document.getElementById("prev-activity-btn");
+        const restartActivityBtn = document.getElementById(
+          "restart-activity-btn",
+        );
+        const keyTakeawaysBtn = document.getElementById("key-takeaways-btn");
+        const endLessonBtn = document.getElementById("end-lesson-btn");
+
+        // --- Feedback Elements ---
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackText = document.getElementById("feedback-modal-text");
+
+        // --- Audio Elements ---
+        const introAudio = document.getElementById("intro-audio");
+        const completeAudio = document.getElementById("complete-audio");
+        const dingSound = document.getElementById("ding-sound");
+        const buzzSound = document.getElementById("buzz-sound");
+
+        // --- Game Data ---
+        const gameData = [
+          {
+            id: 1,
+            title: "Data Collection",
+            text: "First, data is collected. This might happen through a national census, where every household is counted, or through continuous registration of births, deaths, and other vital events. This stage is all about gathering the raw facts, who, where, and how many.",
+          },
+          {
+            id: 2,
+            title: "Data Processing",
+            text: "Next, experts clean, sort, and analyse the data. This stage is like putting together a puzzle; finding patterns, correcting mistakes, and making sense of huge amounts of information. Tools like computers and statistics software help make this happen.",
+          },
+          {
+            id: 3,
+            title: "Data Publication",
+            text: "Finally, it is time to share the findings! Processed data is published in reports, databases, charts, and maps. This is how governments, schools, researchers and even you get access to valuable population information.",
+          },
+          {
+            id: 4,
+            title: "Interpretation & Use",
+            text: "Now that the data is available, people use it to plan services, make laws, and track changes in society. Understanding how many children need schools or where hospitals are needed all starts with well-handled data.",
+          },
+        ];
+
+        // --- Game State ---
+        let totalTasks = gameData.length;
+        let completedTasks = 0;
+        let currentStepIndex = 0;
+        const collapsedRevealedSlots = new Set();
+
+        // --- Core Functions ---
+        function initializeGame() {
+          completedTasks = 0;
+          currentStepIndex = 0;
+          collapsedRevealedSlots.clear();
+          updateProgressBar();
+          renderFlowchart();
+        }
+
+        function renderFlowchart(focusStepIndex = null) {
+          gameBoard.innerHTML = "";
+
+          const container = document.createElement("div");
+          container.className = "stacked-container";
+
+          gameData.forEach((step, index) => {
+            const slot = document.createElement("div");
+            slot.className = "stacked-slot";
+
+            if (index < currentStepIndex) {
+              slot.classList.add("revealed");
+              if (collapsedRevealedSlots.has(index)) {
+                slot.classList.add("collapsed");
+              }
+            } else if (index === currentStepIndex) {
+              slot.classList.add("active");
+            } else {
+              slot.classList.add("locked");
+            }
+
+            slot.addEventListener("click", () => handleStepClick(index));
+
+            const header = document.createElement("div");
+            header.className = "slot-header";
+
+            const number = document.createElement("div");
+            number.className = "slot-number";
+            number.textContent = step.id;
+
+            const title = document.createElement("div");
+            title.className = "slot-title";
+            title.textContent = step.title;
+
+            header.appendChild(number);
+            header.appendChild(title);
+            slot.appendChild(header);
+
+            const content = document.createElement("div");
+            content.className = "slot-content";
+            content.textContent = step.text;
+            slot.appendChild(content);
+
+            container.appendChild(slot);
+
+            // Add downward connecting arrow if it's not the last item
+            if (index < gameData.length - 1) {
+              const connector = document.createElement("div");
+              connector.className = "flow-connector";
+              if (index >= currentStepIndex) {
+                connector.classList.add("locked");
+              }
+              // Arrow visual
+              connector.innerHTML = `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" style="width: 2rem; height: 2rem;"><line x1="12" y1="2" x2="12" y2="22"></line><polyline points="19 15 12 22 5 15"></polyline></svg>`;
+              container.appendChild(connector);
+            }
+          });
+
+          if (currentStepIndex === gameData.length) {
+            const continueBtn = document.createElement("button");
+            continueBtn.className = "modal-btn";
+            continueBtn.textContent = "Continue";
+            continueBtn.style.margin = "1rem auto 0";
+            continueBtn.style.display = "block";
+            continueBtn.addEventListener("click", showCompletionOverlay);
+            container.appendChild(continueBtn);
+          }
+
+          gameBoard.appendChild(container);
+
+          // Keep the clicked step in focus after it is revealed.
+          if (focusStepIndex !== null) {
+            setTimeout(() => {
+              const focusSlot =
+                container.querySelectorAll(".stacked-slot")[focusStepIndex];
+              const focusTarget = focusSlot
+                ? focusSlot.querySelector(".slot-content")
+                : null;
+              if (focusTarget) {
+                focusTarget.scrollIntoView({
+                  behavior: "smooth",
+                  block: "center",
+                });
+              } else if (focusSlot) {
+                focusSlot.scrollIntoView({
+                  behavior: "smooth",
+                  block: "center",
+                });
+              }
+            }, 100);
+          }
+        }
+
+        function handleStepClick(index) {
+          if (index === currentStepIndex) {
+            playSound(dingSound);
+            currentStepIndex++;
+            completedTasks++;
+            updateProgressBar();
+            renderFlowchart(index);
+          } else if (index < currentStepIndex) {
+            if (collapsedRevealedSlots.has(index)) {
+              collapsedRevealedSlots.delete(index);
+            } else {
+              collapsedRevealedSlots.add(index);
+            }
+            renderFlowchart();
+          } else if (index > currentStepIndex) {
+            playSound(buzzSound);
+            const slot = document.querySelectorAll(".stacked-slot")[index];
+            if (slot) {
+              slot.classList.add("shake");
+              setTimeout(() => slot.classList.remove("shake"), 500);
+            }
+          }
+        }
+
+        function updateProgressBar() {
+          const percentage = (completedTasks / totalTasks) * 100;
+          progressBar.style.width = `${percentage}%`;
+          progressText.textContent = `${completedTasks} / ${totalTasks}`;
+        }
+
+        function showCompletionOverlay() {
+          completionOverlay.classList.remove("hidden");
+          if (gameContainer) gameContainer.classList.add("overlay-open");
+          playSound(completeAudio);
+        }
+
+        function playSound(sound) {
+          if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch((e) => console.error("Audio play failed:", e));
+          }
+        }
+
+        function stopAllAudio() {
+          [introAudio, completeAudio, dingSound, buzzSound].forEach((audio) => {
+            if (audio) {
+              audio.pause();
+              audio.currentTime = 0;
+            }
+          });
+        }
+
+        // --- Event Listeners Setup ---
+        startBtn.addEventListener("click", () => {
+          startScreen.classList.add("hidden");
+          gameScreen.classList.remove("hidden");
+          initializeGame();
+
+          activityDescriptionOverlay.classList.remove("hidden");
+          playSound(introAudio);
+
+          if (
+            typeof sendEvent !== "undefined" &&
+            typeof ActivityEvent !== "undefined"
+          ) {
+            sendEvent(ActivityEvent.START_ACTIVITY, {
+              activityName: "Activity 2: Data Dive - Interactive Flowchart",
+            });
+          }
+        });
+
+        continueBtn.addEventListener("click", () => {
+          stopAllAudio();
+          activityDescriptionOverlay.classList.add("hidden");
+        });
+
+        instructionsIcon.addEventListener("click", () =>
+          instructionsOverlay.classList.remove("hidden"),
+        );
+        closeInstructionsBtn.addEventListener("click", () =>
+          instructionsOverlay.classList.add("hidden"),
+        );
+
+        hintIcon.addEventListener("click", () =>
+          hintOverlay.classList.remove("hidden"),
+        );
+        closeHintBtn.addEventListener("click", () =>
+          hintOverlay.classList.add("hidden"),
+        );
+
+        nextQuestionBtn.addEventListener("click", () => {
+          feedbackModalOverlay.classList.add("hidden");
+        });
+
+        restartActivityBtn.addEventListener("click", () => {
+          stopAllAudio();
+          completionOverlay.classList.add("hidden");
+          if (gameContainer) gameContainer.classList.remove("overlay-open");
+          initializeGame();
+        });
+
+        prevActivityBtn.style.display = "block";
+        keyTakeawaysBtn.style.display = "block";
+
+        prevActivityBtn.addEventListener("click", () => {
+          window.location.href = "../ACTIVITY1/index.html";
+          if (
+            typeof sendEvent !== "undefined" &&
+            typeof ActivityEvent !== "undefined"
+          ) {
+            sendEvent(ActivityEvent.END_ACTIVITY, {
+              activityName: "Activity 2: Data Dive - Interactive Flowchart",
+            });
+          }
+        });
+
+        keyTakeawaysBtn.addEventListener("click", () => {
+          completionOverlay.classList.add("hidden");
+          if (gameContainer) gameContainer.classList.remove("overlay-open");
+          stopAllAudio();
+          takeawaysOverlay.classList.remove("hidden");
+          if (
+            typeof sendEvent !== "undefined" &&
+            typeof ActivityEvent !== "undefined"
+          ) {
+            sendEvent(ActivityEvent.END_ACTIVITY, {
+              activityName: "Activity 2: Data Dive - Interactive Flowchart",
+            });
+          }
+        });
+
+        endLessonBtn.addEventListener("click", () => {
+          if (
+            typeof sendEvent !== "undefined" &&
+            typeof LessonEvent !== "undefined"
+          ) {
+            sendEvent(LessonEvent.END_LESSON, {
+              lessonName: "Identify Sources of Population Data in a Country",
+            });
+          }
+        });
+
+        [activityDescriptionOverlay, instructionsOverlay, hintOverlay].forEach(
+          (overlay) => {
+            overlay.addEventListener("click", (e) => {
+              if (e.target === overlay) {
+                overlay.classList.add("hidden");
+                if (overlay === activityDescriptionOverlay) stopAllAudio();
+              }
+            });
+          },
+        );
+      });
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>
