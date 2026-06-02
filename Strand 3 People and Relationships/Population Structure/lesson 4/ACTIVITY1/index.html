@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity 1: Age & Resources Explorer</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="../js/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Age & Resources Explorer</h1>
+          <button id="start-btn" class="start-button">Start Activity</button>
+        </div>
+
+        <div id="game-screen" class="screen hidden layout-with-header">
+          <div class="game-top-section" id="game-top-section">
+            <h1 id="game-title">Age & Resources Explorer</h1>
+            <div class="progress-wrapper" id="progress-wrapper">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <div id="progress-text">0 / 3</div>
+              <div class="instructions-icon" id="btn-show-instructions">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div id="game-content" class="game-content-scrollable">
+            <div class="game-main-layout two-column-layout" id="main-layout">
+              <div class="chart-container pyramid-layout single-chart" id="population-chart">
+                <div class="pyramid-headers">
+                  <div class="gender-label male-color">Male</div>
+                  <div class="chart-title-box">Population Pyramid</div>
+                  <div class="gender-label right-align female-color">Female</div>
+                </div>
+
+                <div class="chart-main-area">
+                  <div class="pyramid-bars" id="bars-container"></div>
+
+                  <div class="brace-group active" id="trigger-elderly" onclick="handleTrigger('elderly')" style="top: 0; height: 27.77%;">
+                    <svg class="brace-svg" preserveAspectRatio="none" viewBox="0 0 50 100">
+                      <path d="M10,0 C35,0 35,10 35,25 L35,40 C35,50 50,50 50,50 C50,50 35,50 35,60 L35,75 C35,90 35,100 10,100" fill="none" stroke="#FF6347" stroke-width="4" vector-effect="non-scaling-stroke"/>
+                    </svg>
+                    <div class="brace-label">
+                      Elderly
+                      <span class="brace-sub">(65+)</span>
+                    </div>
+                  </div>
+
+                  <div class="brace-group active" id="trigger-working" onclick="handleTrigger('working')" style="top: 27.77%; height: 55.55%;">
+                    <svg class="brace-svg" preserveAspectRatio="none" viewBox="0 0 50 100">
+                      <path d="M10,0 C35,0 35,10 35,25 L35,40 C35,50 50,50 50,50 C50,50 35,50 35,60 L35,75 C35,90 35,100 10,100" fill="none" stroke="#FFD700" stroke-width="4" vector-effect="non-scaling-stroke"/>
+                    </svg>
+                    <div class="brace-label">
+                      Working Age
+                      <span class="brace-sub">(15-64)</span>
+                    </div>
+                  </div>
+
+                  <div class="brace-group active" id="trigger-children" onclick="handleTrigger('children')" style="top: 83.32%; height: 16.66%;">
+                    <svg class="brace-svg" preserveAspectRatio="none" viewBox="0 0 50 100">
+                      <path d="M10,0 C35,0 35,10 35,25 L35,40 C35,50 50,50 50,50 C50,50 35,50 35,60 L35,75 C35,90 35,100 10,100" fill="none" stroke="#1E90FF" stroke-width="4" vector-effect="non-scaling-stroke"/>
+                    </svg>
+                    <div class="brace-label">
+                      Children
+                      <span class="brace-sub">(0-14)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="pyramid-x-axis">
+                  <div class="axis-side left-axis">
+                    <span>3</span><span>2</span><span>1</span><span>0</span>
+                  </div>
+                  <div class="axis-center">Age</div>
+                  <div class="axis-side right-axis">
+                    <span>0</span><span>1</span><span>2</span><span>3</span>
+                  </div>
+                </div>
+                <div class="pyramid-x-axis-labels">
+                  <div class="label-side full-width-center">
+                    Population (Millions)
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              id="summary-action-area"
+              class="hidden"
+              style="
+                margin-top: 1rem;
+                margin-bottom: 2rem;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+              "
+            >
+              <button id="btn-continue-summary" class="summary-continue-btn">
+                Continue
+              </button>
+            </div>
+          </div>
+          
+          <div class="hint-icon" id="btn-show-hint" style="display: flex">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="activity-description-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Activity Introduction</h2>
+            <div class="modal-content-scroll intro-text-container">
+              <p>
+                Let us explore how different age groups shape what a country needs most. On this diagram, you will see three population groups: <b>children</b>, <b>working-age adults</b>, and the <b>elderly</b>.
+                Click each group to find out what key services they need, like schools, jobs, and hospitals. Then, see how governments use this information to plan and distribute national resources. Ready? Click to explore!
+              </p>
+            </div>
+            <button class="modal-close-btn" id="btn-close-description">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="game-instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Learner Instructions</h2>
+            <div class="modal-content-scroll">
+              <ol class="instructions-list">
+                <li>Look at the population pyramid displayed on your screen. It is divided into three coloured sections:
+                  <ul>
+                    <li><b>Blue</b> – Children (0–14 years)</li>
+                    <li><b>Yellow</b> – Working-age adults (15–64 years)</li>
+                    <li><b>Red</b> – Elderly (65+ years)</li>
+                  </ul>
+                </li>
+                <li>Click on a coloured section's bracket to explore that age group’s needs. A pop-up will appear with key services and resources needed.</li>
+                <li>Explore all three age groups to discover what services they need and how governments allocate resources.</li>
+              </ol>
+            </div>
+            <button class="modal-close-btn" id="btn-close-instructions">
+              Got It!
+            </button>
+          </div>
+        </div>
+
+        <div id="bar-info-overlay" class="overlay hidden">
+          <div class="modal info-modal" id="dynamic-info-modal">
+            <div class="info-modal-header">
+              <h2 class="modal-title" id="bar-info-year-title">Factor</h2>
+            </div>
+            <div class="info-modal-body modal-content-scroll">
+              <div id="bar-info-text-content"></div>
+            </div>
+            <div class="info-modal-footer">
+              <button class="modal-close-btn" id="btn-close-bar-info">
+                Got It!
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Here is a hint</h2>
+            <div class="modal-content-scroll">
+              <ul id="hint-text" class="instructions-list"></ul>
+            </div>
+            <button class="modal-close-btn" id="btn-close-hint">Got It!</button>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="screen hidden scrollable">
+          <div class="completion-title">Activity Conclusion</div>
+          <div class="completion-image-container">
+            <img
+              id="completion-image"
+              src=""
+              alt="Activity Complete"
+              class="completion-image"
+            />
+          </div>
+          <div class="completion-buttons-footer">
+            <button class="completion-btn" id="btn-restart">
+              Restart Activity
+            </button>
+            <button id="btn-next-activity" class="completion-btn">
+              Next Activity
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="outro-audio" src="audio/outro.mp3" preload="auto"></audio>
+
+    <script>
+      // --- DATA ---
+      const ageGroups = [
+        "0 - 4", "5 - 9", "10 - 14", "15 - 19", "20 - 24", "25 - 29",
+        "30 - 34", "35 - 39", "40 - 44", "45 - 49", "50 - 54", "55 - 59",
+        "60 - 64", "65 - 69", "70 - 74", "75 - 79", "80 - 84", "85+",
+      ];
+
+      // Representative data for the single pre-drawn chart
+      const populationData = [
+        { m: 2.8, f: 2.7 }, { m: 2.7, f: 2.6 }, { m: 2.5, f: 2.4 }, // Children
+        { m: 2.3, f: 2.2 }, { m: 2.1, f: 2.0 }, { m: 1.9, f: 1.8 },
+        { m: 1.7, f: 1.6 }, { m: 1.5, f: 1.4 }, { m: 1.3, f: 1.2 },
+        { m: 1.1, f: 1.0 }, { m: 0.9, f: 0.8 }, { m: 0.7, f: 0.6 },
+        { m: 0.6, f: 0.5 }, // Working Age
+        { m: 0.5, f: 0.4 }, { m: 0.3, f: 0.3 }, { m: 0.2, f: 0.2 },
+        { m: 0.1, f: 0.1 }, { m: 0.05, f: 0.05 }, // Elderly
+      ];
+
+      const groupData = {
+        'children': {
+          title: "Children (0–14 years)",
+          info: "<h3 class='info-subhead'>Needs Displayed:</h3><ul class='info-list'><li>Education (primary and secondary schools)</li><li>Child healthcare and vaccinations</li><li>Nutrition programs</li><li>Child protection services</li></ul><h3 class='info-subhead'>Description:</h3><p class='info-desc'>Children form the youngest part of the population. They depend entirely on adults for survival, education, and healthcare. In countries with a large youth population, governments must invest heavily in schools, clinics, and nutrition programs.</p>"
+        },
+        'working': {
+          title: "Working-Age Adults (15–64 years)",
+          info: "<h3 class='info-subhead'>Needs Displayed:</h3><ul class='info-list'><li>Jobs and business opportunities</li><li>Technical and higher education</li><li>Infrastructure (roads, transport)</li><li>Housing and family support programs</li><li>Tax systems (as contributors)</li></ul><h3 class='info-subhead'>Description:</h3><p class='info-desc'>Working-age adults support the economy. They are the producers, taxpayers, and caregivers. A large working-age population means the government must invest in jobs, training, infrastructure, and housing.</p>"
+        },
+        'elderly': {
+          title: "Elderly (65+ years)",
+          info: "<h3 class='info-subhead'>Needs Displayed:</h3><ul class='info-list'><li>Pensions and social welfare</li><li>Geriatric healthcare</li><li>Elderly-friendly infrastructure (public transport, housing)</li><li>Community care and support</li></ul><h3 class='info-subhead'>Description:</h3><p class='info-desc'>The elderly population often requires special care. In aging societies, governments need to fund pensions, build elderly care centres, and ensure accessible healthcare and housing for older adults.</p>"
+        }
+      };
+
+      const hints = [
+        "Click the blue bracket to learn about the youth and education.",
+        "The yellow bracket represents the workforce and economic needs.",
+        "The red bracket shows the needs of an aging population.",
+      ];
+
+      // --- STATE ---
+      let visitedGroups = new Set();
+      let isActivityComplete = false;
+      const MAX_X_VALUE = 3.5;
+      const TOTAL_STEPS = 3;
+      let activeTriggerId = null;
+
+      // --- DOM ELEMENTS ---
+      const startScreen = document.getElementById("start-screen");
+      const gameScreen = document.getElementById("game-screen");
+      const completionOverlay = document.getElementById("completion-overlay");
+      const progressBar = document.getElementById("progress-bar");
+      const progressText = document.getElementById("progress-text");
+
+      const overlays = {
+        activityDescription: document.getElementById("activity-description-overlay"),
+        gameInstructions: document.getElementById("game-instructions-overlay"),
+        barInfo: document.getElementById("bar-info-overlay"),
+        hint: document.getElementById("hint-overlay"),
+      };
+
+      const sounds = {
+        ding: document.getElementById("ding-sound"),
+        intro: document.getElementById("intro-audio"),
+        outro: document.getElementById("outro-audio"),
+      };
+
+      // --- INITIALIZATION ---
+      document.addEventListener("DOMContentLoaded", () => {
+        renderChart();
+        bindEvents();
+      });
+
+      function bindEvents() {
+        document.getElementById("start-btn").addEventListener("click", () => {
+          startGame();
+          if (typeof sendEvent === "function" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.START_ACTIVITY, { activityName: "Age & Resources Explorer" });
+          }
+        });
+
+        document.getElementById("btn-show-instructions").addEventListener("click", () =>
+            overlays.gameInstructions.classList.remove("hidden")
+        );
+        document.getElementById("btn-close-instructions").addEventListener("click", () =>
+            overlays.gameInstructions.classList.add("hidden")
+        );
+
+        document.getElementById("btn-show-hint").addEventListener("click", showHint);
+        document.getElementById("btn-close-hint").addEventListener("click", () =>
+            overlays.hint.classList.add("hidden")
+        );
+
+        document.getElementById("btn-close-description").addEventListener("click", () => {
+            overlays.activityDescription.classList.add("hidden");
+            if (sounds.intro) sounds.intro.pause();
+        });
+
+        document.getElementById("btn-close-bar-info").addEventListener("click", closeBarInfo);
+
+        document.getElementById("btn-continue-summary").addEventListener("click", triggerCompletion);
+
+        document.getElementById("btn-restart").addEventListener("click", restartGame);
+
+        document.getElementById("btn-next-activity").addEventListener("click", () => {
+            if (typeof sendEvent === "function" && typeof ActivityEvent !== "undefined") {
+              sendEvent(ActivityEvent.NEXT_ACTIVITY, { activityName: "Age & Resources Explorer" });
+            }
+            window.location.href = "../ACTIVITY2/index.html";
+        });
+      }
+
+      function renderChart() {
+        const container = document.getElementById("bars-container");
+        container.innerHTML = "";
+
+        populationData.forEach((data, index) => {
+          const malePercent = (data.m / MAX_X_VALUE) * 100;
+          const femalePercent = (data.f / MAX_X_VALUE) * 100;
+
+          // Determine section color
+          let barColorClass = "children-group";
+          if (index >= 3 && index <= 12) barColorClass = "working-group";
+          if (index >= 13) barColorClass = "elderly-group";
+
+          const rowWrapper = document.createElement("div");
+          rowWrapper.className = `pyramid-row revealed`;
+          rowWrapper.id = `row-${index}`;
+
+          rowWrapper.innerHTML = `
+            <div class="male-side">
+               <div class="bar-fill ${barColorClass}" style="width: ${malePercent}%;"></div>
+            </div>
+            <div class="age-label-wrapper">
+                <div class="age-label">${ageGroups[index]}</div>
+            </div>
+            <div class="female-side">
+               <div class="bar-fill ${barColorClass}" style="width: ${femalePercent}%;"></div>
+            </div>
+          `;
+          container.appendChild(rowWrapper);
+        });
+
+        updateProgress();
+      }
+
+      window.handleTrigger = function (groupId) {
+        if (isActivityComplete) return;
+        activeTriggerId = groupId;
+
+        const data = groupData[groupId];
+        document.getElementById("bar-info-year-title").textContent = data.title;
+        
+        // Dynamic Theming
+        const infoModal = document.getElementById("dynamic-info-modal");
+        infoModal.classList.remove('theme-children', 'theme-working', 'theme-elderly');
+        infoModal.classList.add(`theme-${groupId}`);
+        
+        // Reset scroll position
+        document.querySelector('#bar-info-overlay .info-modal-body').scrollTop = 0;
+        document.getElementById("bar-info-text-content").innerHTML = data.info;
+
+        overlays.barInfo.classList.remove("hidden");
+      };
+
+      function closeBarInfo() {
+        overlays.barInfo.classList.add("hidden");
+        
+        if (activeTriggerId && !visitedGroups.has(activeTriggerId)) {
+          visitedGroups.add(activeTriggerId);
+          document.getElementById(`trigger-${activeTriggerId}`).classList.remove("active");
+          document.getElementById(`trigger-${activeTriggerId}`).classList.add("completed");
+          playSound(sounds.ding);
+          updateProgress();
+        }
+
+        if (visitedGroups.size === TOTAL_STEPS) {
+          setTimeout(() => {
+            triggerCompletion();
+          }, 800);
+        }
+      }
+
+      function triggerCompletion() {
+        document.getElementById("btn-show-hint").style.display = "none";
+        
+        const contentArea = document.getElementById("game-content");
+        if(contentArea) {
+           contentArea.style.overflow = "visible";
+        }
+
+        setTimeout(() => {
+          html2canvas(document.getElementById("game-screen"), {
+            backgroundColor: "#fafafa",
+            useCORS: true,
+            onclone: (clonedDocument) => {
+              clonedDocument
+                .querySelectorAll(".chart-container, .completion-image-container, .completion-image")
+                .forEach((element) => {
+                  element.style.boxShadow = "none";
+                });
+            },
+          }).then((canvas) => {
+            const imgData = canvas.toDataURL("image/png");
+            document.getElementById("completion-image").src = imgData;
+
+            if(contentArea) {
+               contentArea.style.overflow = "auto";
+            }
+
+            gameScreen.classList.add("hidden");
+            completionOverlay.classList.remove("hidden");
+            if (sounds.outro) playSound(sounds.outro);
+          });
+        }, 300);
+      }
+
+      function startGame() {
+        startScreen.classList.add("hidden");
+        gameScreen.classList.remove("hidden");
+        setTimeout(() => {
+          overlays.activityDescription.classList.remove("hidden");
+          if (sounds.intro) playSound(sounds.intro);
+        }, 500);
+      }
+
+      function showHint() {
+        const hintList = document.getElementById("hint-text");
+        hintList.innerHTML = hints.map((hint) => `<li>${hint}</li>`).join("");
+        overlays.hint.classList.remove("hidden");
+      }
+
+      function updateProgress() {
+        const progress = (visitedGroups.size / TOTAL_STEPS) * 100;
+        progressBar.style.width = `${progress}%`;
+        progressText.textContent = `${visitedGroups.size} / ${TOTAL_STEPS}`;
+      }
+
+      function restartGame() {
+        if (sounds.outro) sounds.outro.pause();
+        visitedGroups.clear();
+        isActivityComplete = false;
+        activeTriggerId = null;
+
+        document.getElementById("progress-wrapper").classList.remove("hidden");
+        document.getElementById("btn-show-hint").style.display = "flex";
+        
+        document.querySelectorAll(".brace-group").forEach(el => {
+          el.classList.add("active");
+          el.classList.remove("completed");
+        });
+
+        completionOverlay.classList.add("hidden");
+        gameScreen.classList.remove("hidden");
+        updateProgress();
+      }
+
+      function playSound(audioEl) {
+        if (audioEl) {
+          audioEl.currentTime = 0;
+          audioEl.play().catch((e) => console.error("Audio play failed:", e));
+        }
+      }
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

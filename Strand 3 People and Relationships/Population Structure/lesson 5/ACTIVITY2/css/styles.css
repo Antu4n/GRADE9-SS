@@ -1,0 +1,747 @@
+/* Font Imports */
+@font-face {
+  font-family: "fredoka";
+  src: url("../../assets/Fredoka-VariableFont_wdth\,wght.ttf") format("truetype");
+}
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Root Variables */
+:root {
+  --primary-color: #5d04b2;
+  --secondary-color: #fbb03b;
+  --progress-color: #ffff00;
+  --correct-color: #5cb85c;
+  --incorrect-color: #d9534f;
+  --text-color-dark: #333;
+  --text-color-light: #fff;
+  --card-background-light: #ffffff;
+  --header-font: "fredoka", sans-serif;
+  --body-font: var(--header-font);
+  --border-color: #cfb8e6;
+  --border-radius: 1rem;
+}
+
+/* Proportional Scaling System Setup */
+html {
+  font-size: 1.8vmin;
+}
+
+/* Global Reset & Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url('../../assets/covers.jpg');
+  background-size: cover;
+  background-position: center;
+  font-family: var(--body-font);
+}
+
+#game-wrapper {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  max-width: 1200px;
+  margin: auto;
+  position: relative;
+}
+
+#game-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+}
+
+.screen {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  overflow: hidden;
+  padding: 1rem;
+}
+
+.screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.95);
+}
+
+button {
+  font-family: var(--body-font);
+  font-weight: 500 !important;
+}
+
+/* Start Screen Styles */
+#start-screen {
+  background: var(--primary-color) url("../images/gamebg.jpg") center center/cover no-repeat;
+}
+
+#start-screen h1 {
+  font-size: 3.5rem;
+  color: var(--text-color-light);
+  margin-bottom: 1.2rem;
+  text-align: center;
+  font-family: var(--header-font);
+  text-shadow: 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.5);
+  font-weight: 600;
+}
+
+.start-button {
+  background: #fbb03b;
+  color: #fff;
+  font-weight: 900;
+  font-size: 1.5rem;
+  border: 0.2rem solid #fff;
+  border-radius: 3rem;
+  padding: 0.75rem 2.25rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0.1rem 0 #b88b2a;
+  transition: all 0.2s;
+}
+.start-button:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0.3rem 1.2rem rgba(0, 0, 0, 0.18);
+}
+
+/* Game Screen Styles */
+#game-screen {
+  justify-content: flex-start;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-top-section {
+  width: 100%;
+  background-color: #5d04b2;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  z-index: 10;
+  box-shadow: 0 0.1rem 0.5rem rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+#game-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.progress-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+#progress-container {
+  width: 12.5rem;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 1rem;
+  height: 1.25rem;
+  border: 2px solid #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+#progress-bar {
+  height: 100%;
+  width: 0%;
+  background: #ffff00;
+  border-radius: 0.8rem;
+  transition: width 0.5s ease;
+}
+
+#progress-text {
+  color: var(--text-color-light);
+  font-weight: 700;
+  font-size: 1rem;
+  text-shadow: 0.0625rem 0.0625rem 0.125rem rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+}
+
+@keyframes glow-pulse-white {
+  0%, 100% { box-shadow: 0 0 1rem rgba(255,255,255,0.7), 0 0 2rem rgba(255,255,255,0.5); transform: scale(1); }
+  50% { box-shadow: 0 0 2rem rgba(255,255,255,1), 0 0 3rem rgba(255,255,255,0.7); transform: scale(1.1); }
+}
+
+.instructions-icon {
+  width: 3rem;
+  height: 3rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: 0.15rem solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 15;
+  flex-shrink: 0;
+  animation: glow-pulse-white 2s infinite ease-in-out;
+}
+.instructions-icon svg { width: 60%; height: 60%; fill: white; }
+.instructions-icon:hover { transform: scale(1.1); animation-play-state: paused; }
+
+.lab-game-area {
+  width: 100%;
+  flex-grow: 1;
+  position: relative;
+  background-color: #e5f0f9;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1rem;
+  overflow: hidden; 
+}
+
+/* Grid & Cards Specifics */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 1.5vmin;
+  width: 100%;
+  height: 100%;
+  max-width: 1200px;
+}
+
+.flip-card {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  perspective: 1000px;
+  cursor: pointer;
+  border-radius: var(--border-radius);
+}
+
+.flip-card.glow-pulse {
+  animation: card-glow 1.5s infinite alternate;
+}
+
+@keyframes card-glow {
+  0% { box-shadow: 0 0 0px var(--secondary-color); }
+  100% { box-shadow: 0 0 1.5vmin var(--secondary-color); }
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.flip-card-front, .flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: var(--border-radius);
+  padding: 1.5vmin;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 0.5vmin 1vmin rgba(0,0,0,0.15);
+  border: 0.3vmin solid var(--border-color);
+  background: var(--card-background-light);
+}
+
+.flip-card-front {
+  background: #fdfdfd;
+  color: var(--primary-color);
+}
+
+.card-fact {
+  font-size: clamp(1.1rem, 2.3vmin, 1.6rem);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.flip-instruction {
+  margin-top: 1.5vmin;
+  font-size: clamp(0.9rem, 1.8vmin, 1.2rem);
+  color: var(--secondary-color);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* --- UPDATED BACK OF CARD STYLING (FIT & OVERFLOW OPTIMIZED) --- */
+.flip-card-back {
+  transform: rotateY(180deg);
+  background: #f4f8fc;
+  justify-content: flex-start;
+  padding: 1.5vmin; /* Reduced from 2vmin */
+  overflow-y: auto; /* Safety net: allows scrolling if content is extremely long */
+}
+/* Custom scrollbar for the card back so it stays clean */
+.flip-card-back::-webkit-scrollbar {
+  width: 0.4vmin;
+}
+.flip-card-back::-webkit-scrollbar-thumb {
+  background: rgba(93, 4, 178, 0.3);
+  border-radius: 1vmin;
+}
+
+.card-prompt {
+  font-size: clamp(1rem, 2vmin, 1.3rem); /* Slightly smaller */
+  font-weight: 600;
+  color: var(--text-color-dark);
+  margin-bottom: 1vmin; /* Tighter margin */
+  padding: 1vmin; /* Tighter padding */
+  background: rgba(93, 4, 178, 0.05); 
+  border-left: 0.5vmin solid var(--primary-color);
+  border-radius: 0.5vmin;
+  text-align: left;
+  width: 100%;
+  box-shadow: 0 0.2vmin 0.5vmin rgba(0,0,0,0.03);
+  line-height: 1.3;
+}
+
+.options-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8vmin; /* Reduced gap between buttons */
+  counter-reset: option-counter; 
+}
+
+.option-btn {
+  width: 100%;
+  padding: 0.8vmin 1.2vmin; /* Tighter padding inside buttons */
+  border: 0.2vmin solid #d1d9e6;
+  border-radius: 0.8vmin;
+  background: #ffffff;
+  color: var(--text-color-dark); 
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  font-size: clamp(1rem, 2vmin, 1.3rem); /* Scaled down text */
+  font-weight: 500 !important;
+  display: flex;
+  align-items: center;
+  text-align: left;
+  box-shadow: 0 0.2vmin 0.5vmin rgba(0,0,0,0.04);
+  line-height: 1.2;
+}
+
+/* Shrink the A, B, C letters to save space */
+.option-btn::before {
+  counter-increment: option-counter;
+  content: counter(option-counter, upper-alpha);
+  margin-right: 1vmin; /* Tighter margin */
+  font-weight: 700;
+  color: var(--secondary-color); 
+  font-size: 0.9em; /* Smaller letter */
+  background: rgba(251, 176, 59, 0.15); 
+  width: 2.8vmin; /* Scaled down circle */
+  height: 2.8vmin; /* Scaled down circle */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.option-btn:hover {
+  background: #fdfaf6;
+  border-color: var(--secondary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 0.5vmin 1vmin rgba(251, 176, 59, 0.15);
+}
+
+.option-btn:hover::before {
+  background: var(--secondary-color);
+  color: #fff;
+}
+
+.option-btn:disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.option-btn.correct-ans {
+  background: var(--correct-color);
+  color: white;
+  border-color: var(--correct-color);
+  opacity: 1;
+  box-shadow: 0 0.5vmin 1.5vmin rgba(92, 184, 92, 0.3);
+}
+
+.option-btn.correct-ans::before {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.flip-card.completed .flip-card-back {
+  border-color: var(--correct-color);
+  box-shadow: 0 0 1.5vmin rgba(92, 184, 92, 0.4);
+}
+.hidden { display: none !important; }
+
+/* MODALS */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(0.5rem);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+
+.modal {
+  background: var(--card-background-light, #fff);
+  padding: 2rem;
+  border-radius: 1rem;
+  text-align: center;
+  width: 90%;
+  max-width: 50rem;
+  position: relative;
+  box-shadow: 0 1rem 3rem rgba(0,0,0,0.3);
+}
+
+.modal .modal-title {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: .5rem;
+  color: var(--primary-color);
+}
+
+/* Feedback Modal Specific Formatting */
+#feedback-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.feedback-icon {
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+}
+
+.modal p {
+  font-size: 1.5rem;
+  line-height: 1.6;
+  color: var(--text-color-dark, #333);
+}
+
+.intro-content {
+  text-align: left;
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  border-left: 0.4rem solid var(--primary-color);
+}
+
+.intro-content p { margin-bottom: 1rem; }
+.intro-content p:last-child { margin-bottom: 0; }
+
+#activity-description-overlay .modal,
+#game-instructions-overlay .modal { border-top: 0.5rem solid var(--primary-color); }
+
+/* Dynamic Feedback Modal Modifiers */
+.modal-correct {
+  border-top: 0.5rem solid var(--correct-color) !important;
+  width:50%;
+}
+.modal-correct .modal-title {
+  color: var(--correct-color) !important;
+}
+.modal-correct .modal-close-btn {
+  background-color: var(--correct-color) !important;
+}
+
+.modal-incorrect {
+  border-top: 0.5rem solid var(--incorrect-color) !important;
+  width:50%;
+}
+.modal-incorrect .modal-title {
+  color: var(--incorrect-color) !important;
+}
+.modal-incorrect .modal-close-btn {
+  background-color: var(--incorrect-color) !important;
+}
+
+#game-instructions-overlay .modal ul {
+  padding: 1.5rem 1.5rem 1.5rem 3rem;
+  border-radius: 0.75rem;
+  text-align: left;
+}
+#game-instructions-overlay .modal li {
+  list-style-type: decimal;
+  margin-bottom: 0.8rem;
+  font-size: 1.4rem;
+  line-height: 1.6;
+}
+
+.modal-close-btn {
+  width: 100%;
+  padding: 1.2rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  color: #fff;
+  background-color: var(--primary-color);
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 0.5rem;
+}
+
+.modal-close-btn:hover { transform: scale(1.02); }
+
+/* ====== COMPLETION SCREEN ====== */
+#completion-overlay {
+  background-image: url("../images/gamebg.jpg");
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+.completion-title-banner {
+  font-size: clamp(2rem, 7vmin, 4rem);
+  text-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
+  text-align: center;
+  font-family: var(--header-font);
+  font-weight: 600;
+  margin: 0;
+  padding: 0;
+}
+#completion-overlay .modal {
+  background: transparent;
+  box-shadow: none;
+  width: auto;
+  max-width: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  overflow: visible;
+  flex-direction: column;
+}
+#completion-image {
+  width: clamp(400px, 70%, 800px);
+  max-width: 85%;
+  height: auto;
+  border: 3px solid #fbb03b;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  margin-top: 0.5rem;
+  background-color: #fff;
+  object-fit: contain;
+}
+.completion-buttons {
+  position: static;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 2rem 2rem 2rem;
+  box-sizing: border-box;
+  align-items: flex-end;
+  margin-top: 0;
+}
+.completion-btn {
+  background: #fbb03b;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border: 0.1875rem solid #fff;
+  border-radius: 3rem;
+  padding: 0.75rem 2.25rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: all 0.2s;
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+}
+.completion-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.2);
+}
+
+/* ===== KEY TAKEAWAYS OVERLAY ===== */
+.takeaways-overlay {
+  flex-direction: column;
+  background-image: url("../images/gamebg.jpg");
+  background-size: cover;
+  background-position: center;
+}
+.takeaways-container-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-height: 90vh;
+}
+.takeaways-main-title {
+  font-size: clamp(1.8rem, 5vmin, 2.5rem);
+  color: white;
+  font-family: var(--header-font);
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 1rem;
+}
+.takeaways-card {
+  background: white;
+  border-radius: var(--border-radius, 1rem);
+  padding: 1.5rem;
+  width: 95%;
+  max-width: 1000px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+}
+.takeaways-card h3 {
+  font-family: var(--header-font);
+  font-size: clamp(1.2rem, 4vmin, 1.8rem);
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+.takeaways-card table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: clamp(1rem, 2.2vmin, 1.1rem);
+}
+.takeaways-card th,
+.takeaways-card td {
+  text-align: left;
+  padding: clamp(0.5rem, 1.5vmin, 0.8rem);
+  border-bottom: 1px solid #ddd;
+  line-height: 1.4;
+}
+.takeaways-card thead tr {
+  background-color: var(--primary-color);
+  color: white;
+}
+.takeaways-card th {
+  font-weight: 700;
+}
+.takeaways-card tbody tr:last-child td {
+  border-bottom: none;
+}
+.takeaways-card td:first-child {
+  font-weight: 700;
+  color: var(--text-color-dark);
+}
+.end-lesson-btn {
+  font-family: var(--header-font);
+  background: #fbb03b;
+  color: #fff;
+  font-weight: 900;
+  font-size: 1.3rem;
+  border: 3px solid #fff;
+  border-radius: 3rem;
+  padding: 0.75rem 2.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
+  text-shadow: 0 0.2rem 0 #b88b2a;
+  position: absolute;
+  bottom: 0.3rem;
+}
+.end-lesson-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* MEDIA QUERIES */
+@media (max-width: 1200px) { 
+  html { font-size: 2.2vmin; } 
+}
+
+@media (max-width: 991px) {
+  html { font-size: 3.2vmin; }
+  #game-wrapper {
+    width: 100vw;
+    height: 100vh;
+    min-width: 100vw;
+    min-height: 100vh;
+    border-radius: 0;
+    max-width: none;
+    aspect-ratio: unset;
+  }
+  #completion-image { width: 58%; }
+  .completion-buttons { padding: 0.5rem; }
+  .completion-title-banner { font-size: 2.5rem; }
+  .takeaways-card { max-width: 600px; }
+}
+
+@media (max-width: 768px) {
+  html { font-size: 3.5vmin; }
+  
+  .takeaways-card { max-width: 1003px; }
+  
+  .modal {
+    width: 95%;
+    padding: 1.5rem;
+  }
+  .modal .modal-title { font-size: 2rem; }
+  .modal p { font-size: 1.2rem; }
+  
+  .completion-title-banner { font-size: 1.8rem; }
+  #completion-image { max-width: 61%; }
+  
+  .takeaways-card th, .takeaways-card td {
+    text-align: left;
+    padding: clamp(0.2rem, 1.1vmin, 0.8rem);
+    border-bottom: 1px solid #ddd;
+    line-height: 1.4;
+  }
+}
+
+@media (max-width: 991px) and (min-height: 500px) {
+    #completion-image {
+        width: 70%;
+    }  
+    .takeaways-card { padding: 1rem; }
+    .option-btn{
+        font-size: clamp(0.9rem, 2vmin, 1.1rem);
+    }
+}

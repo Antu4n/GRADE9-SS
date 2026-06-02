@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Emotion Wheel – Clickable Diagram</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>The Emotion Wheel</h1>
+          <button class="start-button">Start Activity</button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">The Emotion Wheel</h1>
+            <div class="progress-area">
+              <div id="progress-container"><div id="progress-bar"></div></div>
+              <div id="progress-text">0 / 6</div>
+            </div>
+            <div
+              class="instructions-icon"
+              id="instructions-icon"
+              aria-label="Instructions"
+            >
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                />
+              </svg>
+            </div>
+          </div>
+          <div class="game-content">
+            <main id="canvas-container">
+              <canvas
+                id="activityCanvas"
+                role="img"
+                aria-label="An interactive wheel with six sections related to emotions. Click a section to learn more."
+              ></canvas>
+            </main>
+            <div class="hint-icon" id="hint-icon" aria-label="Hints">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+                ></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <h2 class="modal-title-primary">Activity Introduction</h2>
+            <p>
+              Let us take a tour through the world of feelings! Emotions can rise quickly like a storm, but when we learn to name them and understand them, we can guide them in a peaceful direction. In this activity, you will explore six important emotions that show up during conflict. Click on each one to uncover what it means, when it appears, and how to stay in control. Let us power up your emotional wisdom!
+            </p>
+            <button class="modal-btn" id="intro-continue-btn">Continue</button>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <h2 class="modal-title-large">Learner Instructions</h2>
+            <ul>
+              <li>Tap each emotion to unlock a calm down strategy and build your Peace Power Wheel!</li>
+            </ul>
+            <button class="modal-btn" id="close-instructions-btn">
+              Got it!
+            </button>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <h2 class="hint-title">Here is a hint</h2>
+            <ul class="hint-list">
+              <li>Does anger clear your thinking or confuse it?</li>
+              <li>Can joy spread to others around you?</li>
+              <li>What happens if sadness is hidden instead of expressed?</li>
+              <li>How can calmness help in solving a problem?</li>
+            </ul>
+            <button class="modal-btn" id="close-hint-btn">Got it</button>
+          </div>
+        </div>
+
+        <div id="feedback-modal-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <h2 id="feedback-title"></h2>
+            <p id="feedback-text"></p>
+            <p class="example" id="feedback-example"></p>
+            <button class="modal-btn" id="feedback-continue-btn">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="screen hidden">
+          <h2 class="completion-header">Activity Conclusion</h2>
+          <div class="modal-content completion-modal-content">
+            <img
+              src="images/complete.jpg"
+              alt="Illustration of a vibrant celebration"
+              class="completion-image"
+              onerror="
+                this.src =
+                  'https.google.com/s/v/img/icons/material/system/2x/error_red_64dp.png';
+                this.onerror = null;
+              "
+            />
+          </div>
+          <div class="completion-buttons-footer">
+            
+            <button class="completion-btn btn-restart">Restart Activity</button>
+            <button class="completion-btn btn-next">Next Activity</button>
+          </div>
+        </div>
+
+        <div
+          id="aria-live-announcer"
+          class="visually-hidden"
+          aria-live="polite"
+        ></div>
+
+        <audio id="intro-sound" src="audio/intro.mp3" preload="auto"></audio>
+        <audio id="outro-sound" src="audio/outro.mp3" preload="auto"></audio>
+        <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // --- Game Data ---
+        const ACTIVITY_DATA = [
+          {
+            segment: "😡 Anger",
+            explanation: "Anger shows up when something feels unfair or hurtful. It is normal but reacting harshly can make things worse.",
+            tip: "Take 3 deep breaths. Step back before you speak or act.",
+            color: "#e74c3c",
+          },
+          {
+            segment: "😢 Sadness",
+            explanation: "Sadness happens when we feel hurt, left out, or disappointed. It is okay to feel this way.",
+            tip: "Talk to someone you trust or write down how you feel.",
+            color: "#3498db",
+          },
+          {
+            segment: "😨 Fear",
+            explanation: "Fear shows up when you feel unsafe or unsure about something. It makes you want to hide or run away.",
+            tip: "Pause. Breathe slowly, or take a quiet walk to calm your thoughts.",
+            color: "#9b59b6",
+          },
+          {
+            segment: "😖 Frustration",
+            explanation: "Frustration builds when things are not working out the way you expected. It can make you want to give up or shout.",
+            tip: "Count to 10. Then try again with a fresh plan.",
+            color: "#e67e22",
+          },
+          {
+            segment: "😊 Calm",
+            explanation: "Feeling calm helps your mind stay clear and your heart stay kind. It is the best place to make good choices.",
+            tip: "Slow your breathing, smile gently and feel the peace.",
+            color: "#2ecc71",
+          },
+          {
+            segment: "😌 Relief",
+            explanation: "Relief comes when a difficult moment passes or something good happens after worry.",
+            tip: "Pause and appreciate the moment. Say thank you to yourself or others.",
+            color: "#f1c40f",
+          },
+        ];
+
+        // --- DOM Elements ---
+        const startScreen = document.getElementById("start-screen"),
+          gameScreen = document.getElementById("game-screen");
+        const startBtn = document.querySelector(".start-button");
+        const canvas = document.getElementById("activityCanvas"),
+          ctx = canvas.getContext("2d");
+        const canvasContainer = document.getElementById("canvas-container");
+        const announcer = document.getElementById("aria-live-announcer");
+        const progressBar = document.getElementById("progress-bar"),
+          progressText = document.getElementById("progress-text");
+        const activityIntroOverlay = document.getElementById(
+            "activity-intro-overlay",
+          ),
+          introContinueBtn = document.getElementById("intro-continue-btn");
+        const instructionsIcon = document.getElementById("instructions-icon"),
+          instructionsOverlay = document.getElementById("instructions-overlay"),
+          closeInstructionsBtn = document.getElementById(
+            "close-instructions-btn",
+          );
+        const hintIcon = document.getElementById("hint-icon"),
+          hintOverlay = document.getElementById("hint-overlay"),
+          closeHintBtn = document.getElementById("close-hint-btn");
+        const feedbackModalOverlay = document.getElementById(
+            "feedback-modal-overlay",
+          ),
+          feedbackTitle = document.getElementById("feedback-title"),
+          feedbackText = document.getElementById("feedback-text"),
+          feedbackExample = document.getElementById("feedback-example"),
+          feedbackContinueBtn = document.getElementById(
+            "feedback-continue-btn",
+          );
+        const completionOverlay = document.getElementById("completion-overlay");
+        const introSound = document.getElementById("intro-sound"),
+          outroSound = document.getElementById("outro-sound"),
+          dingSound = document.getElementById("ding-sound");
+
+        // Canvas & Sizing
+        let W, H, radius, centerX, centerY;
+        const dpr = window.devicePixelRatio || 1;
+
+        // Game State
+        let clickedSegments = [];
+
+        // --- Sound Functions ---
+        function playSound(sound) {
+          if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch((e) => {});
+          }
+        }
+        function stopSound(sound) {
+          if (sound) {
+            sound.pause();
+            sound.currentTime = 0;
+          }
+        }
+
+        // --- Canvas Drawing Helpers ---
+        function wrapText(context, text, x, y, maxWidth, lineHeight) {
+          let words = text.split(" ");
+          let line = "";
+          let lines = [];
+
+          for (let n = 0; n < words.length; n++) {
+            let testLine = line + words[n] + " ";
+            let metrics = context.measureText(testLine);
+            let testWidth = metrics.width;
+            if (testWidth > maxWidth && n > 0) {
+              lines.push(line);
+              line = words[n] + " ";
+            } else {
+              line = testLine;
+            }
+          }
+          lines.push(line);
+
+          let startY = y - ((lines.length - 1) * lineHeight) / 2;
+
+          for (let k = 0; k < lines.length; k++) {
+            context.fillText(lines[k].trim(), x, startY + k * lineHeight);
+          }
+          return lines.length;
+        }
+
+        // --- Main Wheel Drawing Function ---
+        const totalSegments = ACTIVITY_DATA.length;
+        const anglePerSegment = (2 * Math.PI) / totalSegments;
+
+        function drawWheel() {
+          if (!ctx || !W || !H) return;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          ctx.save(); // Save 1: Base State
+          ctx.scale(dpr, dpr);
+
+          // --- Draw Segments ---
+          ctx.save(); // Save 2: Scaled State
+          ctx.translate(centerX, centerY);
+          ACTIVITY_DATA.forEach((segment, i) => {
+            const startAngle = i * anglePerSegment - Math.PI / 2;
+            const endAngle = startAngle + anglePerSegment;
+            const isClicked = clickedSegments.includes(i);
+            const midAngle = startAngle + anglePerSegment / 2;
+
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.arc(0, 0, radius, startAngle, endAngle);
+            ctx.closePath();
+            ctx.fillStyle = segment.color;
+            ctx.fill();
+
+            if (isClicked) {
+              ctx.fillStyle = "rgba(128, 128, 128, 0.7)";
+              ctx.fill();
+            }
+
+            ctx.save();
+            ctx.translate(
+              Math.cos(midAngle) * radius * 0.66,
+              Math.sin(midAngle) * radius * 0.66,
+            );
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "#fff";
+            ctx.font = `bold ${radius * 0.11}px ${getComputedStyle(document.body).fontFamily}`;
+            ctx.shadowColor = "rgba(0,0,0,0.3)";
+            ctx.shadowBlur = 3;
+            const textMaxWidth = radius * 0.48;
+            wrapText(
+              ctx,
+              segment.segment,
+              0,
+              0,
+              textMaxWidth,
+              radius * 0.14,
+            );
+            ctx.restore();
+
+            if (isClicked) {
+              ctx.save();
+              const checkX = Math.cos(midAngle) * radius * 0.46;
+              const checkY = Math.sin(midAngle) * radius * 0.46;
+              ctx.translate(checkX, checkY);
+              ctx.globalAlpha = 0.7;
+              ctx.strokeStyle = "#2ecc71";
+              ctx.lineWidth = radius * 0.04;
+              const checkSize = radius * 0.075;
+              ctx.beginPath();
+              ctx.moveTo(-checkSize, 0);
+              ctx.lineTo(-checkSize / 3, checkSize / 2);
+              ctx.lineTo(checkSize, -checkSize);
+              ctx.stroke();
+              ctx.restore();
+            }
+            ctx.strokeStyle = "#fff";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          });
+          ctx.restore(); // Restore 2: Returns to pure scaled coordinate space (0,0)
+
+          // --- Draw Center Hub ---
+          ctx.save(); // Save 3: Scaled State
+          ctx.translate(centerX, centerY);
+          ctx.beginPath();
+          ctx.arc(0, 0, radius * 0.35, 0, 2 * Math.PI);
+          ctx.fillStyle = "#fff";
+          ctx.fill();
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillStyle = "#333";
+          ctx.font = `bold ${radius * 0.16}px ${getComputedStyle(document.body).fontFamily}`; // Increased font size
+          ctx.fillText("Emotions", 0, 0);
+          ctx.restore(); // Restore 3: Returns to pure scaled coordinate space
+
+          // --- Draw Tooltips ---
+          if (clickedSegments.length > 0) {
+            const placedTooltipBounds = [];
+            clickedSegments.forEach((segmentIndex) => {
+              drawTooltipOnCanvas(segmentIndex, placedTooltipBounds);
+            });
+          }
+
+          ctx.restore(); // Restore 1: Returns back to base unscaled state
+        }
+
+        function boxesOverlap(a, b) {
+          return !(
+            a.right < b.left ||
+            a.left > b.right ||
+            a.bottom < b.top ||
+            a.top > b.bottom
+          );
+        }
+
+        function clampTooltipToCanvas(bounds, tooltipWidth, tooltipHeight) {
+          const edgePadding = 8;
+
+          bounds.x = Math.max(
+            tooltipWidth / 2 + edgePadding,
+            Math.min(W - tooltipWidth / 2 - edgePadding, bounds.x),
+          );
+          bounds.y = Math.max(
+            tooltipHeight / 2 + edgePadding,
+            Math.min(H - tooltipHeight / 2 - edgePadding, bounds.y),
+          );
+
+          bounds.left = bounds.x - tooltipWidth / 2;
+          bounds.top = bounds.y - tooltipHeight / 2;
+          bounds.right = bounds.left + tooltipWidth;
+          bounds.bottom = bounds.top + tooltipHeight;
+        }
+
+        function separateTooltipFromOthers(
+          bounds,
+          tooltipWidth,
+          tooltipHeight,
+          placedTooltipBounds,
+        ) {
+          const separationGap = 16;
+
+          for (let attempts = 0; attempts < 12; attempts++) {
+            const overlappingTooltip = placedTooltipBounds.find((placedBounds) =>
+              boxesOverlap(bounds, placedBounds),
+            );
+
+            if (!overlappingTooltip) {
+              break;
+            }
+
+            const shiftX = bounds.x >= overlappingTooltip.x ? separationGap : -separationGap;
+            const shiftY = bounds.y >= overlappingTooltip.y ? separationGap : -separationGap;
+
+            bounds.x += shiftX;
+            bounds.y += shiftY;
+            clampTooltipToCanvas(bounds, tooltipWidth, tooltipHeight);
+          }
+        }
+
+        function drawTooltipOnCanvas(index, placedTooltipBounds = []) {
+          const segment = ACTIVITY_DATA[index];
+          const midAngle =
+            index * anglePerSegment + anglePerSegment / 2 - Math.PI / 2;
+
+          const tooltipRadius = radius * 2.0;
+          const tooltipAngle = midAngle;
+          let tooltipX = centerX + tooltipRadius * Math.cos(tooltipAngle);
+          let tooltipY = centerY + tooltipRadius * Math.sin(tooltipAngle);
+
+          const tooltipWidth = W * 0.35;
+          const tooltipPadding = 12;
+
+          let fontSize;
+          if (W <= 1024) {
+            fontSize = H * 0.045;
+          } else {
+            fontSize = H * 0.03;
+          }
+          const lineHeight = fontSize * 1.3;
+
+          ctx.save();
+          ctx.font = `normal ${fontSize}px ${getComputedStyle(document.body).fontFamily}`;
+
+          const tooltipTextCombined = `${segment.explanation}`;
+          const words = tooltipTextCombined.split(" ");
+          let line = "";
+          let lineCount = 1;
+          for (let n = 0; n < words.length; n++) {
+            let testLine = line + words[n] + " ";
+            if (
+              ctx.measureText(testLine).width >
+              tooltipWidth - tooltipPadding * 2
+            ) {
+              lineCount++;
+              line = words[n] + " ";
+            } else {
+              line = testLine;
+            }
+          }
+          const tooltipHeight =
+            lineCount * lineHeight +
+            (lineCount > 1 ? lineHeight * 0.5 : 0) +
+            tooltipPadding * 2;
+
+          const tooltipBounds = {
+            x: tooltipX,
+            y: tooltipY,
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+          };
+
+          clampTooltipToCanvas(tooltipBounds, tooltipWidth, tooltipHeight);
+          separateTooltipFromOthers(
+            tooltipBounds,
+            tooltipWidth,
+            tooltipHeight,
+            placedTooltipBounds,
+          );
+
+          placedTooltipBounds.push({ ...tooltipBounds });
+
+          ctx.fillStyle = "rgba(0, 0, 0, 0.85)";
+          ctx.beginPath();
+          ctx.roundRect(
+            tooltipBounds.left,
+            tooltipBounds.top,
+            tooltipWidth,
+            tooltipHeight,
+            8,
+          );
+          ctx.fill();
+
+          ctx.fillStyle = "#fff";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          wrapText(
+            ctx,
+            tooltipTextCombined,
+            tooltipBounds.x,
+            tooltipBounds.y,
+            tooltipWidth - tooltipPadding,
+            lineHeight,
+          );
+          ctx.restore();
+        }
+
+        // --- Clicking Logic ---
+        function handleWheelClick(event) {
+          const rect = canvas.getBoundingClientRect();
+          const scaleX = canvas.width / rect.width;
+          const scaleY = canvas.height / rect.height;
+          const x = ((event.clientX - rect.left) * scaleX) / dpr;
+          const y = ((event.clientY - rect.top) * scaleY) / dpr;
+
+          const dx = x - centerX;
+          const dy = y - centerY;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance > radius || distance < radius * 0.35) return;
+
+          let angle = Math.atan2(dy, dx) + Math.PI / 2;
+          if (angle < 0) angle += 2 * Math.PI;
+
+          const segmentIndex = Math.floor(angle / anglePerSegment);
+
+          if (segmentIndex < 0 || segmentIndex >= totalSegments) return;
+
+          // If not already clicked, process logic
+          if (!clickedSegments.includes(segmentIndex)) {
+            clickedSegments.push(segmentIndex);
+            updateProgress();
+
+            drawWheel();
+
+            const segment = ACTIVITY_DATA[segmentIndex];
+            announcer.textContent = `You clicked on ${segment.segment}.`;
+            playSound(dingSound);
+
+            setTimeout(() => {
+              showFeedbackModal(
+                segment.segment,
+                segment.explanation,
+                segment.tip,
+                segment.color,
+              );
+            }, 300);
+          } else {
+            // Re-order to bring clicked segment tooltip to the front
+            clickedSegments = clickedSegments.filter(
+              (idx) => idx !== segmentIndex,
+            );
+            clickedSegments.push(segmentIndex);
+            drawWheel();
+          }
+        }
+
+        // --- UI, Feedback & State Checks ---
+        function updateProgress() {
+          const total = ACTIVITY_DATA.length;
+          progressBar.style.width = `${(clickedSegments.length / total) * 100}%`;
+          progressText.textContent = `${clickedSegments.length} / ${total}`;
+        }
+
+        function showFeedbackModal(
+          title,
+          explanation,
+          tip,
+          color = "#333",
+        ) {
+          const modalContent =
+            feedbackModalOverlay.querySelector(".modal-content");
+          feedbackTitle.textContent = title;
+
+          feedbackText.innerHTML = `<strong>Explanation:</strong> ${explanation}`;
+          feedbackExample.textContent = `💡 Peace Tip: ${tip}`;
+
+          modalContent.style.borderColor = color;
+          feedbackTitle.style.color = color;
+          feedbackContinueBtn.style.backgroundColor = color;
+          feedbackContinueBtn.style.borderColor = color;
+          feedbackContinueBtn.style.color = "#fff";
+          feedbackModalOverlay.classList.remove("hidden");
+
+          feedbackContinueBtn.onclick = () => {
+            feedbackModalOverlay.classList.add("hidden");
+            drawWheel();
+            if (clickedSegments.length === ACTIVITY_DATA.length) {
+              setTimeout(showCompletionScreen, 500);
+            }
+          };
+        }
+
+        function showCompletionScreen() {
+          gameScreen.classList.add("hidden");
+          completionOverlay.classList.remove("hidden");
+          playSound(outroSound);
+        }
+
+        function resize() {
+          const r = canvasContainer.getBoundingClientRect();
+          if (r.width === 0 || r.height === 0) return;
+
+          canvas.width = Math.floor(r.width * dpr);
+          canvas.height = Math.floor(r.height * dpr);
+          canvas.style.width = `${r.width}px`;
+          canvas.style.height = `${r.height}px`;
+
+          W = r.width;
+          H = r.height;
+          // Make radius proportionately smaller on smaller screens to ensure everything remains visible without displacement
+          radius = Math.min(W, H) * (W <= 991 ? 0.39 : 0.35);
+          centerX = W / 2;
+          centerY = H / 2;
+
+          drawWheel();
+        }
+
+        // --- Initialization ---
+        function init() {
+          startBtn.addEventListener("click", () => {
+            startScreen.classList.add("hidden");
+            gameScreen.classList.remove("hidden");
+            activityIntroOverlay.classList.remove("hidden");
+            resize();
+            playSound(introSound);
+            sendEvent(ActivityEvent.START_ACTIVITY, {
+              activityName: "Emotion Wheel",
+            });
+          });
+          introContinueBtn.addEventListener("click", () => {
+            activityIntroOverlay.classList.add("hidden");
+            stopSound(introSound);
+            drawWheel();
+          });
+          instructionsIcon.addEventListener("click", () => {
+            instructionsOverlay.classList.remove("hidden");
+          });
+          closeInstructionsBtn.addEventListener("click", () => {
+            instructionsOverlay.classList.add("hidden");
+          });
+
+          hintIcon.addEventListener("click", () => {
+            hintOverlay.classList.remove("hidden");
+          });
+          closeHintBtn.addEventListener("click", () => {
+            hintOverlay.classList.add("hidden");
+          });
+
+          canvas.addEventListener("click", handleWheelClick);
+
+          completionOverlay
+            .querySelector(".btn-restart")
+            .addEventListener("click", () => {
+              stopSound(outroSound);
+              completionOverlay.classList.add("hidden");
+              gameScreen.classList.remove("hidden");
+              startScreen.classList.add("hidden");
+              clickedSegments = [];
+              updateProgress();
+              drawWheel();
+            });
+
+          completionOverlay
+            .querySelector(".btn-next")
+            .addEventListener("click", () => {
+              window.location.href = "../ACTIVITY2/index.html";
+              sendEvent(ActivityEvent.END_ACTIVITY, {
+                activityName: "Emotion Wheel",
+              });
+            });
+
+          if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function (
+              x,
+              y,
+              w,
+              h,
+              r,
+            ) {
+              if (w < 2 * r) r = w / 2;
+              if (h < 2 * r) r = h / 2;
+              this.beginPath();
+              this.moveTo(x + r, y);
+              this.arcTo(x + w, y, x + w, y + h, r);
+              this.arcTo(x + w, y + h, x, y + h, r);
+              this.arcTo(x, y + h, x, y, r);
+              this.arcTo(x, y, x + w, y, r);
+              this.closePath();
+              return this;
+            };
+          }
+
+          window.addEventListener("resize", resize);
+          setTimeout(resize, 100);
+        }
+
+        init();
+      });
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity 1: Types of Peace Explorer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1 id="start-title">Types of Peace Explorer</h1>
+          <button class="start-button" onclick="showActivityIntro()">
+            Start Activity
+          </button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Types of Peace Explorer</h1>
+            <div class="top-right-controls">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <span id="progress-text">0 / 6</span>
+              <div class="instructions-icon" onclick="showInstructions()">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="hint-icon" onclick="openHintModal()">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              />
+            </svg>
+          </div>
+
+          <div id="game-content-area">
+            <div class="carousel-container">
+              <button class="carousel-nav-btn" id="carousel-prev">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                </svg>
+              </button>
+              <div id="image-carousel-wrapper">
+                <div id="image-carousel"></div>
+              </div>
+              <button class="carousel-nav-btn" id="carousel-next">
+                <svg viewBox="0 0 24 24">
+                  <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <h2 class="completion-title-banner">Activity Conclusion</h2>
+          <img
+            id="completion-image"
+            src="images/complete.jpg"
+            alt="Key Takeaways Summary"
+            onerror="
+              this.src =
+                'https://via.placeholder.com/600x400?text=Conclusion+Image'
+            "
+          />
+          <div class="completion-buttons">
+            <button class="completion-btn btn-restart" onclick="restartGame()">
+              Restart Activity
+            </button>
+            <button class="completion-btn btn-previous" onclick="nextActivity()">
+              Next Activity
+            </button>
+          </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Activity Introduction</h2>
+            <p id="intro-text"></p>
+            <button onclick="closeModal('activity-intro-overlay')">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Learner Instructions</h2>
+            <p id="instructions-text"></p>
+            <button onclick="closeModal('instructions-overlay')">
+              Got it!
+            </button>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal hint-modal">
+            <h2>Here is a hint</h2>
+            <div class="hint-content">
+              <ul class="hints-list">
+                <li>Inner peace is about <b>you</b>.</li>
+                <li>Interpersonal peace is about <b>us</b>.</li>
+                <li>Look at the scenes: explore both sides to complete your mission.</li>
+              </ul>
+            </div>
+            <button
+              class="hint-btn"
+              onclick="closeModal('hint-overlay')"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+
+        <div id="image-details-overlay" class="overlay hidden">
+          <div class="modal">
+            <div id="details-content-new">
+              <div id="details-image-panel">
+                <div id="details-image-header">
+                  <span class="details-eyebrow">Scene Analysis</span>
+                  <h2 id="details-image-title">Location View</h2>
+                </div>
+                <img id="details-image" src="" alt="Location View" />
+              </div>
+              <div id="details-questions">
+                <h2 id="details-question-text">Which side of the scene would you like to explore?</h2>
+                <div id="details-options-container"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="feedback-correct-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header correct">
+              <h2>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <span id="trait-title-display">Discovered!</span>
+              </h2>
+            </div>
+            <p id="correct-feedback-text"></p>
+            <button
+              class="feedback-btn correct"
+              onclick="handleFeedbackContinue(this)"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="feedback-incorrect-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header incorrect">
+              <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="15" y1="9" x2="9" y2="15"></line>
+              <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+                Try Again
+              </h2>
+            </div>
+            <p id="incorrect-feedback-text">That is not correct.</p>
+            <button
+              class="feedback-btn incorrect"
+              onclick="handleFeedbackTryAgain(this)"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const activityData = {
+        title: "Types of Peace Explorer",
+        introduction:
+          "Ready to explore the world of peace like a real-life detective? In this activity, you will discover the two powerful types of peace that shape how we feel inside and how we get along with others. Just click the split-screen scenes to unlock the secrets of inner calm and positive relationships. Let us begin your peace mission!",
+        instructions:
+          "Look at the carousel showing split-screen scenes representing two types of peace. Click on each image to investigate, then choose to explore either the left or right side of the scene. Read the pop-ups and reflect on your own experiences.",
+        images: [
+            {
+                id: "1",
+                imageSrc: "images/split1.jpg",
+                scene: "Meditation & Friends",
+                leftSide: {
+                    id: "1a",
+                    buttonText: "Left Side: Inner Calm",
+                    title: "Intrapersonal Peace",
+                    explanation: "<b>Intrapersonal Peace</b><br>This is Intrapersonal Peace. It is the peace that lives inside you. It helps you stay calm, accept yourself, and feel good, even during hard times.<br><br><i>Mini Reflection: Have you ever taken a deep breath to calm down? That is intrapersonal peace in action!</i>"
+                },
+                rightSide: {
+                    id: "1b",
+                    buttonText: "Right Side: Getting Along",
+                    title: "Interpersonal Peace",
+                    explanation: "<b>Interpersonal Peace</b><br>This is Interpersonal Peace. It is the peace between people, when we listen, share, help, and solve problems together.<br><br><i>Mini Reflection: When was the last time you made someone smile? That is interpersonal peace at work!</i>"
+                }
+            },
+            {
+                id: "2",
+                imageSrc: "images/split2.jpg",
+                scene: "Mindful Writing & Teamwork",
+                leftSide: {
+                    id: "2a",
+                    buttonText: "Left Side: Reflective Journaling",
+                    title: "Intrapersonal Peace",
+                    explanation: "<b>Intrapersonal Peace</b><br>Writing your thoughts and feelings in a diary can help you understand yourself and feel calmer.<br><br><i>Mini Reflection: Have you ever felt better after writing down your thoughts? That is intrapersonal peace helping you process emotions.</i>"
+                },
+                rightSide: {
+                    id: "2b",
+                    buttonText: "Right Side: Cooperation",
+                    title: "Interpersonal Peace",
+                    explanation: "<b>Interpersonal Peace</b><br>Teamwork builds trust and understanding, helping people achieve more together.<br><br><i>Mini Reflection: Think about a time you worked well with others, how did it make the group stronger?</i>"
+                }
+            },
+            {
+                id: "3",
+                imageSrc: "images/split3.jpg",
+                scene: "Nature Connection & Resolving Disagreements",
+                leftSide: {
+                    id: "3a",
+                    buttonText: "Left Side: Relaxation in Nature",
+                    title: "Intrapersonal Peace",
+                    explanation: "<b>Intrapersonal Peace</b><br>Spending time in nature can refresh your mind, reduce stress, and help you feel peaceful inside.<br><br><i>Mini Reflection: When did you last enjoy a quiet moment in nature? How did it make you feel?</i>"
+                },
+                rightSide: {
+                    id: "3b",
+                    buttonText: "Right Side: Problem-solving",
+                    title: "Interpersonal Peace",
+                    explanation: "<b>Interpersonal Peace</b><br>Talking calmly, listening, and finding solutions together keeps relationships strong.<br><br><i>Mini Reflection: Can you remember a time when you solved a problem with a friend? What did you learn from it?</i>"
+                }
+            }
+        ],
+      };
+
+      let currentImageId = null;
+      let completedImages = new Set();
+      let exploredHotspots = new Set();
+      let totalImages = activityData.images.length;
+      let totalHotspots = 6;
+      let introAudio, dingAudio, buzzAudio, outroAudio;
+      let hasPlayedIntro = false;
+      let initReadyResolve;
+      const initReady = new Promise((resolve) => {
+        initReadyResolve = resolve;
+      });
+
+      // ===== AUDIO HANDLING =====
+      function initAudio() {
+        try {
+          introAudio = new Audio("audio/intro.mp3");
+          dingAudio = new Audio("audio/ding.mp3");
+          buzzAudio = new Audio("audio/buzz.mp3");
+          outroAudio = new Audio("audio/outro.mp3");
+        } catch (e) {
+          console.warn("Audio could not be loaded.");
+          const mockAudio = { play: () => {}, pause: () => {}, currentTime: 0 };
+          introAudio = dingAudio = buzzAudio = outroAudio = mockAudio;
+        }
+      }
+      function playSound(audio) {
+        if (audio) {
+          audio.currentTime = 0;
+          audio.play().catch((e) => {});
+        }
+      }
+      function stopSound(audio) {
+        if (audio) {
+          audio.pause();
+        }
+      }
+
+      // ===== CAROUSEL LOGIC =====
+      function renderCarousel() {
+        const carousel = document.getElementById("image-carousel");
+        carousel.innerHTML = "";
+        activityData.images.forEach((imgData) => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "carousel-item-wrapper";
+          wrapper.dataset.id = imgData.id;
+          wrapper.onclick = () => showImageDetails(imgData.id);
+
+          const img = document.createElement("img");
+          img.onerror = function () {
+            this.src = "https://via.placeholder.com/300?text=Image+Missing";
+          };
+          img.src = imgData.imageSrc;
+          img.alt = imgData.scene;
+          img.className = "carousel-image";
+
+          const check = document.createElement("div");
+          check.className = "completed-checkmark";
+          check.innerHTML = `<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
+
+          if (completedImages.has(imgData.id)) {
+            wrapper.classList.add("completed");
+          }
+
+          wrapper.appendChild(img);
+          wrapper.appendChild(check);
+          carousel.appendChild(wrapper);
+        });
+        updateCarouselFocus();
+      }
+
+      function setupCarouselNav() {
+        const carousel = document.getElementById("image-carousel");
+        const prevBtn = document.getElementById("carousel-prev");
+        const nextBtn = document.getElementById("carousel-next");
+
+        const scrollCarousel = (direction) => {
+          const focusedEl =
+            carousel.querySelector(".in-focus") || carousel.firstElementChild;
+          if (!focusedEl) return;
+
+          if (direction === "next") {
+            const targetEl = focusedEl.nextElementSibling;
+            if (targetEl)
+              targetEl.scrollIntoView({
+                behavior: "smooth",
+                inline: "center",
+                block: "nearest",
+              });
+            else
+              carousel.firstElementChild.scrollIntoView({
+                behavior: "smooth",
+                inline: "center",
+                block: "nearest",
+              });
+          } else {
+            const targetEl = focusedEl.previousElementSibling;
+            if (targetEl)
+              targetEl.scrollIntoView({
+                behavior: "smooth",
+                inline: "center",
+                block: "nearest",
+              });
+            else
+              carousel.lastElementChild.scrollIntoView({
+                behavior: "smooth",
+                inline: "center",
+                block: "nearest",
+              });
+          }
+        };
+
+        prevBtn.addEventListener("click", () => scrollCarousel("prev"));
+        nextBtn.addEventListener("click", () => scrollCarousel("next"));
+        carousel.addEventListener("scroll", updateCarouselFocus);
+      }
+
+      let scrollTimeout;
+      function updateCarouselFocus() {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          const carousel = document.getElementById("image-carousel");
+          if (!carousel) return;
+          const carouselRect = carousel.getBoundingClientRect();
+          const carouselCenter = carouselRect.left + carouselRect.width / 2;
+
+          let minDistance = Infinity;
+          let focusedChild = null;
+
+          [...carousel.children].forEach((child) => {
+            const childRect = child.getBoundingClientRect();
+            const childCenter = childRect.left + childRect.width / 2;
+            const distance = Math.abs(carouselCenter - childCenter);
+
+            child.classList.remove("in-focus");
+            if (distance < minDistance) {
+              minDistance = distance;
+              focusedChild = child;
+            }
+          });
+
+          if (focusedChild) focusedChild.classList.add("in-focus");
+        }, 100);
+      }
+
+      // ===== GAME LOGIC / HOTSPOTS =====
+      function showImageDetails(id) {
+        if (completedImages.has(id)) return;
+        currentImageId = id;
+
+        const imgData = activityData.images.find((i) => i.id === id);
+
+        const detailsImg = document.getElementById("details-image");
+        detailsImg.onerror = function () {
+          this.src = "https://via.placeholder.com/300?text=Image+Missing";
+        };
+        detailsImg.src = imgData.imageSrc;
+        detailsImg.alt = imgData.scene;
+        document.getElementById("details-image-title").textContent = imgData.scene;
+
+        const optionsContainer = document.getElementById("details-options-container");
+        optionsContainer.innerHTML = "";
+
+        // Add Left Hotspot Button
+        const leftBtn = document.createElement("button");
+        leftBtn.className = "option-btn";
+        leftBtn.textContent = imgData.leftSide.buttonText;
+        if (exploredHotspots.has(imgData.leftSide.id)) {
+            leftBtn.style.opacity = "0.6";
+            leftBtn.style.pointerEvents = "none";
+            leftBtn.textContent += " (Explored)";
+            leftBtn.style.backgroundColor = "#4caf50";
+        } else {
+            leftBtn.onclick = () => exploreHotspot(imgData.leftSide);
+        }
+        optionsContainer.appendChild(leftBtn);
+
+        // Add Right Hotspot Button
+        const rightBtn = document.createElement("button");
+        rightBtn.className = "option-btn";
+        rightBtn.textContent = imgData.rightSide.buttonText;
+        if (exploredHotspots.has(imgData.rightSide.id)) {
+            rightBtn.style.opacity = "0.6";
+            rightBtn.style.pointerEvents = "none";
+            rightBtn.textContent += " (Explored)";
+            rightBtn.style.backgroundColor = "#4caf50";
+        } else {
+            rightBtn.onclick = () => exploreHotspot(imgData.rightSide);
+        }
+        optionsContainer.appendChild(rightBtn);
+
+        document.getElementById("image-details-overlay").classList.remove("hidden");
+      }
+
+      function exploreHotspot(hotspotData) {
+        playSound(dingAudio);
+        // Using the correct feedback modal as an info popup
+        document.getElementById("trait-title-display").textContent = hotspotData.title;
+        document.getElementById("correct-feedback-text").innerHTML = hotspotData.explanation;
+        
+        exploredHotspots.add(hotspotData.id);
+
+        document.getElementById("feedback-correct-overlay").classList.remove("hidden");
+      }
+
+      function findNextIncompleteItem() {
+        if (completedImages.size === totalImages) return null;
+        const currentIndex = activityData.images.findIndex(
+          (img) => img.id === currentImageId,
+        );
+        for (let i = 1; i < totalImages; i++) {
+          const nextIndex = (currentIndex + i) % totalImages;
+          const nextImgData = activityData.images[nextIndex];
+          if (!completedImages.has(nextImgData.id)) return nextImgData;
+        }
+        return null;
+      }
+
+      function updateProgress() {
+        const progress = exploredHotspots.size;
+        document.getElementById("progress-bar").style.width =
+          `${(progress / totalHotspots) * 100}%`;
+        document.getElementById("progress-text").textContent =
+          `${progress} / ${totalHotspots}`;
+      }
+
+      // ===== FEEDBACK HANDLERS =====
+      function handleFeedbackContinue(button) {
+        button.disabled = true;
+        closeModal("feedback-correct-overlay");
+
+        updateProgress();
+
+        const imgData = activityData.images.find(i => i.id === currentImageId);
+        const isLeftExplored = exploredHotspots.has(imgData.leftSide.id);
+        const isRightExplored = exploredHotspots.has(imgData.rightSide.id);
+
+        // Check if both hotspots for the current split-screen are complete
+        if (isLeftExplored && isRightExplored) {
+            completedImages.add(currentImageId);
+            renderCarousel();
+            closeModal("image-details-overlay");
+
+            const nextItemToScroll = findNextIncompleteItem();
+            if (nextItemToScroll) {
+                const carouselElement = document.querySelector(
+                    `#image-carousel .carousel-item-wrapper[data-id="${nextItemToScroll.id}"]`,
+                );
+                if (carouselElement) {
+                    setTimeout(() => {
+                        carouselElement.scrollIntoView({
+                            behavior: "smooth",
+                            inline: "center",
+                            block: "nearest",
+                        });
+                    }, 100);
+                }
+            } else {
+                if (exploredHotspots.size === totalHotspots) {
+                    endActivity();
+                }
+            }
+        } else {
+            // Refresh buttons to show the (Explored) state for the one just clicked
+            showImageDetails(currentImageId);
+        }
+
+        button.disabled = false;
+      }
+
+      function handleFeedbackTryAgain(button) {
+        button.disabled = true;
+        closeModal("feedback-incorrect-overlay");
+        button.disabled = false;
+      }
+
+      // ===== MODAL AND SCREEN LOGIC =====
+      function showActivityIntro() {
+        document.getElementById("start-screen").classList.add("hidden");
+        document.getElementById("game-screen").classList.remove("hidden");
+
+        if (typeof sendEvent !== "undefined") {
+          sendEvent(ActivityEvent.START_ACTIVITY, {
+            activityName: activityData.title,
+          });
+        }
+
+        initReady.then(() => {
+          if (!hasPlayedIntro) {
+            document
+              .getElementById("activity-intro-overlay")
+              .classList.remove("hidden");
+            playSound(introAudio);
+            hasPlayedIntro = true;
+          } else {
+            renderCarousel();
+          }
+        });
+      }
+
+      function showInstructions() {
+        document.getElementById("instructions-overlay").classList.remove("hidden");
+      }
+
+      function openHintModal() {
+        const el = document.getElementById("hint-overlay");
+        if (el) el.classList.remove("hidden");
+      }
+
+      function closeModal(id) {
+        document.getElementById(id).classList.add("hidden");
+
+        if (id === "activity-intro-overlay") {
+          stopSound(introAudio);
+          renderCarousel();
+          setTimeout(updateCarouselFocus, 150);
+        }
+      }
+
+      function endActivity() {
+        document.getElementById("progress-bar").style.width = `100%`;
+        document.getElementById("progress-text").textContent =
+          `${totalHotspots} / ${totalHotspots}`;
+        document.getElementById("game-screen").classList.add("hidden");
+        document.getElementById("completion-overlay").classList.remove("hidden");
+        playSound(outroAudio);
+      }
+
+      function restartGame() {
+        stopSound(outroAudio);
+        document.getElementById("completion-overlay").classList.add("hidden");
+        document.getElementById("activity-intro-overlay").classList.add("hidden");
+        document.getElementById("image-details-overlay").classList.add("hidden");
+
+        completedImages.clear();
+        exploredHotspots.clear();
+        currentImageId = null;
+        hasPlayedIntro = true;
+
+        updateProgress();
+        document.getElementById("game-screen").classList.remove("hidden");
+
+        renderCarousel();
+        document.getElementById("image-carousel").scrollLeft = 0;
+        setTimeout(updateCarouselFocus, 150);
+      }
+
+      function nextActivity() {
+        if (typeof sendEvent !== "undefined") {
+          sendEvent(ActivityEvent.NAVIGATE_NEXT, {
+            currentActivity: activityData.title,
+          });
+        }
+        window.location.href = "../ACTIVITY2/index.html";
+      } 
+
+      function populateStaticContent() {
+        document.getElementById("start-title").textContent = activityData.title;
+        document.getElementById("game-title").textContent = activityData.title;
+        document.getElementById("intro-text").innerHTML = activityData.introduction;
+        document.getElementById("instructions-text").innerHTML = activityData.instructions;
+        document.getElementById("progress-text").textContent = `0 / ${totalHotspots}`;
+      }
+
+      window.onload = () => {
+        initAudio();
+        populateStaticContent();
+        setupCarouselNav();
+
+        if (typeof initReadyResolve === "function") initReadyResolve();
+      };
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

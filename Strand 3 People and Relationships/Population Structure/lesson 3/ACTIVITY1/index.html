@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pyramid Parts Puzzle</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <!-- Animation and Canvas capture libraries -->
+    <script src="../js/anime.min.js"></script>
+    <script src="../js/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Pyramid Parts Puzzle</h1>
+          <button
+            class="start-button"
+            onclick="
+              startGame();
+              sendEvent(ActivityEvent.START_ACTIVITY, {
+                activityName: 'Pyramid Parts Puzzle',
+              });
+            "
+          >
+            Start Activity
+          </button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Pyramid Parts Puzzle</h1>
+            <div class="progress-wrapper">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <div id="progress-text">0 / 5</div>
+              <div class="instructions-icon" onclick="showGameInstructions()">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="game-main-layout">
+            <div class="drag-panel">
+              <h3 class="drag-panel-title">Pyramid Parts</h3>
+              
+              <!-- Text Cards -->
+              <div
+                class="draggable-item text-card"
+                draggable="true"
+                ondragstart="drag(event)"
+                data-type="title"
+              >
+                <span class="route-item-label">Title Block</span>
+              </div>
+
+              <div
+                class="draggable-item text-card"
+                draggable="true"
+                ondragstart="drag(event)"
+                data-type="y-axis"
+              >
+                <span class="route-item-label">Age Groups</span>
+              </div>
+
+              <div
+                class="draggable-item text-card"
+                draggable="true"
+                ondragstart="drag(event)"
+                data-type="x-axis"
+              >
+                <span class="route-item-label">Population Scale</span>
+              </div>
+
+              <div
+                class="draggable-item text-card"
+                draggable="true"
+                ondragstart="drag(event)"
+                data-type="left-label"
+              >
+                <span class="route-item-label">Males</span>
+              </div>
+
+              <div
+                class="draggable-item text-card"
+                draggable="true"
+                ondragstart="drag(event)"
+                data-type="right-label"
+              >
+                <span class="route-item-label">Females</span>
+              </div>
+
+            </div>
+
+            <div
+              class="lab-game-area"
+              id="lab-game-area"
+              ondrop="drop(event)"
+              ondragover="allowDrop(event)"
+            >
+                <!-- CSS Pyramid Chart will be injected here via JS -->
+            </div>
+          </div>
+
+          <div class="hint-icon" onclick="showHint()" style="display: flex">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="activity-description-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Activity Introduction</h2>
+            <p>
+              Let us build a population pyramid piece by piece! Your job is to drag each part of the pyramid, like the title, age groups, gender sides, and labels, to its correct place on the diagram.<br>
+              Think carefully! Where do males usually appear? What about age groups? When a piece fits, it will snap into place.<br>
+              Ready to become a pyramid pro? Let us get started!
+            </p>
+            <button
+              class="modal-close-btn"
+              onclick="closeActivityDescription()"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="game-instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Learner Instructions</h2>
+            <ul>
+              <li>
+                Drag each pyramid part, title, age group labels, gender sides, and population scale, to its correct position on the diagram.
+              </li>
+              <li>
+                Watch for the snap when it is in the right place, and check the feedback to learn as you go.
+              </li>
+              <li>
+                Complete the puzzle to reveal a full, working population pyramid!
+              </li>
+            </ul>
+            <button class="modal-close-btn" onclick="closeGameInstructions()">
+              Got It!
+            </button>
+          </div>
+        </div>
+
+        <div id="feedback-correct-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header correct">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <h2>Correct!</h2>
+            </div>
+            <p id="correct-feedback-text"></p>
+            <button
+              class="feedback-btn correct"
+              onclick="closeModal('feedback-correct-overlay')"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="feedback-incorrect-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header incorrect">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+              </svg>
+              <h2>Not Quite</h2>
+            </div>
+            <p id="incorrect-feedback-text"></p>
+            <button class="feedback-btn incorrect" onclick="handleTryAgain()">
+              Try Again
+            </button>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Here is a hint</h2>
+            <p id="hint-text"></p>
+            <button class="modal-close-btn" onclick="closeHint()">
+              Got It!
+            </button>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="screen hidden">
+          <div class="completion-title">Activity Conclusion</div>
+          <div class="completion-image-container">
+            <img
+              id="dynamic-completion-image"
+              src=""
+              alt="Activity Complete"
+              class="completion-image"
+            />
+          </div>
+          <div class="completion-buttons-footer">
+            <button class="completion-btn" onclick="restartGame()">
+              Restart Activity
+            </button>
+              <button class="completion-btn" onclick="nextActivity()">
+              Next Activity
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="outro-audio" src="audio/outro.mp3" preload="auto"></audio>
+    <audio id="buzz-sound" src="audio/buzz.mp3" preload="auto"></audio>
+
+    <script>
+      // --- DATA ---
+      const dropzonesData = [
+        {
+          id: "zone-title",
+          expected: "title",
+          title: "Title Block",
+          coords: { top: "8%", left: "50%", width: "40%", height: "8%" },
+          success: "Perfect! Every graph needs a title to tell us what it shows, and this one goes right on top.",
+        },
+        {
+          id: "zone-y-axis",
+          expected: "y-axis",
+          title: "Age Groups",
+          coords: { top: "55%", left: "50%", width: "10%", height: "55%" },
+          success: "Nice! These age groups go up the middle of the pyramid, from youngest at the bottom to oldest at the top.",
+        },
+        {
+          id: "zone-x-axis",
+          expected: "x-axis",
+          title: "Population Scale",
+          coords: { top: "90%", left: "50%", width: "65%", height: "8%" },
+          success: "Great! These numbers show how many people are in each age group, stretching outward on both sides.",
+        },
+        {
+          id: "zone-left-label",
+          expected: "left-label",
+          title: "Males",
+          coords: { top: "8%", left: "18%", width: "15%", height: "8%" },
+          success: "Spot on! Males usually go on the left side of the pyramid.",
+        },
+        {
+          id: "zone-right-label",
+          expected: "right-label",
+          title: "Females",
+          coords: { top: "8%", left: "82%", width: "15%", height: "8%" },
+          success: "Exactly! Females are placed on the right side of the pyramid.",
+        }
+      ];
+
+      const errorFeedback = {
+        title: "Not quite. The title usually goes at the top so we know what the whole pyramid is about.",
+        "y-axis": "Try again. Remember that the age groups are stacked vertically, showing who’s young and who’s old. Picture a ladder, from babies at the bottom to grandparents at the top!",
+        "x-axis": "Oops! These labels belong at the bottom, stretching left and right. The numbers grow outward from the centre, just like arms!",
+        "left-label": "Not quite. Population pyramids traditionally place males on the left.",
+        "right-label": "Try again, remember the pyramid splits by gender, with females on the right."
+      };
+
+      const hints = [
+        "The title goes at the very top of the graph.",
+        "Age groups are stacked vertically in the middle, like a ladder.",
+        "The population scale stretches horizontally at the bottom.",
+        "Males traditionally go on the left, and females on the right."
+      ];
+
+      const targets = { title: 1, "y-axis": 1, "x-axis": 1, "left-label": 1, "right-label": 1 };
+      const TOTAL_TARGET = 5; 
+
+      // --- STATE ---
+      let placedCounts = { title: 0, "y-axis": 0, "x-axis": 0, "left-label": 0, "right-label": 0 };
+      let isActivityComplete = false;
+      let currentHintIndex = 0;
+      let checkProgressOnClose = false;
+      let activeTouchType = null;
+      let activeTouchItem = null;
+      let activeTouchDropzone = null;
+      let touchGhost = null;
+      let touchGhostOffset = { x: 0, y: 0 };
+
+      // --- DOM ELEMENTS ---
+      const startScreen = document.getElementById("start-screen");
+      const gameScreen = document.getElementById("game-screen");
+      const completionOverlay = document.getElementById("completion-overlay");
+      const labGameArea = document.getElementById("lab-game-area");
+      const progressBar = document.getElementById("progress-bar");
+      const progressText = document.getElementById("progress-text");
+      const overlays = {
+        activityDescription: document.getElementById(
+          "activity-description-overlay",
+        ),
+        gameInstructions: document.getElementById("game-instructions-overlay"),
+        correctFeedback: document.getElementById("feedback-correct-overlay"),
+        incorrectFeedback: document.getElementById(
+          "feedback-incorrect-overlay",
+        ),
+        hint: document.getElementById("hint-overlay")
+      };
+      const sounds = {
+        ding: document.getElementById("ding-sound"),
+        intro: document.getElementById("intro-audio"),
+        outro: document.getElementById("outro-audio"),
+        buzz: document.getElementById("buzz-sound"),
+      };
+
+      // --- INITIALIZATION ---
+      document.addEventListener("DOMContentLoaded", () => {
+        initializeGame();
+        setupTouchDrag();
+      });
+
+      function initializeGame() {
+        labGameArea.innerHTML = "";
+        
+        // 1. Build the Empty Pyramid Chart Structure
+        const chart = document.createElement('div');
+        chart.id = 'pyramid-chart';
+        
+        // Width distribution approximations to form a pyramid
+        const widths = [95, 90, 85, 75, 65, 55, 48, 40, 33, 27, 22, 18, 14, 10, 7, 5, 3, 2];
+        widths.forEach(w => {
+            const row = document.createElement('div');
+            row.className = 'pyramid-row';
+
+            const maleContainer = document.createElement('div');
+            maleContainer.className = 'bar-container male';
+            const maleBar = document.createElement('div');
+            maleBar.className = 'bar male-bar';
+            maleBar.style.width = w + '%';
+            maleContainer.appendChild(maleBar);
+
+            const gap = document.createElement('div');
+            gap.className = 'y-axis-gap';
+
+            const femaleContainer = document.createElement('div');
+            femaleContainer.className = 'bar-container female';
+            const femaleBar = document.createElement('div');
+            femaleBar.className = 'bar female-bar';
+            femaleBar.style.width = w + '%';
+            femaleContainer.appendChild(femaleBar);
+
+            row.appendChild(maleContainer);
+            row.appendChild(gap);
+            row.appendChild(femaleContainer);
+            chart.appendChild(row);
+        });
+        labGameArea.appendChild(chart);
+
+        // 2. Add Dropzones
+        dropzonesData.forEach((item, index) => {
+          const dropzone = document.createElement("div");
+          dropzone.className = "dropzone active";
+          dropzone.id = item.id;
+          dropzone.dataset.index = index;
+          Object.assign(dropzone.style, item.coords);
+          labGameArea.appendChild(dropzone);
+        });
+
+        updateDragItemAvailability();
+        updateProgress();
+      }
+
+      function updateDragItemAvailability() {
+        document.querySelectorAll(".draggable-item").forEach((item) => {
+          const type = item.dataset.type;
+          const requiredCount = targets[type] || 0;
+          const reachedRequiredCount = placedCounts[type] >= requiredCount;
+
+          item.classList.toggle("depleted", reachedRequiredCount);
+          item.setAttribute(
+            "draggable",
+            reachedRequiredCount ? "false" : "true",
+          );
+
+          if (reachedRequiredCount) {
+            item.setAttribute("aria-disabled", "true");
+          } else {
+            item.removeAttribute("aria-disabled");
+          }
+        });
+      }
+
+      // --- DRAG AND DROP ---
+      function drag(ev) {
+        const type = ev.currentTarget.dataset.type;
+        if (placedCounts[type] >= (targets[type] || 0)) {
+          ev.preventDefault();
+          return;
+        }
+
+        ev.dataTransfer.setData("type", type);
+      }
+
+      function allowDrop(ev) {
+        ev.preventDefault();
+      }
+
+      function drop(ev) {
+        ev.preventDefault();
+        const type = ev.dataTransfer.getData("type");
+        const dropzoneEl = ev.target.closest(".dropzone");
+        handleDrop(type, dropzoneEl);
+      }
+
+      function handleDrop(type, dropzoneEl) {
+        if (!dropzoneEl || dropzoneEl.classList.contains("completed")) return;
+
+        const zoneData = dropzonesData[parseInt(dropzoneEl.dataset.index)];
+        const isGenderLabel = type === "left-label" || type === "right-label";
+        const isGenderDropzone = zoneData.expected === "left-label" || zoneData.expected === "right-label";
+
+        if (zoneData.expected === type || (isGenderLabel && isGenderDropzone)) {
+          placedCounts[type]++;
+          dropzoneEl.classList.add("completed");
+          dropzoneEl.classList.remove("active");
+          dropzoneEl.dataset.placedType = type;
+
+          const labelText = {
+            'title': 'Population Pyramid of Kenya, 2020',
+            'y-axis': 'Age Groups',
+            'x-axis': 'Population Scale (Millions)',
+            'left-label': 'Males',
+            'right-label': 'Females'
+          }[type];
+
+          dropzoneEl.innerHTML = `<span class="dropped-text">${labelText}</span>`;
+          dropzoneEl.style.backgroundColor = "rgba(255, 255, 255, 0.95)";
+          dropzoneEl.style.border = "2px solid var(--primary-color)";
+
+          playSound(sounds.ding);
+          showFeedbackPopup("correct", zoneData.success);
+          updateDragItemAvailability();
+          updateProgress();
+
+          let totalPlaced = Object.keys(targets).reduce((sum, key) => sum + Math.min(placedCounts[key], targets[key]), 0);
+
+          if (totalPlaced >= TOTAL_TARGET) {
+            checkProgressOnClose = true;
+          }
+        } else {
+          let msg = errorFeedback[type] || "Invalid placement.";
+          if (sounds.buzz) playSound(sounds.buzz);
+          showFeedbackPopup("incorrect", msg);
+        }
+      }
+
+      function setupTouchDrag() {
+        document.querySelectorAll(".draggable-item").forEach((item) => {
+          item.addEventListener("touchstart", handleTouchStart, {
+            passive: false,
+          });
+          item.addEventListener("touchmove", handleTouchMove, {
+            passive: false,
+          });
+          item.addEventListener("touchend", handleTouchEnd, { passive: false });
+          item.addEventListener("touchcancel", handleTouchEnd, {
+            passive: false,
+          });
+        });
+      }
+
+      function handleTouchStart(ev) {
+        ev.preventDefault();
+        const item = ev.currentTarget;
+        const type = item.dataset.type;
+
+        if (placedCounts[type] >= (targets[type] || 0)) {
+          return;
+        }
+
+        activeTouchType = type;
+        activeTouchItem = item;
+        item.classList.add("touch-dragging");
+
+        const touch = ev.touches[0];
+        if (touch) {
+          createTouchGhost(item, touch.clientX, touch.clientY);
+        }
+      }
+
+      function handleTouchMove(ev) {
+        if (!activeTouchType) return;
+        ev.preventDefault();
+
+        const touch = ev.touches[0];
+        if (!touch) return;
+
+        moveTouchGhost(touch.clientX, touch.clientY);
+
+        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+        const dropzoneEl = element ? element.closest(".dropzone") : null;
+
+        if (dropzoneEl !== activeTouchDropzone) {
+          clearTouchOver();
+          if (dropzoneEl && !dropzoneEl.classList.contains("completed")) {
+            activeTouchDropzone = dropzoneEl;
+            dropzoneEl.classList.add("touch-over");
+          }
+        }
+      }
+
+      function handleTouchEnd(ev) {
+        if (!activeTouchType) return;
+        ev.preventDefault();
+
+        const dropzoneEl = activeTouchDropzone;
+        clearTouchOver();
+
+        if (dropzoneEl) {
+          handleDrop(activeTouchType, dropzoneEl);
+        }
+
+        if (activeTouchItem) {
+          activeTouchItem.classList.remove("touch-dragging");
+        }
+
+        removeTouchGhost();
+
+        activeTouchType = null;
+        activeTouchItem = null;
+      }
+
+      function clearTouchOver() {
+        if (activeTouchDropzone) {
+          activeTouchDropzone.classList.remove("touch-over");
+          activeTouchDropzone = null;
+        }
+      }
+
+      function createTouchGhost(item, x, y) {
+        removeTouchGhost();
+        
+        const ghost = document.createElement("div");
+        ghost.className = "touch-ghost";
+        ghost.innerHTML = `<div class="text-card-ghost">${item.innerText}</div>`;
+        
+        document.body.appendChild(ghost);
+
+        const rect = ghost.getBoundingClientRect();
+        touchGhostOffset = { x: rect.width / 2, y: rect.height / 2 };
+        touchGhost = ghost;
+        moveTouchGhost(x, y);
+      }
+
+      function moveTouchGhost(x, y) {
+        if (!touchGhost) return;
+        touchGhost.style.transform = `translate(${x - touchGhostOffset.x}px, ${y - touchGhostOffset.y}px)`;
+      }
+
+      function removeTouchGhost() {
+        if (touchGhost) {
+          touchGhost.remove();
+          touchGhost = null;
+        }
+      }
+
+      // --- GAME FLOW ---
+      function startGame() {
+        startScreen.classList.add("hidden");
+        gameScreen.classList.remove("hidden");
+        setTimeout(() => {
+          overlays.activityDescription.classList.remove("hidden");
+          if (sounds.intro) playSound(sounds.intro);
+        }, 500);
+      }
+
+      function closeActivityDescription() {
+        overlays.activityDescription.classList.add("hidden");
+        if (sounds.intro) sounds.intro.pause();
+      }
+
+      function showFeedbackPopup(type, message) {
+        const feedbackText = document.getElementById(`${type}-feedback-text`);
+        feedbackText.innerHTML = message;
+        overlays[`${type}Feedback`].classList.remove("hidden");
+      }
+
+      function closeModal(id) {
+        document.getElementById(id).classList.add("hidden");
+        if (id === "feedback-correct-overlay") {
+          setTimeout(() => {
+            if (checkProgressOnClose && !isActivityComplete) {
+              triggerCompletion();
+            }
+          }, 300);
+        }
+      }
+
+      function handleTryAgain() {
+        document
+          .getElementById("feedback-incorrect-overlay")
+          .classList.add("hidden");
+      }
+
+      function triggerCompletion() {
+        isActivityComplete = true;
+
+        // 1. Fill the labels with actual detailed data styled similarly to fin.png, set initial opacity to 0
+        const zoneTitle = document.getElementById('zone-title');
+        zoneTitle.innerHTML = '<span class="anim-label" style="opacity: 0; font-size: 1.8rem; color: #5d04b2; border: 2px solid #5d04b2; padding: 0.2rem 1.5rem; border-radius: 0.5rem; background: #fff; font-weight: 800;">Kenya</span>';
+        zoneTitle.style.border = 'none';
+        zoneTitle.style.backgroundColor = 'transparent';
+
+        const zoneLeft = document.getElementById('zone-left-label');
+        zoneLeft.innerHTML = '<span class="anim-label" style="opacity: 0; font-size: 1.5rem; color: #5d04b2; font-weight: 900;">Male</span>';
+        zoneLeft.style.border = 'none';
+        zoneLeft.style.backgroundColor = 'transparent';
+
+        const zoneRight = document.getElementById('zone-right-label');
+        zoneRight.innerHTML = '<span class="anim-label" style="opacity: 0; font-size: 1.5rem; color: #fc6b7a; font-weight: 900;">Female</span>';
+        zoneRight.style.border = 'none';
+        zoneRight.style.backgroundColor = 'transparent';
+
+        const zoneY = document.getElementById('zone-y-axis');
+        zoneY.innerHTML = `
+          <div class="anim-label" style="opacity: 0; display: flex; flex-direction: column-reverse; justify-content: space-between; height: 100%; font-size: clamp(0.6rem, 1.5vmin, 0.9rem); font-weight: 800; color: #333; text-align: center; line-height: 1;">
+            <span>0 - 4</span><span>5 - 9</span><span>10 - 14</span><span>15 - 19</span><span>20 - 24</span><span>25 - 29</span><span>30 - 34</span><span>35 - 39</span><span>40 - 44</span><span>45 - 49</span><span>50 - 54</span><span>55 - 59</span><span>60 - 64</span><span>65 - 69</span><span>70 - 74</span><span>75 - 79</span><span>80 - 84</span><span>85+</span>
+          </div>`;
+        zoneY.style.border = 'none';
+        zoneY.style.backgroundColor = 'transparent';
+
+        const zoneX = document.getElementById('zone-x-axis');
+        zoneX.innerHTML = `
+          <div class="anim-label" style="opacity: 0; width: 100%; text-align: center; font-weight: 800; font-size: clamp(0.7rem, 1.8vmin, 1rem); color: #333;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem; border-top: 2px solid #333; padding-top: 0.3rem; width: 100%;">
+              <span>3</span><span>2</span><span>1</span><span>0</span><span style="font-weight:900">Age</span><span>0</span><span>1</span><span>2</span><span>3</span>
+            </div>
+            <div>Population (Millions)</div>
+          </div>`;
+        zoneX.style.border = 'none';
+        zoneX.style.backgroundColor = 'transparent';
+
+        // 2. Animate the labels fading in and the chart bars filling with color
+        if (typeof anime !== 'undefined') {
+          // Fade in the text elements smoothly
+          anime({
+            targets: '.anim-label',
+            opacity: [0, 1],
+            duration: 1500,
+            easing: 'easeInOutQuad'
+          });
+
+          // Fill bars
+          anime({
+            targets: '.male-bar',
+            backgroundColor: '#4c6cb3',
+            borderColor: '#2e4a85',
+            delay: anime.stagger(60, {start: 300})
+          });
+          anime({
+            targets: '.female-bar',
+            backgroundColor: '#fc6b7a',
+            borderColor: '#c94150',
+            delay: anime.stagger(60, {start: 300})
+          });
+        }
+
+        // 3. Take screenshot of the entire game-screen and display completion overlay
+        setTimeout(() => {
+          const captureArea = document.getElementById('game-screen'); 
+          
+          // Optionally hide hint icon for a clean shot
+          const hintIcon = document.querySelector('.hint-icon');
+          if(hintIcon) hintIcon.style.display = 'none';
+
+          html2canvas(captureArea, {
+              backgroundColor: '#ffffff',
+              scale: 2 
+          }).then(canvas => {
+              const imgData = canvas.toDataURL('image/png');
+              document.getElementById('dynamic-completion-image').src = imgData;
+              
+              // Restore UI
+              if(hintIcon) hintIcon.style.display = 'flex';
+
+              gameScreen.classList.add("hidden");
+              completionOverlay.classList.remove("hidden");
+              if (sounds.outro) playSound(sounds.outro);
+          });
+        }, 2500); 
+      }
+        nextActivity = () => {
+            window.location.href = "../ACTIVITY2/index.html"; 
+            sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: 'Pyramid Parts Puzzle',
+            })
+        };
+
+      function restartGame() {
+        if (sounds.outro) sounds.outro.pause();
+        placedCounts = { title: 0, "y-axis": 0, "x-axis": 0, "left-label": 0, "right-label": 0 };
+        isActivityComplete = false;
+        checkProgressOnClose = false;
+        completionOverlay.classList.add("hidden");
+        gameScreen.classList.remove("hidden");
+        initializeGame();
+      }
+
+      // --- UI & FEEDBACK ---
+      function updateProgress() {
+        let totalPlaced = Object.keys(targets).reduce((sum, key) => sum + Math.min(placedCounts[key], targets[key]), 0);
+
+        const progress = (totalPlaced / TOTAL_TARGET) * 100;
+        progressBar.style.width = `${progress}%`;
+        progressText.textContent = `${totalPlaced} / ${TOTAL_TARGET}`;
+      }
+
+      // --- MODAL CONTROLS ---
+      function showGameInstructions() {
+        overlays.gameInstructions.classList.remove("hidden");
+      }
+      function closeGameInstructions() {
+        overlays.gameInstructions.classList.add("hidden");
+      }
+
+      function showHint() {
+        document.getElementById("hint-text").textContent =
+          hints[currentHintIndex];
+        overlays.hint.classList.remove("hidden");
+        currentHintIndex = (currentHintIndex + 1) % hints.length;
+      }
+      function closeHint() {
+        overlays.hint.classList.add("hidden");
+      }
+
+      // --- UTILITIES ---
+      function playSound(audioEl) {
+        if (audioEl) {
+          audioEl.currentTime = 0;
+          audioEl.play().catch((e) => console.error("Audio play failed:", e));
+        }
+      }
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

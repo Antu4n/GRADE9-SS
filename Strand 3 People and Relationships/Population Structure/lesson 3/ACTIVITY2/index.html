@@ -1,0 +1,796 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity 2: Build Your Pyramid</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="../js/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+
+        <div id="global-header" class="game-top-section hidden">
+          <h1 class="game-title-text">Select Country</h1>
+          <div class="progress-wrapper">
+            <div id="progress-container">
+              <div class="progress-bar-fill" style="width: 0%;"></div>
+            </div>
+            <div class="progress-text-val">0 / 3</div>
+            <div class="instructions-icon btn-show-instructions">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div id="content-area">
+          
+          <div id="start-screen" class="screen">
+            <h1>Build Your Pyramid</h1>
+            <button id="start-btn" class="start-button">Start Activity</button>
+          </div>
+
+          <div id="country-select-screen" class="screen hidden">
+            <div class="modal country-modal">
+              <h2 class="modal-title">Select a Country to Build</h2>
+              <p>Choose a country to construct its 2026 population pyramid.</p>
+              <div class="country-options">
+                <div class="country-card" data-country="kenya">
+                  <h3>Kenya</h3>
+                  <div class="preview-chart kenya-preview"></div>
+                </div>
+                <div class="country-card" data-country="germany">
+                  <h3>Germany</h3>
+                  <div class="preview-chart germany-preview"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="data-scale-screen" class="screen hidden">
+            <div class="modal data-modal" style="margin-top: auto; margin-bottom: auto;">
+              <h2 class="modal-title">Population Data & Scale</h2>
+              <p>Review the 2026 population data and choose the best horizontal scale.</p>
+              <div class="data-table-container">
+                <table id="population-table">
+                  <thead>
+                    <tr><th>Age Group</th><th>Male (Millions)</th><th>Female (Millions)</th></tr>
+                  </thead>
+                  <tbody id="population-tbody"></tbody>
+                </table>
+              </div>
+              <div class="scale-selection">
+                <h3>Select Graph Scale:</h3>
+                <div class="scale-buttons">
+                  <button class="scale-btn" data-scale="2">0 - 2 Million</button>
+                  <button class="scale-btn" data-scale="5">0 - 5 Million</button>
+                  <button class="scale-btn" data-scale="10">0 - 10 Million</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="game-screen" class="screen hidden">
+            <div class="game-main-layout">
+              <div class="side-panel">
+                <div id="task-panel-header" class="side-panel-title">Drag & Drop</div>
+                
+                <div id="drag-items-area" class="drag-panel">
+                  <div class="draggable-item text-card" draggable="true" data-type="title" id="lbl-title">
+                    <span class="route-item-label">Title</span>
+                  </div>
+                  <div class="draggable-item text-card" draggable="true" data-type="males" id="lbl-males">
+                    <span class="route-item-label">Males</span>
+                  </div>
+                  <div class="draggable-item text-card" draggable="true" data-type="females" id="lbl-females">
+                    <span class="route-item-label">Females</span>
+                  </div>
+                  <div class="draggable-item text-card" draggable="true" data-type="xaxis" id="lbl-xaxis">
+                    <span class="route-item-label">Population Scale</span>
+                  </div>
+                </div>
+
+                <div id="plot-prompt-area" class="prompt-area hidden">
+                  <div id="plot-instruction-text">Tap the chart to plot the data.</div>
+                </div>
+              </div>
+
+              <div class="chart-layout">
+                <div class="chart-container pyramid-layout">
+                  <div class="pyramid-headers">
+                     <div class="gender-label dropzone" data-accept="males" id="drop-males">Male</div>
+                     <div class="chart-title-box dropzone" data-accept="title" id="drop-title">Country - 2026</div>
+                     <div class="gender-label right-align dropzone" data-accept="females" id="drop-females">Female</div>
+                  </div>
+
+                  <div class="chart-main-area">
+                    <div class="pyramid-bars" id="bars-container"></div>
+                  </div>
+
+                  <div class="pyramid-x-axis">
+                    <div class="axis-side left-axis" id="x-axis-left"></div>
+                    <div class="axis-center">Age Group</div>
+                    <div class="axis-side right-axis" id="x-axis-right"></div>
+                  </div>
+                  <div class="pyramid-x-axis-labels dropzone" data-accept="xaxis" id="drop-xaxis">
+                     <div class="label-side">Population (millions)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="hint-icon" id="btn-show-hint" style="display: flex">
+              <svg viewBox="0 0 24 24"><path d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"></path></svg>
+            </div>
+          </div>
+
+          <div id="activity-description-overlay" class="overlay hidden">
+            <div class="modal">
+              <h2 class="modal-title">Activity Introduction</h2>
+              <p>Welcome, population architect! You are about to bring data to life by building a real population pyramid. Turn the numbers into a visual story.</p>
+              <button class="modal-close-btn" id="btn-close-description">Continue</button>
+            </div>
+          </div>
+
+          <div id="game-instructions-overlay" class="overlay hidden">
+            <div class="modal">
+              <h2 class="modal-title">Learner Instructions</h2>
+              <ul>
+                <li><strong>Step 1:</strong> Choose a country.</li>
+                <li><strong>Step 2:</strong> Set an appropriate graph scale based on the data.</li>
+                <li><strong>Step 3:</strong> Drag and drop labels to set up your blank chart.</li>
+                <li><strong>Step 4:</strong> Tap the chart grid to plot bars (Males left, Females right).</li>
+              </ul>
+              <button class="modal-close-btn btn-close-instructions">Got It!</button>
+            </div>
+          </div>
+
+          <div id="hint-overlay" class="overlay hidden">
+            <div class="modal">
+              <h2 class="modal-title">Here is a hint</h2>
+              <ul id="hint-text"></ul>
+              <button class="modal-close-btn" id="btn-close-hint">Got It!</button>
+            </div>
+          </div>
+
+          <div id="feedback-correct-overlay" class="overlay hidden">
+            <div class="modal feedback-modal">
+              <div class="feedback-header correct">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <h2>Correct!</h2>
+              </div>
+              <p id="correct-feedback-text"></p>
+              <button class="feedback-btn correct" onclick="closeModal('feedback-correct-overlay')">Continue</button>
+            </div>
+          </div>
+
+          <div id="feedback-incorrect-overlay" class="overlay hidden">
+            <div class="modal feedback-modal">
+              <div class="feedback-header incorrect">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="15" y1="9" x2="9" y2="15"></line>
+                  <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+                <h2>Not Quite</h2>
+              </div>
+              <p id="incorrect-feedback-text"></p>
+              <button class="feedback-btn incorrect" onclick="closeModal('feedback-incorrect-overlay')">Try Again</button>
+            </div>
+          </div>
+
+          <div id="completion-overlay" class="screen hidden">
+            <div class="completion-title">Activity Conclusion</div>
+            <div class="completion-image-container">
+              <img id="completion-image" src="" alt="Activity Complete" class="completion-image" />
+            </div>
+            <div class="completion-buttons-footer">
+              <button class="completion-btn" id="btn-previous">Previous Activity</button>
+              <button class="completion-btn" id="btn-restart">Restart Activity</button>
+              <button id="btn-show-takeaways" class="completion-btn">Key Takeaways</button>
+            </div>
+          </div>
+
+          <div id="takeaways-overlay" class="overlay hidden">
+            <h2 class="takeaways-main-header">Lesson Complete</h2>
+            <div class="modal">
+              <div class="takeaways-header">
+                <h3>Key Takeaways</h3>
+              </div>
+              <table id="takeaways-table">
+                <thead>
+                  <tr><th>Concept</th><th>Detail</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Age-Sex Pyramid</td><td>Visually represents a population's structure by age and gender.</td></tr>
+                  <tr><td>Components</td><td>Horizontal bars (population size), Vertical axis (age groups), Left (males), Right (females), Title, Labels.</td></tr>
+                  <tr><td>Shape Interpretation</td><td>Broad base = High proportion of young; Narrow base = Lower proportion of young.</td></tr>
+                  <tr><td>Bulges & Tops</td><td>Bulge = Large cohort in that age group; Top width = Number of elderly.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <button class="end-lesson-btn" id="end-lesson-btn">Brain Power Checkpoint</button>
+          </div>
+
+        </div> </div> </div>
+
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="outro-audio" src="audio/outro.mp3" preload="auto"></audio>
+    <audio id="buzz-sound" src="audio/buzz.mp3" preload="auto"></audio>
+
+    <script>
+      // --- DATA (2026 Estimates) ---
+      const datasets = {
+        kenya: {
+          title: "Population Pyramid of Kenya, 2026",
+          insight: "Kenya’s wide base shows many children, indicating a youthful and growing population.",
+          maxScale: 5,
+          data: [
+            { age: "0-4", male: 4.1, female: 4.0 }, { age: "5-9", male: 3.9, female: 3.8 },
+            { age: "10-14", male: 3.7, female: 3.6 }, { age: "15-19", male: 3.4, female: 3.3 },
+            { age: "20-24", male: 3.0, female: 2.9 }, { age: "25-29", male: 2.6, female: 2.5 },
+            { age: "30-34", male: 2.2, female: 2.1 }, { age: "35-39", male: 1.8, female: 1.8 },
+            { age: "40-44", male: 1.4, female: 1.4 }, { age: "45-49", male: 1.1, female: 1.1 },
+            { age: "50-54", male: 0.8, female: 0.8 }, { age: "55-59", male: 0.6, female: 0.6 },
+            { age: "60-64", male: 0.4, female: 0.5 }, { age: "65-69", male: 0.3, female: 0.3 },
+            { age: "70-74", male: 0.2, female: 0.2 }, { age: "75+", male: 0.1, female: 0.2 }
+          ]
+        },
+        germany: {
+          title: "Population Pyramid of Germany, 2026",
+          insight: "Germany’s stable middle and narrow base shows an older, shrinking youth population.",
+          maxScale: 5,
+          data: [
+            { age: "0-4", male: 1.9, female: 1.8 }, { age: "5-9", male: 2.0, female: 1.9 },
+            { age: "10-14", male: 2.1, female: 2.0 }, { age: "15-19", male: 2.1, female: 2.0 },
+            { age: "20-24", male: 2.3, female: 2.1 }, { age: "25-29", male: 2.6, female: 2.5 },
+            { age: "30-34", male: 2.9, female: 2.8 }, { age: "35-39", male: 3.1, female: 3.0 },
+            { age: "40-44", male: 3.0, female: 2.9 }, { age: "45-49", male: 2.8, female: 2.7 },
+            { age: "50-54", male: 3.2, female: 3.1 }, { age: "55-59", male: 3.6, female: 3.6 },
+            { age: "60-64", male: 3.5, female: 3.6 }, { age: "65-69", male: 3.0, female: 3.2 },
+            { age: "70-74", male: 2.5, female: 2.8 }, { age: "75+", male: 3.2, female: 4.0 }
+          ]
+        }
+      };
+
+      const feedbackTexts = {
+        title: "Perfect! Every graph needs a title to tell us what it shows, and this one goes right on top.",
+        males: "Spot on! Males traditionally go on the left side of the pyramid.",
+        females: "Exactly! Females are traditionally placed on the right side of the pyramid.",
+        xaxis: "Great! The population scale shows how many millions of people are in each group."
+      };
+
+      // --- STATE ---
+      let selectedCountry = null;
+      let currentData = null;
+      let currentStep = 0;
+      let isLabelingPhase = false;
+      let isPlottingPhase = false;
+      let labelsPlaced = 0;
+      let targetGender = 'male';
+      let currentScale = 5;
+      let checkProgressOnClose = false;
+      
+      // Touch state
+      let activeTouchType = null;
+      let activeTouchItem = null;
+      let activeTouchDropzone = null;
+      let touchGhost = null;
+      let touchGhostOffset = { x: 0, y: 0 };
+
+      // --- DOM ELEMENTS ---
+      const globalHeader = document.getElementById("global-header");
+      const screens = {
+        start: document.getElementById("start-screen"),
+        country: document.getElementById("country-select-screen"),
+        scale: document.getElementById("data-scale-screen"),
+        game: document.getElementById("game-screen"),
+        completion: document.getElementById("completion-overlay")
+      };
+      
+      const overlays = {
+        description: document.getElementById("activity-description-overlay"),
+        instructions: document.getElementById("game-instructions-overlay"),
+        hint: document.getElementById("hint-overlay"),
+        takeaways: document.getElementById("takeaways-overlay"),
+        correctFeedback: document.getElementById("feedback-correct-overlay"),
+        incorrectFeedback: document.getElementById("feedback-incorrect-overlay")
+      };
+
+      const barsContainer = document.getElementById("bars-container");
+      const sounds = {
+        ding: document.getElementById("ding-sound"),
+        intro: document.getElementById("intro-audio"),
+        outro: document.getElementById("outro-audio"),
+        buzz: document.getElementById("buzz-sound")
+      };
+
+      // --- INITIALIZATION ---
+      document.addEventListener("DOMContentLoaded", () => {
+        buildMiniPreviews();
+        bindEvents();
+      });
+
+      function buildMiniPreviews() {
+        ['kenya', 'germany'].forEach(country => {
+          const container = document.querySelector(`.${country}-preview`);
+          if(!container) return;
+          
+          container.innerHTML = '';
+          const data = datasets[country].data;
+          
+          for (let i = data.length - 1; i >= 0; i--) {
+             const mPct = (data[i].male / datasets[country].maxScale) * 100;
+             const fPct = (data[i].female / datasets[country].maxScale) * 100;
+             
+             container.innerHTML += `
+               <div style="display:flex; width:100%; flex:1; margin-bottom:1px;">
+                  <div style="flex:1; display:flex; justify-content:flex-end; padding-right:1px; height:100%;">
+                     <div style="width:${mPct}%; background:#4A55A2; height:100%; border-radius: 2px 0 0 2px;"></div>
+                  </div>
+                  <div style="flex:1; display:flex; justify-content:flex-start; padding-left:1px; height:100%;">
+                     <div style="width:${fPct}%; background:#F96167; height:100%; border-radius: 0 2px 2px 0;"></div>
+                  </div>
+               </div>
+             `;
+          }
+        });
+      }
+
+      function bindEvents() {
+        document.getElementById("start-btn").addEventListener("click", () => {
+          screens.start.classList.add("hidden");
+          globalHeader.classList.remove("hidden");
+          screens.country.classList.remove("hidden");
+          updateGlobalProgress(1); 
+          
+          overlays.description.classList.remove("hidden");
+          if (sounds.intro) playSound(sounds.intro);
+          if (typeof sendEvent === "function") sendEvent(ActivityEvent.START_ACTIVITY, { activityName: "Build the Pyramid" });
+        });
+
+        document.getElementById("btn-close-description").addEventListener("click", () => {
+          if (sounds.intro) {
+            sounds.intro.pause();
+            sounds.intro.currentTime = 0;
+          }
+          overlays.description.classList.add("hidden");
+        });
+
+        document.querySelectorAll(".country-card").forEach(card => {
+          card.addEventListener("click", (e) => {
+            selectedCountry = e.currentTarget.dataset.country;
+            currentData = datasets[selectedCountry];
+            setupDataScreen();
+          });
+        });
+
+        document.querySelectorAll(".scale-btn").forEach(btn => {
+          btn.addEventListener("click", (e) => {
+            const scale = parseInt(e.target.dataset.scale);
+            const maxVal = Math.max(...currentData.data.map(d => Math.max(d.male, d.female)));
+            
+            if (scale >= maxVal && scale <= maxVal + 3) {
+              currentScale = scale;
+              startLabelingPhase();
+            } else {
+              if(sounds.buzz) playSound(sounds.buzz);
+              showFeedbackPopup('incorrect', "Incorrect scale. The scale must be large enough to fit the highest population group, but not unnecessarily large.");
+            }
+          });
+        });
+
+        document.querySelectorAll(".btn-show-instructions").forEach(btn => {
+          btn.addEventListener("click", () => overlays.instructions.classList.remove("hidden"));
+        });
+        
+        document.querySelectorAll(".btn-close-instructions").forEach(btn => {
+          btn.addEventListener("click", () => overlays.instructions.classList.add("hidden"));
+        });
+        
+        document.getElementById("btn-show-hint").addEventListener("click", showHint);
+        document.getElementById("btn-close-hint").addEventListener("click", () => overlays.hint.classList.add("hidden"));
+        
+        document.getElementById("btn-restart").addEventListener("click", restartGame);
+        document.getElementById("btn-previous").addEventListener("click", () => {
+          if (typeof sendEvent === "function") sendEvent(ActivityEvent.END_ACTIVITY, { activityName: "Build the Pyramid" });
+          window.location.href = "../ACTIVITY1/index.html";
+        });
+
+        document.getElementById("btn-show-takeaways").addEventListener("click", () => {
+          overlays.takeaways.classList.remove("hidden");
+        });
+
+        document.getElementById("end-lesson-btn").addEventListener("click", () => {
+          if (typeof sendEvent === "function") sendEvent(LessonEvent.END_LESSON, { lessonName: "Construct Age, Sex Population Pyramids" });
+        });
+
+        setupDragAndDrop();
+      }
+
+      // --- GLOBAL PROGRESS TRACKER ---
+      function updateGlobalProgress(phase, subProgress = 0) {
+        let progressPercent = 0;
+        let progressTextStr = "";
+        let titleStr = "";
+        
+        if (phase === 1) { progressPercent = 0; progressTextStr = "0 / 3"; titleStr = "Select Country"; }
+        else if (phase === 2) { progressPercent = 25; progressTextStr = "1 / 3"; titleStr = "Select Scale"; }
+        else if (phase === 3) { progressPercent = 50 + (subProgress * 25); progressTextStr = subProgress < 1 ? "2 / 3" : "3 / 3"; titleStr = "Label the Pyramid"; }
+        else if (phase === 4) { progressPercent = 75 + (subProgress * 25); progressTextStr = "3 / 3"; titleStr = "Plot the Data"; }
+        else if (phase === 5) { progressPercent = 100; progressTextStr = "3 / 3"; titleStr = "Activity Conclusion"; }
+        
+        document.querySelectorAll(".progress-bar-fill").forEach(el => el.style.width = `${progressPercent}%`);
+        document.querySelectorAll(".progress-text-val").forEach(el => el.textContent = progressTextStr);
+        document.querySelectorAll(".game-title-text").forEach(el => el.textContent = titleStr);
+      }
+
+      function setupDataScreen() {
+        updateGlobalProgress(2); 
+        screens.country.classList.add("hidden");
+        
+        const tbody = document.getElementById("population-tbody");
+        tbody.innerHTML = "";
+        currentData.data.forEach(row => {
+          tbody.innerHTML += `<tr><td>${row.age}</td><td>${row.male}</td><td>${row.female}</td></tr>`;
+        });
+        screens.scale.classList.remove("hidden");
+      }
+
+      function startLabelingPhase() {
+        updateGlobalProgress(3, 0); 
+        screens.scale.classList.add("hidden");
+        screens.game.classList.remove("hidden");
+        
+        isLabelingPhase = true;
+        isPlottingPhase = false;
+        labelsPlaced = 0;
+        checkProgressOnClose = false;
+
+        document.querySelectorAll('.dropzone').forEach(dz => dz.classList.add('unlabelled'));
+        document.getElementById('drag-items-area').classList.remove('hidden');
+        document.getElementById('plot-prompt-area').classList.add('hidden');
+        document.getElementById("task-panel-header").textContent = "Drag & Drop";
+        
+        renderAxis();
+        renderEmptyChart();
+      }
+
+      function startPlottingPhase() {
+        isLabelingPhase = false;
+        isPlottingPhase = true;
+        currentStep = 0;
+        targetGender = 'male';
+
+        updateGlobalProgress(4, 0); 
+        document.getElementById("task-panel-header").textContent = "Plot Data";
+        document.getElementById('drag-items-area').classList.add('hidden');
+        document.getElementById('plot-prompt-area').classList.remove('hidden');
+
+        highlightActiveRow();
+        updatePlotPrompt();
+      }
+
+      function renderAxis() {
+        let spansLeft = '';
+        for(let i=currentScale; i>=0; i--) spansLeft += `<span>${i}</span>`;
+        document.getElementById("x-axis-left").innerHTML = spansLeft;
+        
+        let spansRight = '';
+        for(let i=0; i<=currentScale; i++) spansRight += `<span>${i}</span>`;
+        document.getElementById("x-axis-right").innerHTML = spansRight;
+      }
+
+      function renderEmptyChart() {
+        barsContainer.innerHTML = "";
+        currentData.data.forEach((data, index) => {
+          const rowWrapper = document.createElement("div");
+          rowWrapper.className = `pyramid-row`;
+          rowWrapper.id = `row-wrap-${index}`;
+          rowWrapper.dataset.index = index;
+          
+          rowWrapper.innerHTML = `
+            <div class="male-side interaction-zone" data-side="male" onclick="handlePlotClick(event, ${index}, 'male')">
+               <div class="bar-val m-val" id="m-val-${index}">${data.male}</div>
+               <div class="bar-fill male" id="m-fill-${index}" style="width: 0%;"></div>
+            </div>
+            <div class="age-label">${data.age}</div>
+            <div class="female-side interaction-zone" data-side="female" onclick="handlePlotClick(event, ${index}, 'female')">
+               <div class="bar-fill female" id="f-fill-${index}" style="width: 0%;"></div>
+               <div class="bar-val f-val" id="f-val-${index}">${data.female}</div>
+            </div>
+          `;
+          barsContainer.appendChild(rowWrapper);
+        });
+      }
+
+      // --- DRAG AND DROP (LABELING PHASE) ---
+      function setupDragAndDrop() {
+        const labels = document.querySelectorAll('.draggable-item');
+        const dropzones = document.querySelectorAll('.dropzone');
+
+        labels.forEach(label => {
+          label.addEventListener('dragstart', (e) => {
+            if(!isLabelingPhase) return;
+            e.dataTransfer.setData('text/plain', e.target.dataset.type);
+            e.target.classList.add('dragging');
+          });
+          label.addEventListener('dragend', (e) => {
+            e.target.classList.remove('dragging');
+          });
+        });
+
+        dropzones.forEach(zone => {
+          zone.addEventListener('dragover', (e) => e.preventDefault());
+          zone.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+            if(isLabelingPhase && !zone.classList.contains('labelled-correct')) zone.classList.add('hovered');
+          });
+          zone.addEventListener('dragleave', () => zone.classList.remove('hovered'));
+          zone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            zone.classList.remove('hovered');
+            if(!isLabelingPhase) return;
+            const draggedType = e.dataTransfer.getData('text/plain');
+            processLabelDrop(draggedType, zone);
+          });
+        });
+
+        labels.forEach(label => {
+          label.addEventListener('touchstart', handleTouchStart, { passive: false });
+          label.addEventListener('touchmove', handleTouchMove, { passive: false });
+          label.addEventListener('touchend', handleTouchEnd, { passive: false });
+          label.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+        });
+      }
+
+      function processLabelDrop(draggedType, zone) {
+        if(zone.classList.contains('labelled-correct')) return;
+        
+        const targetType = zone.dataset.accept;
+        if (draggedType === targetType) {
+          const labelEl = document.querySelector(`.draggable-item[data-type="${draggedType}"]`);
+          if (targetType === 'title') {
+            zone.textContent = currentData.title;
+          } else if (targetType === 'xaxis') {
+            zone.innerHTML = `<div class="label-side">Population (millions)</div>`;
+          } else {
+            zone.textContent = labelEl.textContent;
+          }
+          zone.classList.remove('unlabelled');
+          zone.classList.add('labelled-correct');
+          labelEl.classList.add('depleted');
+          playSound(sounds.ding);
+          
+          labelsPlaced++;
+          updateGlobalProgress(3, labelsPlaced / 4); 
+          
+          if (labelsPlaced === 4) {
+            checkProgressOnClose = true; 
+          }
+          showFeedbackPopup('correct', feedbackTexts[targetType]);
+
+        } else {
+          if(sounds.buzz) playSound(sounds.buzz);
+          showFeedbackPopup('incorrect', "Incorrect label placement. Try another dashed box.");
+        }
+      }
+
+      // Touch events for drag & drop
+      function handleTouchStart(ev) {
+        ev.preventDefault();
+        const item = ev.currentTarget;
+        if(!isLabelingPhase || item.classList.contains('depleted')) return;
+
+        activeTouchType = item.dataset.type;
+        activeTouchItem = item;
+        item.classList.add("touch-dragging");
+
+        const touch = ev.touches[0];
+        if (touch) {
+          createTouchGhost(item, touch.clientX, touch.clientY);
+        }
+      }
+
+      function handleTouchMove(ev) {
+        if (!activeTouchType) return;
+        ev.preventDefault();
+
+        const touch = ev.touches[0];
+        if (!touch) return;
+        moveTouchGhost(touch.clientX, touch.clientY);
+
+        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+        const dropzoneEl = element ? element.closest(".dropzone") : null;
+
+        if (dropzoneEl !== activeTouchDropzone) {
+          if (activeTouchDropzone) activeTouchDropzone.classList.remove("touch-over");
+          if (dropzoneEl && !dropzoneEl.classList.contains("labelled-correct")) {
+            activeTouchDropzone = dropzoneEl;
+            dropzoneEl.classList.add("touch-over");
+          } else {
+            activeTouchDropzone = null;
+          }
+        }
+      }
+
+      function handleTouchEnd(ev) {
+        if (!activeTouchType) return;
+        ev.preventDefault();
+
+        const dropzoneEl = activeTouchDropzone;
+        if (activeTouchDropzone) activeTouchDropzone.classList.remove("touch-over");
+
+        if (dropzoneEl) {
+          processLabelDrop(activeTouchType, dropzoneEl);
+        }
+
+        if (activeTouchItem) {
+          activeTouchItem.classList.remove("touch-dragging");
+        }
+
+        removeTouchGhost();
+        activeTouchType = null;
+        activeTouchItem = null;
+        activeTouchDropzone = null;
+      }
+
+      function createTouchGhost(item, x, y) {
+        removeTouchGhost();
+        const ghost = document.createElement("div");
+        ghost.className = "touch-ghost text-card";
+        ghost.textContent = item.textContent;
+        document.body.appendChild(ghost);
+
+        const rect = ghost.getBoundingClientRect();
+        touchGhostOffset = { x: rect.width / 2, y: rect.height / 2 };
+        touchGhost = ghost;
+        moveTouchGhost(x, y);
+      }
+
+      function moveTouchGhost(x, y) {
+        if (!touchGhost) return;
+        touchGhost.style.transform = `translate(${x - touchGhostOffset.x}px, ${y - touchGhostOffset.y}px)`;
+      }
+
+      function removeTouchGhost() {
+        if (touchGhost) {
+          touchGhost.remove();
+          touchGhost = null;
+        }
+      }
+
+      // --- PLOTTING PHASE ---
+      function highlightActiveRow() {
+        document.querySelectorAll('.pyramid-row').forEach(row => row.classList.remove('active-plot'));
+        if(currentStep < currentData.data.length) {
+          const targetRow = document.getElementById(`row-wrap-${currentStep}`);
+          targetRow.classList.add('active-plot');
+          targetRow.querySelector('.male-side').style.pointerEvents = targetGender === 'male' ? 'auto' : 'none';
+          targetRow.querySelector('.female-side').style.pointerEvents = targetGender === 'female' ? 'auto' : 'none';
+        }
+      }
+
+      function updatePlotPrompt() {
+        if(currentStep >= currentData.data.length) {
+          triggerCompletion();
+          return;
+        }
+        const data = currentData.data[currentStep];
+        const val = targetGender === 'male' ? data.male : data.female;
+        const sideText = targetGender === 'male' ? 'Left' : 'Right';
+        const color = targetGender === 'male' ? '#4A55A2' : '#F96167';
+        
+        document.getElementById('plot-instruction-text').innerHTML = `Tap the <strong style="color:${color}">${sideText}</strong> side to plot ${targetGender}s aged ${data.age} <br><br><span style="font-size:2rem; font-weight:800; color:${color}">${val}M</span>`;
+      }
+
+      function handlePlotClick(event, index, side) {
+        if (!isPlottingPhase || index !== currentStep || side !== targetGender) return;
+
+        const rect = event.currentTarget.getBoundingClientRect();
+        let clickX = event.clientX - rect.left;
+        let percentClicked = (clickX / rect.width) * 100;
+        
+        if (side === 'male') {
+          percentClicked = 100 - percentClicked;
+        }
+
+        const data = currentData.data[currentStep];
+        const targetVal = side === 'male' ? data.male : data.female;
+        const targetPercent = (targetVal / currentScale) * 100;
+
+        if (Math.abs(percentClicked - targetPercent) < 10) {
+           const fillEl = document.getElementById(`${side === 'male' ? 'm' : 'f'}-fill-${index}`);
+           const valEl = document.getElementById(`${side === 'male' ? 'm' : 'f'}-val-${index}`);
+           
+           fillEl.style.width = `${targetPercent}%`;
+           valEl.classList.add("visible");
+           playSound(sounds.ding);
+
+           if (targetGender === 'male') {
+             targetGender = 'female';
+           } else {
+             targetGender = 'male';
+             currentStep++;
+           }
+           
+           const totalPlotSteps = currentData.data.length * 2;
+           const currentProgress = currentStep * 2 + (targetGender === 'female' ? 1 : 0);
+           updateGlobalProgress(4, currentProgress / totalPlotSteps);
+           
+           highlightActiveRow();
+           updatePlotPrompt();
+        } else {
+           if(sounds.buzz) playSound(sounds.buzz);
+           showFeedbackPopup('incorrect', "Incorrect position. Look at the numbered scale at the bottom and tap closer to the correct value.");
+        }
+      }
+
+      // --- MODALS AND FEEDBACK ---
+      function showFeedbackPopup(type, message) {
+        document.getElementById(`${type}-feedback-text`).innerHTML = message;
+        overlays[`${type}Feedback`].classList.remove("hidden");
+      }
+
+      function closeModal(id) {
+        document.getElementById(id).classList.add("hidden");
+        if (id === "feedback-correct-overlay" && checkProgressOnClose) {
+          checkProgressOnClose = false;
+          startPlottingPhase();
+        }
+      }
+
+      // --- GAME FLOW (COMPLETION & RESTART) ---
+      function triggerCompletion() {
+        isPlottingPhase = false;
+        updateGlobalProgress(5);         
+        setTimeout(() => {
+          html2canvas(document.getElementById('game-container'), {
+            backgroundColor: '#fafafa',
+            useCORS: true
+          }).then(canvas => {
+            document.getElementById('completion-image').src = canvas.toDataURL('image/png');
+            globalHeader.classList.add("hidden");
+            screens.game.classList.add("hidden");
+            screens.completion.classList.remove("hidden");
+            if (sounds.outro) playSound(sounds.outro);
+          });
+        }, 800);
+      }
+
+      function showHint() {
+        const hints = isPlottingPhase ? 
+          ["Check the horizontal axis numbers at the bottom to find the right width.", "Males are on the left (blue), females are on the right (pink)."] : 
+          ["Titles go at the top.", "Males are left, Females are right.", "Population scale goes at the bottom."];
+        
+        document.getElementById("hint-text").innerHTML = hints.map((h) => `<li>${h}</li>`).join("");
+        overlays.hint.classList.remove("hidden");
+      }
+
+      function restartGame() {
+        if (sounds.outro) sounds.outro.pause();
+        updateGlobalProgress(1); 
+        
+        screens.completion.classList.add("hidden");
+        globalHeader.classList.add("hidden");
+        screens.start.classList.remove("hidden");
+        
+        document.querySelectorAll('.draggable-item').forEach(el => el.classList.remove('depleted'));
+        document.querySelectorAll('.dropzone').forEach(el => el.classList.remove('labelled-correct', 'unlabelled'));
+      }
+
+      function playSound(audioEl) {
+        if (audioEl) {
+          audioEl.currentTime = 0;
+          audioEl.play().catch(e => console.log("Audio skipped"));
+        }
+      }
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

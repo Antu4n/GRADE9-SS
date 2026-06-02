@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Activity 4: Community Peace Plan Builder</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="../js/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Community Peace Plan Builder</h1>
+          <button class="start-button">Start Activity</button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Community Peace Plan Builder</h1>
+            <div class="header-right-group">
+              <div class="progress-area">
+                <div id="progress-container">
+                  <div id="progress-bar"></div>
+                </div>
+                <div id="progress-text">0 / 8</div>
+              </div>
+              <div class="instructions-icon" id="instructions-icon">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="game-content">
+            <div id="game-board"></div>
+          </div>
+          <div class="hint-icon" id="hint-icon">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="activity-description-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="modal-title">Activity Introduction</div>
+              <p class="modal-text">
+                Peace does not just happen, it is planned! Imagine your community wants to stay united and prevent conflict. It is up to you to help design a smart, peaceful path. Drag each step into the correct order to build a peace plan that brings everyone together.
+              </p>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-btn" id="continue-btn">Continue</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="modal-title">Learner Instructions</div>
+              <ol>
+                <li>Review all the peacebuilding actions in random order.</li>
+                <li>Drag and arrange them into the sequence you believe works best.</li>
+                <li>Think logically, what must happen first before the next step can work?</li>
+                <li>Submit your sequence for feedback.</li>
+                <li>If any steps are misplaced, use the guidance to adjust and try again.</li>
+              </ol>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-btn" id="close-instructions-btn">
+                Got it!
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="modal-title">Here is a Hint</div>
+              <ul
+                style="
+                  text-align: left;
+                  padding-left: 1.5rem;
+                  font-size: 1.2rem;
+                  line-height: 1.6;
+                  color: var(--text-color-dark);
+                "
+              >
+                <li>Start with the foundation, then build toward action and ongoing maintenance.</li>
+              </ul>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-btn" id="close-hint-btn">Got it</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="feedback-modal-overlay" class="modal-overlay hidden">
+          <div id="feedback-modal">
+            <div class="modal-content">
+              <div class="modal-body">
+                <div id="feedback-title" class="modal-title"></div>
+                <p id="feedback-modal-text" class="modal-text"></p>
+              </div>
+              <div class="modal-buttons">
+                <button id="next-question-button" class="modal-btn">
+                  Continue
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="modal-overlay hidden">
+          <div id="completion-title">Activity Conclusion</div>
+          <div class="modal-content completion-modal-content">
+            <img
+              src=""
+              alt="Completion configuration"
+              class="completion-image"
+            />
+          </div>
+          <div class="completion-buttons">
+            <button class="completion-btn" id="prev-activity-btn">
+              Previous Activity
+            </button>
+            <button class="completion-btn" id="restart-activity-btn">
+              Restart Activity
+            </button>
+            <button class="completion-btn" id="key-takeaways-btn">
+              Key Takeaways
+            </button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="modal-overlay hidden">
+          <h2 class="takeaways-main-header">Lesson Complete</h2>
+          <div class="modal">
+            <div class="takeaways-header">
+              <h3>Key Takeaways</h3>
+            </div>
+            <table id="takeaways-table">
+              <thead>
+                <tr>
+                  <th>Concept</th>
+                  <th>Detail</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Peace Initiatives</td>
+                  <td>Communities use peace agreements, festivals, dialogues, and initiatives to stay united and solve problems.</td>
+                </tr>
+                <tr>
+                  <td>Core Values</td>
+                  <td>Dialogue, respect, and inclusion are key to making peace work.</td>
+                </tr>
+                <tr>
+                  <td>Peace Leaders</td>
+                  <td>Peace leaders like elders, chiefs, teachers, and youth, play special roles in promoting harmony.</td>
+                </tr>
+                <tr>
+                  <td>Process</td>
+                  <td>Building peace takes planning, teamwork, and follow-up, just like you practiced!</td>
+                </tr>
+                <tr>
+                  <td>Participation</td>
+                  <td>Embracing these initiatives involves learning about them, obeying them, educating others, avoiding conflict, causing activities, taking responsibility, and participating in peace-promoting activities.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button class="end-lesson-btn" id="end-lesson-btn">
+            Brain Power Checkpoint
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="complete-audio" src="audio/outro.mp3" preload="auto"></audio>
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="buzz-sound" src="audio/buzz.mp3" preload="auto"></audio>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // --- DOM Elements ---
+        const startScreen = document.getElementById("start-screen");
+        const gameScreen = document.getElementById("game-screen");
+        const startBtn = document.querySelector(".start-button");
+        const progressBar = document.getElementById("progress-bar");
+        const progressText = document.getElementById("progress-text");
+        const gameBoard = document.getElementById("game-board");
+
+        // --- Modal Elements ---
+        const activityDescriptionOverlay = document.getElementById("activity-description-overlay");
+        const instructionsOverlay = document.getElementById("instructions-overlay");
+        const hintOverlay = document.getElementById("hint-overlay");
+        const feedbackModalOverlay = document.getElementById("feedback-modal-overlay");
+        const completionOverlay = document.getElementById("completion-overlay");
+        const takeawaysOverlay = document.getElementById("takeaways-overlay");
+
+        // --- Button Elements ---
+        const continueBtn = document.getElementById("continue-btn");
+        const instructionsIcon = document.getElementById("instructions-icon");
+        const closeInstructionsBtn = document.getElementById("close-instructions-btn");
+        const hintIcon = document.getElementById("hint-icon");
+        const closeHintBtn = document.getElementById("close-hint-btn");
+        const nextQuestionBtn = document.getElementById("next-question-button");
+        const prevActivityBtn = document.getElementById("prev-activity-btn");
+        const restartActivityBtn = document.getElementById("restart-activity-btn");
+        const keyTakeawaysBtn = document.getElementById("key-takeaways-btn");
+        const endLessonBtn = document.getElementById("end-lesson-btn");
+
+        // --- Feedback Elements ---
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackText = document.getElementById("feedback-modal-text");
+
+        // --- Audio Elements ---
+        const introAudio = document.getElementById("intro-audio");
+        const completeAudio = document.getElementById("complete-audio");
+        const dingSound = document.getElementById("ding-sound");
+        const buzzSound = document.getElementById("buzz-sound");
+
+        const icons = {
+          correct: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+          incorrect: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`,
+        };
+
+        // --- Game Data ---
+        const gameData = [
+          {
+            id: "peace_plan",
+            title: "Community Peace Plan Builder",
+            steps: [
+              {
+                id: 1,
+                text: "Identify Common Goals",
+                correctFeedback: "Identify Common Goals, Communities must agree on shared needs and values, like safety, fairness, and respect.",
+                incorrectFeedback: "Without common goals, the community will have no shared direction. This must come first."
+              },
+              {
+                id: 2,
+                text: "Establish Communication Channels",
+                correctFeedback: "Establish Communication Channels, Safe and open ways for people to share ideas are essential.",
+                incorrectFeedback: "People cannot work together if they have no way to communicate. This should be among the first steps."
+              },
+              {
+                id: 3,
+                text: "Build Trust Among Community Members",
+                correctFeedback: "Build Trust Among Community Members, Trust lays the groundwork for honest and respectful collaboration.",
+                incorrectFeedback: "Trust should be developed early, before implementing solutions, so people feel safe to work together."
+              },
+              {
+                id: 4,
+                text: "Promote Inclusivity and Respect for Diversity",
+                correctFeedback: "Promote Inclusivity and Respect for Diversity, Peace thrives when everyone feels valued and included.",
+                incorrectFeedback: "Inclusion works best once communication and trust are established, so everyone’s voice can be heard."
+              },
+              {
+                id: 5,
+                text: "Provide Peace Education and Awareness Campaigns",
+                correctFeedback: "Provide Peace Education and Awareness Campaigns, Education strengthens understanding of peaceful values and skills.",
+                incorrectFeedback: "Education is more effective after trust and inclusivity are in place, so people are open to learning."
+              },
+              {
+                id: 6,
+                text: "Create Conflict Resolution Mechanisms",
+                correctFeedback: "Create Conflict Resolution Mechanisms, Fair systems are important for resolving disputes.",
+                incorrectFeedback: "This comes after people are connected, included, and aware, so systems can work fairly."
+              },
+              {
+                id: 7,
+                text: "Organize Regular Community Meetings",
+                correctFeedback: "Organize Regular Community Meetings, Keeping dialogue active ensures relationships remain strong and peace thrives.",
+                incorrectFeedback: "Meetings maintain peace but should happen after the plan’s foundation is ready."
+              },
+              {
+                id: 8,
+                text: "Implement and Monitor Agreements",
+                correctFeedback: "Excellent sequencing! You began with shared goals, built communication and trust, promoted inclusion, educated the community, set up fair conflict-solving systems, kept dialogue alive with meetings, and finally implemented the plan. This is how sustainable peace is made!",
+                incorrectFeedback: "This is the final step, after all preparation, systems, and education are in place."
+              }
+            ],
+            completedSteps: 0,
+          },
+        ];
+
+        // --- Game State ---
+        let totalTasks = gameData.reduce((acc, curr) => acc + curr.steps.length, 0);
+        let completedTasks = 0;
+        let currentExperimentIndex = 0;
+        let draggedItem = null;
+        let touchClone = null;
+
+        // --- Core Functions ---
+        function shuffleArray(array) {
+          for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+          }
+        }
+
+        function initializeGame() {
+          completedTasks = 0;
+          currentExperimentIndex = 0;
+          gameData.forEach((exp) => (exp.completedSteps = 0));
+          updateProgressBar();
+          renderCurrentExperiment();
+          progressText.textContent = `0 / ${totalTasks}`;
+        }
+
+        function renderCurrentExperiment() {
+          gameBoard.innerHTML = "";
+
+          if (currentExperimentIndex >= gameData.length) {
+            checkGameCompletion();
+            return;
+          }
+
+          const experiment = gameData[currentExperimentIndex];
+
+          const panel = document.createElement("div");
+          panel.className = "experiment-panel";
+          panel.dataset.experimentId = experiment.id;
+
+          const title = document.createElement("h3");
+          title.className = "experiment-title";
+          title.textContent = experiment.title;
+          panel.appendChild(title);
+
+          const contentWrapper = document.createElement("div");
+          contentWrapper.className = "content-wrapper";
+
+          const sequenceContainer = document.createElement("div");
+          sequenceContainer.className = "sequence-container";
+          experiment.steps.forEach((step, index) => {
+            const slot = document.createElement("div");
+            slot.className = "sequence-slot";
+            slot.dataset.sequenceIndex = index;
+            slot.innerHTML = `<span>${index + 1}</span>`;
+            addDropListeners(slot);
+            sequenceContainer.appendChild(slot);
+
+            if (index < experiment.steps.length - 1) {
+              const arrow = document.createElement("div");
+              arrow.className = "sequence-arrow";
+              arrow.setAttribute("aria-hidden", "true");
+              sequenceContainer.appendChild(arrow);
+            }
+          });
+          contentWrapper.appendChild(sequenceContainer);
+
+          const stepsContainer = document.createElement("div");
+          stepsContainer.className = "steps-container";
+          let shuffledSteps = [...experiment.steps];
+          shuffleArray(shuffledSteps);
+          shuffledSteps.forEach((step) => {
+            const card = document.createElement("div");
+            card.className = "step-card";
+            card.draggable = true;
+            card.dataset.stepId = step.id;
+            card.dataset.experimentId = experiment.id;
+            card.textContent = step.text;
+            addDragListeners(card);
+            stepsContainer.appendChild(card);
+          });
+          contentWrapper.appendChild(stepsContainer);
+
+          panel.appendChild(contentWrapper);
+
+          // Set initial state for fade-in
+          panel.style.opacity = "0";
+          panel.style.transform = "scale(0.95)";
+          gameBoard.appendChild(panel);
+
+          // Trigger the fade-in transition
+          setTimeout(() => {
+            panel.style.opacity = "1";
+            panel.style.transform = "scale(1)";
+          }, 50);
+        }
+
+        function addDragListeners(item) {
+          item.addEventListener("dragstart", (e) => {
+            if (item.classList.contains("sorted")) {
+              e.preventDefault();
+              return;
+            }
+            draggedItem = item;
+            setTimeout(() => item.classList.add("dragging"), 0);
+          });
+
+          item.addEventListener("dragend", () => {
+            item.classList.remove("dragging");
+            draggedItem = null;
+          });
+
+          let offsetX, offsetY;
+          item.addEventListener(
+            "touchstart",
+            (e) => {
+              if (item.classList.contains("sorted")) {
+                return;
+              }
+              if (e.cancelable) e.preventDefault();
+              draggedItem = item;
+
+              const touch = e.touches[0];
+              const rect = item.getBoundingClientRect();
+              offsetX = touch.clientX - rect.left;
+              offsetY = touch.clientY - rect.top;
+
+              touchClone = item.cloneNode(true);
+              touchClone.classList.add("touch-clone");
+              touchClone.style.width = `${rect.width}px`;
+              touchClone.style.height = `${rect.height}px`;
+              touchClone.style.left = `${touch.clientX - offsetX}px`;
+              touchClone.style.top = `${touch.clientY - offsetY}px`;
+              document.body.appendChild(touchClone);
+              item.classList.add("dragging");
+            },
+            { passive: false },
+          );
+
+          item.addEventListener(
+            "touchmove",
+            (e) => {
+              if (item.classList.contains("sorted") || !touchClone) {
+                return;
+              }
+              if (e.cancelable) e.preventDefault();
+
+              const touch = e.touches[0];
+              touchClone.style.left = `${touch.clientX - offsetX}px`;
+              touchClone.style.top = `${touch.clientY - offsetY}px`;
+
+              let elementUnderTouch = document.elementFromPoint(
+                touch.clientX,
+                touch.clientY,
+              );
+              let dropZoneUnderTouch = elementUnderTouch
+                ? elementUnderTouch.closest(".sequence-slot")
+                : null;
+
+              document.querySelectorAll(".sequence-slot").forEach((zone) => {
+                zone.classList.toggle("drag-over", zone === dropZoneUnderTouch);
+              });
+            },
+            { passive: false },
+          );
+
+          item.addEventListener("touchend", (e) => {
+            if (!draggedItem) return;
+
+            if (item.classList.contains("sorted")) {
+              if (touchClone) touchClone.remove();
+              touchClone = null;
+              if (draggedItem) draggedItem.classList.remove("dragging");
+              draggedItem = null;
+              document
+                .querySelectorAll(".sequence-slot")
+                .forEach((zone) => zone.classList.remove("drag-over"));
+              return;
+            }
+
+            const touch = e.changedTouches[0];
+            let dropTarget = document.elementFromPoint(
+              touch.clientX,
+              touch.clientY,
+            );
+            let dropZone = dropTarget
+              ? dropTarget.closest(".sequence-slot")
+              : null;
+
+            if (dropZone) handleDrop(dropZone);
+
+            if (touchClone) touchClone.remove();
+            touchClone = null;
+            if (draggedItem) draggedItem.classList.remove("dragging");
+            draggedItem = null;
+            document
+              .querySelectorAll(".sequence-slot")
+              .forEach((zone) => zone.classList.remove("drag-over"));
+          });
+        }
+
+        function addDropListeners(zone) {
+          zone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            if (zone.children.length === 1) zone.classList.add("drag-over");
+          });
+          zone.addEventListener("dragleave", () =>
+            zone.classList.remove("drag-over"),
+          );
+          zone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            zone.classList.remove("drag-over");
+            handleDrop(zone);
+          });
+        }
+
+        function shakeDraggedItem() {
+          if (!draggedItem) return;
+
+          const itemToShake = draggedItem;
+          itemToShake.classList.remove("shake");
+          void itemToShake.offsetWidth;
+          itemToShake.classList.add("shake");
+          setTimeout(() => {
+            itemToShake.classList.remove("shake");
+          }, 500);
+        }
+
+        function handleDrop(zone) {
+          if (!draggedItem || zone.children.length > 1) return;
+
+          const panel = zone.closest(".experiment-panel");
+          const draggedExperimentId = draggedItem.dataset.experimentId;
+          const experimentData = gameData[currentExperimentIndex];
+
+          if (experimentData.id !== draggedExperimentId) {
+            shakeDraggedItem();
+            return;
+          }
+
+          const sequenceIndex = parseInt(zone.dataset.sequenceIndex);
+          const correctStepId = sequenceIndex + 1;
+          const draggedStepId = parseInt(draggedItem.dataset.stepId);
+
+          const draggedStepData = experimentData.steps.find(
+            (s) => s.id === draggedStepId,
+          );
+          const isCorrect =
+            correctStepId === draggedStepId &&
+            sequenceIndex === experimentData.completedSteps;
+
+          if (isCorrect) {
+            completedTasks++;
+            experimentData.completedSteps++;
+            updateProgressBar();
+
+            zone.innerHTML = ""; 
+
+            const numberSpan = document.createElement("span");
+            numberSpan.className = "sorted-number";
+            numberSpan.textContent = `${sequenceIndex + 1}.`;
+            zone.appendChild(numberSpan);
+
+            zone.appendChild(draggedItem);
+            draggedItem.draggable = false;
+            draggedItem.classList.remove("step-card");
+            draggedItem.classList.add("sorted");
+
+            zone.classList.add("filled");
+
+            showFeedback(true, draggedStepData.correctFeedback);
+
+            if (experimentData.completedSteps === experimentData.steps.length) {
+              panel.classList.add("completed");
+            }
+          } else {
+            shakeDraggedItem();
+            const feedbackMsg = draggedStepData.incorrectFeedback;
+            showFeedback(false, feedbackMsg);
+          }
+        }
+
+        function updateProgressBar() {
+          const percentage = (completedTasks / totalTasks) * 100;
+          progressBar.style.width = `${percentage}%`;
+          progressText.textContent = `${completedTasks} / ${totalTasks}`;
+        }
+
+        function showFeedback(isCorrect, message) {
+          const titleText = isCorrect ? "Correct!" : "Not Quite...";
+          feedbackTitle.innerHTML = `${isCorrect ? icons.correct : icons.incorrect} ${titleText}`;
+          feedbackText.textContent = message;
+          feedbackModal.className = isCorrect
+            ? "correct-feedback"
+            : "incorrect-feedback";
+          playSound(isCorrect ? dingSound : buzzSound);
+          feedbackModalOverlay.classList.remove("hidden");
+        }
+
+        function checkGameCompletion() {
+          if (completedTasks === totalTasks) {
+            setTimeout(() => {
+              const gameScreenEl = document.getElementById("game-screen");
+
+              html2canvas(gameScreenEl, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: "#fafbff",
+                onclone: (clonedDoc) => {
+                  const clonedGameScreen = clonedDoc.getElementById("game-screen");
+                  const clonedCompletion = clonedDoc.getElementById("completion-overlay");
+                  const clonedFeedback = clonedDoc.getElementById("feedback-modal-overlay");
+                  const clonedHint = clonedDoc.getElementById("hint-overlay");
+                  const clonedInstructions = clonedDoc.getElementById("instructions-overlay");
+                  const clonedIntro = clonedDoc.getElementById("activity-description-overlay");
+                  const clonedTakeaways = clonedDoc.getElementById("takeaways-overlay");
+
+                  if (clonedCompletion) clonedCompletion.classList.add("hidden");
+                  if (clonedFeedback) clonedFeedback.classList.add("hidden");
+                  if (clonedHint) clonedHint.classList.add("hidden");
+                  if (clonedInstructions) clonedInstructions.classList.add("hidden");
+                  if (clonedIntro) clonedIntro.classList.add("hidden");
+                  if (clonedTakeaways) clonedTakeaways.classList.add("hidden");
+
+                  if (clonedGameScreen) {
+                    clonedGameScreen.classList.remove("hidden");
+                    clonedGameScreen.style.position = "relative"; 
+                    clonedGameScreen.style.height = "auto"; 
+                    clonedGameScreen.style.overflow = "visible";
+                  }
+
+                  const panels = clonedDoc.querySelectorAll(".experiment-panel");
+                  panels.forEach((p) => {
+                    p.style.opacity = "1";
+                    p.style.transform = "scale(1)";
+                  });
+
+                  const elementsToExpand = clonedDoc.querySelectorAll(
+                    ".game-content, #game-board, .experiment-panel, .content-wrapper, .sequence-container, .steps-container",
+                  );
+                  elementsToExpand.forEach((el) => {
+                    el.style.overflow = "visible";
+                    el.style.height = "auto";
+                    el.style.minHeight = "auto";
+                    el.style.maxHeight = "none";
+                    el.style.flex = "none"; 
+                  });
+                },
+              })
+                .then((canvas) => {
+                  const imgData = canvas.toDataURL("image/png");
+                  document.querySelector(".completion-image").src = imgData;
+
+                  completionOverlay.classList.remove("hidden");
+                  playSound(completeAudio);
+                })
+                .catch((err) => {
+                  console.error("Screenshot failed:", err);
+                  completionOverlay.classList.remove("hidden");
+                  playSound(completeAudio);
+                });
+            }, 500);
+          }
+        }
+
+        function advanceToNextExperiment() {
+          const currentPanel = gameBoard.querySelector(".experiment-panel");
+
+          if (currentExperimentIndex >= gameData.length - 1) {
+            currentExperimentIndex++;
+            checkGameCompletion();
+            return;
+          }
+
+          if (currentPanel) {
+            currentPanel.style.opacity = "0";
+            currentPanel.style.transform = "scale(0.95)";
+
+            setTimeout(() => {
+              currentExperimentIndex++;
+              if (currentExperimentIndex < gameData.length) {
+                renderCurrentExperiment();
+              } else {
+                checkGameCompletion();
+              }
+            }, 400); 
+          } else {
+            currentExperimentIndex++;
+            if (currentExperimentIndex < gameData.length) {
+              renderCurrentExperiment();
+            } else {
+              checkGameCompletion();
+            }
+          }
+        }
+
+        function playSound(sound) {
+          if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch((e) => console.error("Audio play failed:", e));
+          }
+        }
+
+        function stopAllAudio() {
+          [introAudio, completeAudio, dingSound, buzzSound].forEach((audio) => {
+            if (audio) {
+              audio.pause();
+              audio.currentTime = 0;
+            }
+          });
+        }
+
+        // --- Event Listeners Setup ---
+        startBtn.addEventListener("click", () => {
+          startScreen.classList.add("hidden");
+          gameScreen.classList.remove("hidden");
+          initializeGame();
+
+          activityDescriptionOverlay.classList.remove("hidden");
+          playSound(introAudio);
+
+          if (
+            typeof sendEvent !== "undefined" &&
+            typeof ActivityEvent !== "undefined"
+          ) {
+            sendEvent(ActivityEvent.START_ACTIVITY, {
+              activityName: "Activity 4: Community Peace Plan Builder",
+            });
+          }
+        });
+
+        continueBtn.addEventListener("click", () => {
+          stopAllAudio();
+          activityDescriptionOverlay.classList.add("hidden");
+        });
+
+        instructionsIcon.addEventListener("click", () =>
+          instructionsOverlay.classList.remove("hidden"),
+        );
+        closeInstructionsBtn.addEventListener("click", () =>
+          instructionsOverlay.classList.add("hidden"),
+        );
+
+        hintIcon.addEventListener("click", () =>
+          hintOverlay.classList.remove("hidden"),
+        );
+        closeHintBtn.addEventListener("click", () =>
+          hintOverlay.classList.add("hidden"),
+        );
+
+        nextQuestionBtn.addEventListener("click", () => {
+          feedbackModalOverlay.classList.add("hidden");
+          const currentExperiment = gameData[currentExperimentIndex];
+          if (
+            currentExperiment &&
+            currentExperiment.completedSteps === currentExperiment.steps.length
+          ) {
+            advanceToNextExperiment();
+          }
+        });
+
+        restartActivityBtn.addEventListener("click", () => {
+          stopAllAudio();
+          completionOverlay.classList.add("hidden");
+          initializeGame();
+        });
+
+        // Navigation Logics
+        prevActivityBtn.addEventListener("click", () => {
+          window.location.href = "../ACTIVITY3/index.html";
+          if (
+            typeof sendEvent !== "undefined" &&
+            typeof ActivityEvent !== "undefined"
+          ) {
+            sendEvent(ActivityEvent.END_ACTIVITY, {
+              activityName: "Activity 4: Community Peace Plan Builder",
+            });
+          }
+        });
+
+        keyTakeawaysBtn.addEventListener("click", () => {
+          completionOverlay.classList.add("hidden");
+          stopAllAudio();
+          takeawaysOverlay.classList.remove("hidden");
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.END_ACTIVITY, {
+              activityName: "Activity 4: Community Peace Plan Builder",
+            });
+          }
+        });
+
+        endLessonBtn.addEventListener("click", () => {
+          if (typeof sendEvent !== "undefined" && typeof LessonEvent !== "undefined") {
+            sendEvent(LessonEvent.END_LESSON, {
+              lessonName: "Embrace Peace Initiatives and Agreements at the Community Level for Harmonious Living",
+            });
+          }
+        });
+
+        [activityDescriptionOverlay, instructionsOverlay, hintOverlay].forEach(
+          (overlay) => {
+            overlay.addEventListener("click", (e) => {
+              if (e.target === overlay) {
+                overlay.classList.add("hidden");
+                if (overlay === activityDescriptionOverlay) stopAllAudio();
+              }
+            });
+          },
+        );
+      });
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

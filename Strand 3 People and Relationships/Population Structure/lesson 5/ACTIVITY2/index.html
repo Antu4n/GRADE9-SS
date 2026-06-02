@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity 2: Appreciation Flip Cards</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        
+        <div id="start-screen" class="screen">
+          <h1>Appreciation Flip Cards</h1>
+          <button
+            class="start-button"
+            onclick="
+              startGame();
+              if(typeof sendEvent === 'function') sendEvent(ActivityEvent.START_ACTIVITY, { activityName: 'Activity 2: Appreciation Flip Cards' });
+            "
+          >
+            Start Activity
+          </button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Fact to Feeling</h1>
+            <div class="progress-wrapper">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <div id="progress-text">0 / 6</div>
+              <div class="instructions-icon" onclick="showGameInstructions()">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          
+          <div class="lab-game-area" id="lab-game-area">
+          </div>
+        </div>
+
+        <div id="activity-description-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Activity Introduction</h2>
+            <div class="intro-content">
+              <p>
+                Let us flip facts into understanding! On each card, you will see a real population structure fact from a country like Kenya or Germany. 
+                Flip it over to uncover what this means for people's lives and how governments plan. Choose the best insight. This is how we turn data into action!
+              </p>
+            </div>
+            <button class="modal-close-btn" onclick="closeActivityDescription()">Continue</button>
+          </div>
+        </div>
+
+        <div id="game-instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Learner Instructions</h2>
+            <ul>
+              <li>Click a card to flip it.</li>
+              <li>Read the fact on the front carefully.</li>
+              <li>On the back, choose the best insight from the options provided.</li>
+              <li>Get instant feedback, read it to understand the reasoning.</li>
+              <li>Keep flipping until you have explored all the cards.</li>
+            </ul>
+            <button class="modal-close-btn" onclick="closeGameInstructions()">Got It!</button>
+          </div>
+        </div>
+
+        <div id="feedback-overlay" class="overlay hidden">
+          <div class="modal" id="feedback-modal">
+            <h2 class="modal-title" id="feedback-title">Feedback</h2>
+            <div class="intro-content" style="text-align: center; border-left: none; background: transparent;">
+              <p id="feedback-text"></p>
+            </div>
+            <button class="modal-close-btn" id="feedback-close-btn" onclick="closeFeedback()">Continue</button>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <div class="completion-title-banner">Activity Conclusion</div>
+          <div class="modal">
+            <img
+              id="completion-image"
+              src="images/complete.jpg"
+              alt="Activity Complete"
+              onerror="this.style.display='none'"
+            />
+          </div>
+          <div class="completion-buttons">
+            <button
+              class="completion-btn btn-prev"
+              onclick="goToPreviousActivity()"
+            >
+              Previous Activity
+            </button>
+            <button class="completion-btn btn-restart" onclick="restartGame()">
+              Restart Activity
+            </button>
+            <button class="completion-btn btn-next" onclick="showTakeaways()">
+              Key Takeaways
+            </button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="overlay takeaways-overlay hidden">
+          <div class="takeaways-container-wrapper">
+              <h2 class="takeaways-main-title">Lesson Complete</h2>
+              <div class="takeaways-card">
+                  <h3>Key Takeaways</h3>
+                  <table>
+                      <thead>
+                          <tr>
+                              <th>Aspect</th>
+                              <th>Detail</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr>
+                              <td>Developed Countries</td>
+                              <td>Tend towards low birth/death rates, ageing populations, slower growth, higher life expectancy.</td>
+                          </tr>
+                          <tr>
+                              <td>Developing Countries</td>
+                              <td>Often have high birth rates, youthful populations, rapid growth, lower life expectancy (historically).</td>
+                          </tr>
+                          <tr>
+                              <td>Appreciating Differences</td>
+                              <td>Appreciating these differences is crucial for understanding global challenges, planning aid, and tailoring development policies.</td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <button class="end-lesson-btn" id="btn-end-lesson" onclick="endLesson()">Brain Power Checkpoint</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="buzz-sound" src="audio/buzz.mp3" preload="auto"></audio>
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="outro-audio" src="audio/outro.mp3" preload="auto"></audio>
+
+    <script>
+      // --- DATA ---
+      const activityData = [
+        {
+          id: "c1", 
+          fact: "Kenya has a wide-based pyramid with over 40% of its population under 15.",
+          prompt: "This means the country needs more...",
+          correctAnswer: "Schools and jobs",
+          incorrectOptions: ["Retirement homes", "Pension systems"],
+          correctFeedback: "Excellent insight! A youthful population means big investments in schools, teachers, and job creation are essential for future stability.",
+          incorrectFeedback: "Not quite. Look at the pyramid again, is the majority of the population elderly? Try to match the resource with the age group."
+        },
+        {
+          id: "c2", 
+          fact: "Germany's population pyramid shows more people aged 65+ than under 15.",
+          prompt: "This creates a need for policies focused on...",
+          correctAnswer: "Elderly care and pensions",
+          incorrectOptions: ["Baby formula", "University scholarships"],
+          correctFeedback: "Spot on! An aging population needs strong social security, healthcare, and elderly support systems.",
+          incorrectFeedback: "That does not quite match the needs of an ageing population. Look at the age range again and think about their challenges."
+        },
+        {
+          id: "c3", 
+          fact: "Developing countries often have high birth and death rates.",
+          prompt: "This can impact development by...",
+          correctAnswer: "Creating rapid population growth and pressure on services",
+          incorrectOptions: ["Increasing pension costs", "Reducing the need for schools"],
+          correctFeedback: "Exactly! High birth rates mean fast population growth, which strains health, education, and housing services.",
+          incorrectFeedback: "Think again. High birth rates often increase the demand for schools, housing, and hospitals, not reduce it."
+        },
+        {
+          id: "c4", 
+          fact: "Urban areas in many developing countries have a high proportion of working-age adults (15-64).",
+          prompt: "This trend can boost development by...",
+          correctAnswer: "Increasing the labour force and economic productivity",
+          incorrectOptions: ["Raising pension demands", "Reducing job opportunities"],
+          correctFeedback: "Correct! A larger working-age population can drive economic growth if there are enough jobs and skills training.",
+          incorrectFeedback: "Check again. Pension demands are mainly driven by older populations, not working-age groups."
+        },
+        {
+          id: "c5", 
+          fact: "Some countries have a declining number of children under 5.",
+          prompt: "This could mean...",
+          correctAnswer: "Lower demand for early childhood services in future",
+          incorrectOptions: ["Higher need for maternity wards", "More school construction immediately"],
+          correctFeedback: "Right! Fewer young children means that over time, fewer kindergartens and nurseries will be needed.",
+          incorrectFeedback: "Not quite. If fewer children are being born, maternity wards and immediate school expansion may not be the priority."
+        },
+        {
+          id: "c6", 
+          fact: "Countries with many people aged 50-64 may soon face a rise in elderly populations.",
+          prompt: "Planners should prepare for...",
+          correctAnswer: "More healthcare services and pension systems",
+          incorrectOptions: ["Expanding primary schools", "Building youth sports facilities"],
+          correctFeedback: "Well done! As people in this age group grow older, demand for elderly care, healthcare, and pensions will increase.",
+          incorrectFeedback: "Think again. This age group is heading into retirement, not school or youth sports age."
+        }
+      ];
+
+      const icons = {
+        correct: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feedback-icon"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+        incorrect: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feedback-icon"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`,
+      };
+
+      const TOTAL_ACTIVITIES = activityData.length;
+      let completedActivities = new Set();
+      let isActivityComplete = false;
+
+      // Utility: Fisher-Yates shuffle
+      function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      // --- DOM ELEMENTS ---
+      const startScreen = document.getElementById("start-screen");
+      const gameScreen = document.getElementById("game-screen");
+      const labGameArea = document.getElementById("lab-game-area");
+      const progressBar = document.getElementById("progress-bar");
+      const progressText = document.getElementById("progress-text");
+      const overlays = {
+        activityDescription: document.getElementById("activity-description-overlay"),
+        gameInstructions: document.getElementById("game-instructions-overlay"),
+        feedback: document.getElementById("feedback-overlay"),
+        completion: document.getElementById("completion-overlay"),
+        takeaways: document.getElementById("takeaways-overlay"),
+      };
+      const sounds = {
+        ding: document.getElementById("ding-sound"),
+        buzz: document.getElementById("buzz-sound"),
+        intro: document.getElementById("intro-audio"),
+        outro: document.getElementById("outro-audio"),
+      };
+
+      // --- INITIALIZATION ---
+      document.addEventListener("DOMContentLoaded", initializeGame);
+
+      function initializeGame() {
+        let gridHTML = `<div class="cards-grid">`;
+
+        activityData.forEach((item) => {
+          let options = [...item.incorrectOptions, item.correctAnswer];
+          shuffleArray(options);
+
+          let optionsHTML = options.map(opt => `
+            <button class="option-btn" onclick="checkAnswer(event, '${item.id}', this, '${opt.replace(/'/g, "\\'")}')">${opt}</button>
+          `).join('');
+
+          gridHTML += `
+            <div class="flip-card glow-pulse" id="card-${item.id}" onclick="flipCard('${item.id}')">
+              <div class="flip-card-inner">
+                <div class="flip-card-front">
+                  <div class="card-fact">${item.fact}</div>
+                  <div class="flip-instruction">Click to Flip</div>
+                </div>
+                <div class="flip-card-back">
+                  <div class="card-prompt">${item.prompt}</div>
+                  <div class="options-container">
+                    ${optionsHTML}
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        gridHTML += `</div>`;
+        labGameArea.innerHTML = gridHTML;
+        updateProgress();
+      }
+
+      // --- GAME FLOW ---
+      function startGame() {
+        startScreen.classList.add("hidden");
+        gameScreen.classList.remove("hidden");
+        setTimeout(() => {
+          overlays.activityDescription.classList.remove("hidden");
+          if (sounds.intro) playSound(sounds.intro);
+        }, 500);
+      }
+
+      function closeActivityDescription() {
+        overlays.activityDescription.classList.add("hidden");
+        if (sounds.intro) sounds.intro.pause();
+      }
+
+      function flipCard(cardId) {
+        const cardElement = document.getElementById(`card-${cardId}`);
+        const cardInner = cardElement.querySelector('.flip-card-inner');
+
+        if (cardElement.classList.contains('is-flipped')) return;
+
+        anime({
+          targets: cardInner,
+          rotateY: '180deg',
+          duration: 600,
+          easing: 'easeInOutQuad'
+        });
+
+        cardElement.classList.add('is-flipped');
+        cardElement.classList.remove('glow-pulse');
+      }
+
+      function checkAnswer(event, activityId, btnElement, selectedValue) {
+        event.stopPropagation(); // Prevent card from flipping back
+        
+        const activity = activityData.find(a => a.id === activityId);
+        const cardElement = document.getElementById(`card-${activityId}`);
+        
+        if (completedActivities.has(activityId)) return;
+
+        if (selectedValue === activity.correctAnswer) {
+            playSound(sounds.ding);
+            showFeedback(true, activity);
+            
+            // Mark as solved
+            cardElement.classList.add('completed');
+            const allBtns = cardElement.querySelectorAll('.option-btn');
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                if(btn.innerText === activity.correctAnswer) btn.classList.add('correct-ans');
+            });
+            
+            if (!completedActivities.has(activityId)) {
+                completedActivities.add(activityId);
+                updateProgress();
+            }
+        } else {
+            playSound(sounds.buzz);
+            showFeedback(false, activity);
+        }
+      }
+
+      function showFeedback(isCorrect, activity) {
+        const modal = document.getElementById("feedback-modal");
+        const title = document.getElementById("feedback-title");
+        const text = document.getElementById("feedback-text");
+        const btn = document.getElementById("feedback-close-btn");
+
+        modal.classList.remove('modal-correct', 'modal-incorrect');
+
+        if (isCorrect) {
+            modal.classList.add('modal-correct');
+            title.innerHTML = `${icons.correct} <span>Correct!</span>`;
+            text.textContent = activity.correctFeedback;
+            btn.textContent = "Continue";
+        } else {
+            modal.classList.add('modal-incorrect');
+            title.innerHTML = `${icons.incorrect} <span>Not Quite...</span>`;
+            text.textContent = activity.incorrectFeedback;
+            btn.textContent = "Try Again";
+        }
+
+        overlays.feedback.classList.remove("hidden");
+      }
+
+      function closeFeedback() {
+        overlays.feedback.classList.add("hidden");
+        
+        if (completedActivities.size >= TOTAL_ACTIVITIES && !isActivityComplete) {
+            isActivityComplete = true;
+            setTimeout(() => {
+                overlays.completion.classList.remove("hidden");
+                if (sounds.outro) playSound(sounds.outro);
+            }, 400);
+        }
+      }
+
+      function restartGame() {
+        if (sounds.outro) sounds.outro.pause();
+        completedActivities.clear();
+        isActivityComplete = false;
+        
+        initializeGame();
+        
+        overlays.completion.classList.add("hidden");
+      }
+
+      function showTakeaways() {
+        if (sounds.outro) {
+            sounds.outro.pause();
+            sounds.outro.currentTime = 0;
+        }
+        overlays.completion.classList.add("hidden");
+        overlays.takeaways.classList.remove("hidden");
+        if (typeof sendEvent === "function") {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: "Activity 2: Appreciation Flip Cards",
+          });
+        }
+      }
+      
+      function goToPreviousActivity() {
+        window.location.href = "../ACTIVITY1/index.html"; 
+        if(typeof sendEvent !== 'undefined') {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: "Activity 2: Appreciation Flip Cards",
+          });
+        }
+      }
+
+      function endLesson() {
+        if (typeof sendEvent !== "undefined" && typeof LessonEvent !== "undefined") {
+            sendEvent(LessonEvent.END_LESSON, { lessonName: "Appreciate the Differences in Population Structure Between Developed and Developing Countries" });
+        }
+      }
+
+      function updateProgress() {
+        let displayCount = Math.min(completedActivities.size, TOTAL_ACTIVITIES);
+        const progress = (displayCount / TOTAL_ACTIVITIES) * 100;
+        progressBar.style.width = `${progress}%`;
+        progressText.textContent = `${displayCount} / ${TOTAL_ACTIVITIES}`;
+      }
+
+      function showGameInstructions() { overlays.gameInstructions.classList.remove("hidden"); }
+      function closeGameInstructions() { overlays.gameInstructions.classList.add("hidden"); }
+
+      function playSound(audioEl) {
+        if (audioEl) {
+          audioEl.currentTime = 0;
+          audioEl.play().catch((e) => console.error("Audio play failed:", e));
+        }
+      }
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

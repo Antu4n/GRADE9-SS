@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity 3: Spot the Barrier</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="../js/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Spot the Barrier</h1>
+          <button class="start-button" onclick="showActivityIntro()">
+            Start Activity
+          </button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Spot the Barrier</h1>
+            <div class="top-right-controls">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <span id="progress-text">0 / 8</span>
+              <div class="instructions-icon" onclick="showInstructions()">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <h2 class="scenario-title" id="scenario-title"></h2>
+
+          <div class="scenario-content">
+            <div class="scenario-container" id="scenario-container">
+              <img
+                id="scenario-image"
+                src=""
+                alt="Scenario Dialogue"
+                class="scenario-image"
+              />
+              <div class="scenario-details">
+                <p class="scenario-story" id="scenario-story-text"></p>
+                <div class="question-section">
+                  <p class="scenario-question" id="scenario-question-text"></p>
+                  <div class="options-container" id="options-container"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hint-icon" id="hint-icon" onclick="showHint()">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <div class="completion-title-banner">Activity Conclusion</div>
+          <div class="modal">
+            <img
+              id="completion-image"
+              src="images/complete.jpg"
+              alt="Activity Complete"
+              onerror="this.style.display = 'none'"
+            />
+          </div>
+          <div class="completion-buttons">
+            <button
+              class="completion-btn btn-prev"
+              onclick="goToPreviousActivity()"
+            >
+              Previous Activity
+            </button>
+            <button class="completion-btn btn-restart" onclick="restartGame()">
+              Restart Activity
+            </button>
+            <button
+              class="completion-btn btn-next"
+              id="keyTakeawaysBtn"
+              onclick="showTakeaways()"
+            >
+              Key Takeaways
+            </button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="overlay takeaways-overlay hidden">
+          <div class="takeaways-container-wrapper">
+            <h2 class="takeaways-main-title">Lesson Complete</h2>
+            <div class="takeaways-card">
+              <h3>Key Takeaways</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Aspect</th>
+                    <th>Detail</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Common Barriers</td>
+                    <td>Barriers to conflict resolution include anger, fear, pride, peer pressure, and poor communication.</td>
+                  </tr>
+                  <tr>
+                    <td>The Impact</td>
+                    <td>These barriers prevent people from solving problems calmly and effectively.</td>
+                  </tr>
+                  <tr>
+                    <td>The Solution</td>
+                    <td>Recognizing and removing these barriers is the first step to resolving conflict and leads to peaceful living.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <button
+              class="end-lesson-btn"
+              id="btn-end-lesson"
+              onclick="endLesson()"
+            >
+              Brain Power Checkpoint
+            </button>
+          </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Activity Introduction</h2>
+            <p>
+              Let us read closely and tune in like peace detectives! In this activity, you will read short scenes where learners face conflict. After each scene, it is your turn to identify the barrier that is getting in the way of peace. Ready to read, think, and choose?
+            </p>
+            <button onclick="closeModal('activity-intro-overlay')">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Learner Instructions</h2>
+            <ol>
+              <li><strong>Read carefully</strong> each short scene.</li>
+              <li><strong>Choose the barrier</strong> that you think best matches the situation from the options.</li>
+              <li><strong>Read the feedback</strong> carefully. It will help you understand why the barrier fits.</li>
+              <li><strong>Use the Hint button</strong> if you are unsure.</li>
+            </ol>
+            <button onclick="closeModal('instructions-overlay')">
+              Got it!
+            </button>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Here is a Hint</h2>
+            <p style="text-align: left"></p>
+            <button onclick="closeModal('hint-overlay')">Got it!</button>
+          </div>
+        </div>
+
+        <div id="feedback-correct-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header correct">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <h2>Correct</h2>
+            </div>
+            <p id="correct-feedback-text"></p>
+            <button
+              class="feedback-btn correct"
+              onclick="closeModal('feedback-correct-overlay')"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="feedback-incorrect-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header incorrect">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+              </svg>
+              <h2>Try Again</h2>
+            </div>
+            <p id="incorrect-feedback-text"></p>
+            <button class="feedback-btn incorrect" onclick="handleTryAgain()">
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const activityData = {
+        scenarios: [
+          {
+            title: "Scenario 1: The Group Project Standstill",
+            story: '"Liam and Amina are working on a class project. Liam: \'I think I should be the one to present. We agreed last week.\' Amina: \'No, I should do it. I have written most of the slides.\' Neither of them backs down. They cross their arms and look away from each other."',
+            image: "images/scenario1.jpg",
+            question: "What barrier is stopping them from resolving the conflict?",
+            options: [
+              {
+                text: "Anger",
+                feedback: "Not quite. Focus on why neither of them will step aside or admit the other might be right.",
+                isCorrect: false,
+              },
+              {
+                text: "Fear",
+                feedback: "Not quite. Focus on why neither of them will step aside or admit the other might be right.",
+                isCorrect: false,
+              },
+              {
+                text: "Pride",
+                feedback: "Yes! Pride is stopping them from apologising or compromising.",
+                isCorrect: true,
+              }
+            ],
+            hint: "Always ask yourself: What is really stopping peace here?"
+          },
+          {
+            title: "Scenario 2: Silent Treatment",
+            story: '"After an argument, Sarah walks past her friend without speaking. Her friend tries to catch her eye: \'Hey… can we talk?\' Sarah glances but keeps walking in silence."',
+            image: "images/scenario2.jpg",
+            question: "What is stopping this conflict from being resolved?",
+            options: [
+              {
+                text: "Lack of Communication",
+                feedback: "Exactly. Sarah’s silence shows a breakdown in communication.",
+                isCorrect: true,
+              },
+              {
+                text: "Peer Pressure",
+                feedback: "That is not quite right. Think about whether any actual talking or listening is happening here.",
+                isCorrect: false,
+              },
+              {
+                text: "Anger",
+                feedback: "That is not quite right. Think about whether any actual talking or listening is happening here.",
+                isCorrect: false,
+              }
+            ],
+            hint: "Always ask yourself: What is really stopping peace here?"
+          },
+          {
+            title: "Scenario 3: Afraid to Apologise",
+            story: '"Jude bumps into a classmate and makes them drop their books. His friends laugh. Jude looks nervous and whispers, \'It was an accident,\' but does not say sorry. He glances at his group of friends and shrinks back."',
+            image: "images/scenario3.jpg",
+            question: "What barrier is Jude facing?",
+            options: [
+              {
+                text: "Peer Pressure",
+                feedback: "Right! Jude does not want to look weak in front of his friends. That is peer pressure.",
+                isCorrect: true,
+              },
+              {
+                text: "Fear",
+                feedback: "Close! But what is really holding Jude back; his feelings, or how others might see him?",
+                isCorrect: false,
+              },
+              {
+                text: "Pride",
+                feedback: "Close! But what is really holding Jude back; his feelings, or how others might see him?",
+                isCorrect: false,
+              }
+            ],
+            hint: "Always ask yourself: What is really stopping peace here?"
+          },
+          {
+            title: "Scenario 4: Shouting Match in Class",
+            story: '"During a group task, Joy and Kelvin start arguing. Joy: \'You never listen to my ideas!\' Kelvin: \'Well maybe if you did not boss everyone around!\' Their voices get louder, and other learners look uncomfortable."',
+            image: "images/scenario4.jpg",
+            question: "What emotion is blocking peace?",
+            options: [
+              {
+                text: "Fear",
+                feedback: "Think, what strong emotion is making them raise their voices and attack each other’s character?",
+                isCorrect: false,
+              },
+              {
+                text: "Anger",
+                feedback: "That is it! Anger has taken over, and no one is listening or calming down.",
+                isCorrect: true,
+              },
+              {
+                text: "Misunderstanding",
+                feedback: "Think, what strong emotion is making them raise their voices and attack each other’s character?",
+                isCorrect: false,
+              }
+            ],
+            hint: "Always ask yourself: What is really stopping peace here?"
+          },
+          {
+            title: "Scenario 5: Quick Judgement",
+            story: '"On the playground, a ball hits Ravi by mistake. Without asking what happened, he shouts: \'You did that on purpose!\' The other child looks shocked and tries to explain, but Ravi walks away angrily."',
+            image: "images/scenario5.jpg",
+            question: "What barrier is shown here?",
+            options: [
+              {
+                text: "Bottled-Up Emotions",
+                feedback: "Not quite. Focus on whether Ravi really understood the other child’s intentions.",
+                isCorrect: false,
+              },
+              {
+                text: "Misunderstanding",
+                feedback: "Correct! Ravi assumed the worst without knowing the full story.",
+                isCorrect: true,
+              },
+              {
+                text: "Pride",
+                feedback: "Not quite. Focus on whether Ravi really understood the other child’s intentions.",
+                isCorrect: false,
+              }
+            ],
+            hint: "Always ask yourself: What is really stopping peace here?"
+          },
+          {
+            title: "Scenario 6: Passing the Blame",
+            story: '"During art class, paint spills on the floor. The teacher asks who is responsible. Amira points at Daniel: \'It was all his fault!\' Daniel protests, \'You pushed my arm!\'"',
+            image: "images/scenario6.jpg",
+            question: "What barrier is blocking peace?",
+            options: [
+              {
+                text: "Blame Shifting",
+                feedback: "Yes! Pointing fingers instead of owning up stops solutions from happening.",
+                isCorrect: true,
+              },
+              {
+                text: "Fear",
+                feedback: "Think, are they focusing on fixing the problem or on avoiding responsibility?",
+                isCorrect: false,
+              },
+              {
+                text: "Pride",
+                feedback: "Think, are they focusing on fixing the problem or on avoiding responsibility?",
+                isCorrect: false,
+              }
+            ],
+            hint: "Always ask yourself: What is really stopping peace here?"
+          },
+          {
+            title: "Scenario 7: Quiet Until It Explodes",
+            story: '"For days, Omar feels upset about a classmate making jokes about him. He says nothing until one day he suddenly shouts at them in the middle of a lesson."',
+            image: "images/scenario7.jpg",
+            question: "What barrier is in play?",
+            options: [
+              {
+                text: "Anger",
+                feedback: "Not quite. Look at whether this is about a single moment of emotion or feelings building over time.",
+                isCorrect: false,
+              },
+              {
+                text: "Bottled-Up Emotions",
+                feedback: "Exactly! Holding feelings inside for too long can cause sudden emotional outbursts.",
+                isCorrect: true,
+              },
+              {
+                text: "Fear",
+                feedback: "Not quite. Look at whether this is about a single moment of emotion or feelings building over time.",
+                isCorrect: false,
+              }
+            ],
+            hint: "Always ask yourself: What is really stopping peace here?"
+          },
+          {
+            title: "Scenario 8: Avoiding the Issue",
+            story: '"During a disagreement about a game, two friends both say, \'Forget it,\' and walk away without talking about what happened."',
+            image: "images/scenario8.jpg",
+            question: "What barrier could be stopping peace here?",
+            options: [
+              {
+                text: "Fear",
+                feedback: "Think, are they solving the problem, or just avoiding it?",
+                isCorrect: false,
+              },
+              {
+                text: "Lack of Communication",
+                feedback: "Yes! Walking away without discussing the problem keeps it unresolved.",
+                isCorrect: true,
+              },
+              {
+                text: "Pride",
+                feedback: "Think, are they solving the problem, or just avoiding it?",
+                isCorrect: false,
+              }
+            ],
+            hint: "Always ask yourself: What is really stopping peace here?"
+          }
+        ],
+      };
+
+      let currentScenarioIndex = 0;
+      const totalScenarios = activityData.scenarios.length;
+      let selectedOptionIndex = null;
+      let currentShuffledOptions = [];
+      let introAudio, dingAudio, buzzAudio, outroAudio;
+
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+
+      function initAudio() {
+        try {
+          introAudio = new Audio("audio/intro.mp3");
+          dingAudio = new Audio("audio/ding.mp3");
+          buzzAudio = new Audio("audio/buzz.mp3");
+          outroAudio = new Audio("audio/outro.mp3");
+        } catch (e) {
+          console.warn("Audio could not be loaded.");
+          const mockAudio = { play: () => {}, pause: () => {}, currentTime: 0 };
+          introAudio = dingAudio = buzzAudio = outroAudio = mockAudio;
+        }
+      }
+
+      function playSound(audio) {
+        if (audio) {
+          audio.currentTime = 0;
+          audio.play().catch((e) => {});
+        }
+      }
+      function stopSound(audio) {
+        if (audio) {
+          audio.pause();
+        }
+      }
+
+      function initGame() {
+        loadScenario();
+      }
+
+      function loadScenario() {
+        selectedOptionIndex = null;
+        const scenario = activityData.scenarios[currentScenarioIndex];
+
+        document.getElementById("scenario-title").textContent = scenario.title;
+        document.getElementById("scenario-story-text").innerHTML = scenario.story;
+        document.getElementById("scenario-image").src = scenario.image;
+        document.getElementById("scenario-question-text").textContent = scenario.question;
+
+        const optionsContainer = document.getElementById("options-container");
+        optionsContainer.innerHTML = "";
+
+        const labels = ["A", "B", "C", "D"];
+
+        // Shuffle options so they appear in a random order each load
+        const shuffled = [...scenario.options];
+        shuffleArray(shuffled);
+        currentShuffledOptions = shuffled;
+
+        shuffled.forEach((option, index) => {
+          const button = document.createElement("button");
+          button.className = "option-button";
+          // Refactored to match design layout
+          button.innerHTML = `<span class="option-text">${labels[index]}) ${option.text}</span>`;
+          button.onclick = () => selectOption(index);
+          optionsContainer.appendChild(button);
+        });
+
+        updateProgress();
+      }
+
+      function selectOption(index) {
+        if (selectedOptionIndex !== null) return;
+        selectedOptionIndex = index;
+        const buttons = document
+          .getElementById("options-container")
+          .querySelectorAll(".option-button");
+
+        buttons.forEach((btn) => (btn.disabled = true));
+
+        const chosenOption = currentShuffledOptions[index];
+        const isCorrect = chosenOption.isCorrect;
+
+        if (isCorrect) {
+          buttons[index].classList.add("correct");
+          playSound(dingAudio);
+          setTimeout(() => {
+            showFeedbackPopup("correct", chosenOption.feedback);
+          }, 500);
+        } else {
+          buttons[index].classList.add("incorrect");
+          playSound(buzzAudio);
+          setTimeout(() => {
+            showFeedbackPopup("incorrect", chosenOption.feedback);
+          }, 500);
+        }
+      }
+
+      function handleTryAgain() {
+        document
+          .getElementById("feedback-incorrect-overlay")
+          .classList.add("hidden");
+        const buttons = document
+          .getElementById("options-container")
+          .querySelectorAll(".option-button");
+        buttons.forEach((btn) => {
+          btn.disabled = false;
+          btn.classList.remove("incorrect");
+        });
+        selectedOptionIndex = null;
+      }
+
+      function goToNextScenario() {
+        const container = document.getElementById("scenario-container");
+        // If this is the last scenario, end activity immediately
+        if (currentScenarioIndex >= totalScenarios - 1) {
+          endActivity();
+          return;
+        }
+
+        // Otherwise play the fade-out animation then load next
+        container.classList.add("fade-out");
+        setTimeout(() => {
+          currentScenarioIndex++;
+          loadScenario();
+          container.classList.remove("fade-out");
+        }, 300);
+      }
+
+      function updateProgress() {
+        const progress = currentScenarioIndex;
+        document.getElementById("progress-bar").style.width = `${
+          (progress / totalScenarios) * 100
+        }%`;
+        document.getElementById("progress-text").textContent =
+          `${progress} / ${totalScenarios}`;
+      }
+
+      function showFeedbackPopup(type, message) {
+        document.getElementById(`${type}-feedback-text`).innerHTML = message;
+        document
+          .getElementById(`feedback-${type}-overlay`)
+          .classList.remove("hidden");
+      }
+
+      function showActivityIntro() {
+        document.getElementById("start-screen").classList.add("hidden");
+        document.getElementById("game-screen").classList.remove("hidden");
+        document
+          .getElementById("activity-intro-overlay")
+          .classList.remove("hidden");
+        playSound(introAudio);
+        if (
+          typeof sendEvent !== "undefined" &&
+          typeof ActivityEvent !== "undefined"
+        ) {
+          sendEvent(ActivityEvent.START_ACTIVITY, {
+            activityName: "Spot the Barrier",
+          });
+        }
+      }
+
+      function showInstructions() {
+        document
+          .getElementById("instructions-overlay")
+          .classList.remove("hidden");
+      }
+
+      function showHint() {
+        const hintText = activityData.scenarios[currentScenarioIndex].hint;
+        const defaultHint =
+          "Always ask yourself: What is really stopping peace here?";
+        document.querySelector("#hint-overlay p").textContent =
+          hintText || defaultHint;
+        document.getElementById("hint-overlay").classList.remove("hidden");
+      }
+
+      function closeModal(id) {
+        document.getElementById(id).classList.add("hidden");
+        if (id === "activity-intro-overlay") {
+          stopSound(introAudio);
+          initGame();
+        }
+        if (id === "feedback-correct-overlay") {
+          goToNextScenario();
+        }
+      }
+
+      function endActivity() {
+        document.getElementById("progress-bar").style.width = `100%`;
+        document.getElementById("progress-text").textContent =
+          `${totalScenarios} / ${totalScenarios}`;
+
+        setTimeout(() => {
+          const gameWrapperEl = document.getElementById("game-wrapper");
+
+          html2canvas(gameWrapperEl, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: "#fafbff",
+            onclone: (clonedDoc) => {
+              const clonedGameScreen = clonedDoc.getElementById("game-screen");
+              const modals = clonedDoc.querySelectorAll(".overlay");
+              modals.forEach((m) => (m.style.display = "none"));
+
+              if (clonedGameScreen) {
+                clonedGameScreen.classList.remove("hidden");
+                clonedGameScreen.style.position = "relative";
+                clonedGameScreen.style.height =
+                  gameWrapperEl.scrollHeight + "px";
+                clonedGameScreen.style.overflow = "visible";
+              }
+
+              const elementsToExpand = clonedDoc.querySelectorAll(
+                ".scenario-content, #scenario-container",
+              );
+              elementsToExpand.forEach((el) => {
+                el.style.opacity = "1";
+                el.style.transform = "none";
+                el.style.overflow = "visible";
+                el.style.maxHeight = "none";
+              });
+            },
+          })
+            .then((canvas) => {
+              const imgData = canvas.toDataURL("image/png");
+              document.getElementById("completion-image").src = imgData;
+
+              document.getElementById("game-screen").classList.add("hidden");
+              document
+                .getElementById("completion-overlay")
+                .classList.remove("hidden");
+              playSound(outroAudio);
+            })
+            .catch((err) => {
+              console.error("Screenshot failed:", err);
+              document.getElementById("game-screen").classList.add("hidden");
+              document
+                .getElementById("completion-overlay")
+                .classList.remove("hidden");
+              playSound(outroAudio);
+            });
+        }, 500);
+      }
+
+      function restartGame() {
+        stopSound(outroAudio);
+        document.getElementById("completion-overlay").classList.add("hidden");
+        currentScenarioIndex = 0;
+        document.getElementById("game-screen").classList.remove("hidden");
+        document
+          .getElementById("scenario-container")
+          .classList.remove("fade-out");
+        loadScenario();
+      }
+
+      function goToPreviousActivity() {
+        window.location.href = "../ACTIVITY2/index.html";
+        if (
+          typeof sendEvent !== "undefined" &&
+          typeof ActivityEvent !== "undefined"
+        ) {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: "Spot the Barrier",
+          });
+        }
+      }
+
+      function showTakeaways() {
+        stopSound(outroAudio);
+        document.getElementById("completion-overlay").classList.add("hidden");
+        document.getElementById("takeaways-overlay").classList.remove("hidden");
+        if (
+          typeof sendEvent !== "undefined" &&
+          typeof ActivityEvent !== "undefined"
+        ) {
+            sendEvent(ActivityEvent.END_ACTIVITY, {
+              activityName: "Spot the Barrier",
+            });
+        }
+      }
+
+      function endLesson() {
+        if (
+          typeof sendEvent !== "undefined" &&
+          typeof LessonEvent !== "undefined"
+        ) {
+          sendEvent(LessonEvent.END_LESSON, {
+            lessonName:
+              "Identify Barriers to Conflict Resolution in Day-to-Day Lives",
+          });
+        }
+      }
+
+      window.onload = () => {
+        initAudio();
+      };
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>
