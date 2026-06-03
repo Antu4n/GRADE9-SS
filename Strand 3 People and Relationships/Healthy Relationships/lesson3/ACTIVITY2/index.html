@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Activity 2: From Conflict to Calm</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="../js/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>From Conflict to Calm</h1>
+          <button class="start-button">Start Activity</button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">From Conflict to Calm</h1>
+            <div class="header-right-group">
+              <div class="progress-area">
+                <div id="progress-container">
+                  <div id="progress-bar"></div>
+                </div>
+                <div id="progress-text">0 / 5</div>
+              </div>
+              <div class="instructions-icon" id="instructions-icon">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="game-content">
+            <div id="game-board"></div>
+          </div>
+          <div class="hint-icon" id="hint-icon">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="question-overlay" class="modal-overlay hidden" style="z-index: 2000;">
+          <div class="modal-content" style="border-top: 5px solid var(--primary-color);">
+            <div class="modal-body">
+              <div id="question-prompt" class="modal-title" style="font-size: 1.5rem;"></div>
+              <div id="options-container" class="options-grid"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="activity-description-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="modal-title">Activity Introduction</div>
+              <p class="modal-text">
+                Conflict is a normal part of life, but how we handle it makes all the difference. In this activity, you will build a smart and peaceful path for resolving disagreements. At each step, you will choose what to do. Your goal? Turn conflict into cooperation. Let us begin!
+              </p>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-btn" id="continue-btn">Continue</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="modal-title">Learner Instructions</div>
+              <ol>
+                <li>Read the situation at the top of the screen carefully.</li>
+                <li>At each step in the flowchart, choose the action you think is the best way to move toward a peaceful resolution.</li>
+                <li>If you choose correctly, you will move to the next step in the flow.</li>
+                <li>If your choice is not the best, you will get feedback and a chance to try again.</li>
+                <li>Keep going until you reach "Resolution Achieved!"</li>
+              </ol>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-btn" id="close-instructions-btn">
+                Got it!
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="modal-overlay hidden">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="modal-title">Here is a Hint</div>
+              <ul
+                style="
+                  text-align: left;
+                  padding-left: 1.5rem;
+                  font-size: 1.2rem;
+                  line-height: 1.6;
+                  color: var(--text-color-dark);
+                "
+              >
+                <li>Think about what will keep the conversation respectful, fair, and calm.</li>
+              </ul>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-btn" id="close-hint-btn">Got it</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="feedback-modal-overlay" class="modal-overlay hidden">
+          <div id="feedback-modal">
+            <div class="modal-content">
+              <div class="modal-body">
+                <div id="feedback-title" class="modal-title"></div>
+                <p id="feedback-modal-text" class="modal-text"></p>
+              </div>
+              <div class="modal-buttons">
+                <button id="next-question-button" class="modal-btn">
+                  Continue
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="modal-overlay hidden">
+          <div id="completion-title">Activity Conclusion</div>
+          <div class="modal-content completion-modal-content">
+            <p style="color: white; font-size: 1.2rem; text-align: center; max-width: 800px; margin-bottom: 1rem; line-height: 1.5;">
+              You have just built a peaceful path to resolving conflict. By staying calm, listening carefully, sharing your feelings, and finding fair solutions, you have shown real maturity and empathy. Keep using these steps every day to turn disagreements into opportunities for growth and understanding.
+            </p>
+            <img
+              src=""
+              alt="Completion configuration"
+              class="completion-image"
+            />
+          </div>
+          <div class="completion-buttons">
+            <button class="completion-btn" id="prev-activity-btn">
+              Previous Activity
+            </button>
+            <button class="completion-btn" id="restart-activity-btn">
+              Restart Activity
+            </button>
+            <button class="completion-btn" id="next-activity-btn">
+              Next Activity
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="complete-audio" src="audio/outro.mp3" preload="auto"></audio>
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="buzz-sound" src="audio/buzz.mp3" preload="auto"></audio>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // --- DOM Elements ---
+        const startScreen = document.getElementById("start-screen");
+        const gameScreen = document.getElementById("game-screen");
+        const startBtn = document.querySelector(".start-button");
+        const progressBar = document.getElementById("progress-bar");
+        const progressText = document.getElementById("progress-text");
+        const gameBoard = document.getElementById("game-board");
+
+        // --- Modal Elements ---
+        const activityDescriptionOverlay = document.getElementById("activity-description-overlay");
+        const instructionsOverlay = document.getElementById("instructions-overlay");
+        const hintOverlay = document.getElementById("hint-overlay");
+        const feedbackModalOverlay = document.getElementById("feedback-modal-overlay");
+        const completionOverlay = document.getElementById("completion-overlay");
+        const questionOverlay = document.getElementById("question-overlay");
+
+        // --- Button Elements ---
+        const continueBtn = document.getElementById("continue-btn");
+        const instructionsIcon = document.getElementById("instructions-icon");
+        const closeInstructionsBtn = document.getElementById("close-instructions-btn");
+        const hintIcon = document.getElementById("hint-icon");
+        const closeHintBtn = document.getElementById("close-hint-btn");
+        const nextQuestionBtn = document.getElementById("next-question-button");
+        const prevActivityBtn = document.getElementById("prev-activity-btn");
+        const restartActivityBtn = document.getElementById("restart-activity-btn");
+        const nextActivityBtn = document.getElementById("next-activity-btn");
+
+        // --- Feedback / Question Elements ---
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackText = document.getElementById("feedback-modal-text");
+        const questionPrompt = document.getElementById("question-prompt");
+        const optionsContainer = document.getElementById("options-container");
+
+        // --- Audio Elements ---
+        const introAudio = document.getElementById("intro-audio");
+        const completeAudio = document.getElementById("complete-audio");
+        const dingSound = document.getElementById("ding-sound");
+        const buzzSound = document.getElementById("buzz-sound");
+
+        const icons = {
+          correct: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+          incorrect: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`,
+        };
+
+        // --- Game Data ---
+        const gameData = [
+          {
+            icon: "🟡",
+            nodeText: "Conflict Arises",
+            prompt: "What should you do first?",
+            options: [
+              { label: "A", text: "Stay calm", isCorrect: true, feedback: "Great start! Staying calm helps you think clearly and avoid saying things you will regret." },
+              { label: "B", text: "Yell or walk away", isCorrect: false, feedback: "Walking away or yelling may make things worse. Try again, what helps you stay in control?" },
+              { label: "C", text: "Blame the other person", isCorrect: false, feedback: "Blaming fuels the fire. Try a more peaceful choice." }
+            ]
+          },
+          {
+            icon: "🔵",
+            nodeText: "Listen Actively",
+            prompt: "What comes next?",
+            options: [
+              { label: "A", text: "Interrupt them to prove your point", isCorrect: false, feedback: "Interrupting shuts down the conversation. Try a respectful option." },
+              { label: "B", text: "Listen actively and let them speak", isCorrect: true, feedback: "Well done! Listening first helps you understand the full picture." },
+              { label: "C", text: "Think about what you will say next", isCorrect: false, feedback: "Planning your comeback can block real understanding." }
+            ]
+          },
+          {
+            icon: "🔷",
+            nodeText: "Express Yourself Respectfully",
+            prompt: "Now it is your turn. What should you do?",
+            options: [
+              { label: "A", text: "Speak clearly and respectfully", isCorrect: true, feedback: "Great! Sharing your view respectfully opens the door to dialogue." },
+              { label: "B", text: "Shout to get attention", isCorrect: false, feedback: "Yelling may push them away. Try something more respectful." },
+              { label: "C", text: "Say nothing and hope they guess your feelings", isCorrect: false, feedback: "People cannot read minds, express your feelings calmly." }
+            ]
+          },
+          {
+            icon: "🔶",
+            nodeText: "Find a Compromise",
+            prompt: "How should you resolve the issue?",
+            options: [
+              { label: "A", text: "Demand to get your way", isCorrect: false, feedback: "Demanding everything will not build peace. Try being fair." },
+              { label: "B", text: "Suggest a fair solution for both sides", isCorrect: true, feedback: "Perfect! Compromise builds fairness and respect in relationships." },
+              { label: "C", text: "Walk away and never speak again", isCorrect: false, feedback: "Avoiding the issue may make it worse." }
+            ]
+          },
+          {
+            icon: "🟣",
+            nodeText: "Seek Help if Needed",
+            prompt: "What if the conflict continues?",
+            options: [
+              { label: "A", text: "Involve a trusted adult or peer mediator", isCorrect: true, feedback: "Good decision! Sometimes outside help is needed to keep peace." },
+              { label: "B", text: "Keep arguing until someone gives in", isCorrect: false, feedback: "Endless arguing leads nowhere. Try a smarter solution." },
+              { label: "C", text: "Ignore the problem forever", isCorrect: false, feedback: "Avoiding problems can make them grow. Let us solve it together." }
+            ]
+          }
+        ];
+
+        // --- Game State ---
+        const totalTasks = gameData.length;
+        let completedTasks = 0;
+        let lastAnswerWasCorrect = false;
+
+        // --- Core Functions ---
+        function initializeGame() {
+          completedTasks = 0;
+          updateProgressBar();
+          renderFlowchart();
+        }
+
+        function renderFlowchart() {
+          gameBoard.innerHTML = '<div class="flowchart-board"></div>';
+          const flowchartBoard = gameBoard.querySelector(".flowchart-board");
+
+          gameData.forEach((step, index) => {
+            const node = document.createElement("div");
+            node.className = `flowchart-node ${index === 0 ? "active" : "locked"}`;
+            node.id = `node-${index}`;
+            node.innerHTML = `<span style="font-size: 1.5rem;">${step.icon}</span> ${step.nodeText}`;
+            
+            node.addEventListener("click", () => {
+              if (node.classList.contains("active")) {
+                openQuestionOverlay(index);
+              }
+            });
+            
+            flowchartBoard.appendChild(node);
+
+            const arrow = document.createElement("div");
+            arrow.className = `flowchart-arrow ${index === 0 ? "active-arrow" : ""}`;
+            arrow.id = `arrow-${index}`;
+            flowchartBoard.appendChild(arrow);
+          });
+
+          // Final Resolution Node
+          const finalNode = document.createElement("div");
+          finalNode.className = "flowchart-node locked";
+          finalNode.id = "node-final";
+          finalNode.innerHTML = `<span style="font-size: 1.5rem;">✅</span> Resolution Achieved!`;
+          flowchartBoard.appendChild(finalNode);
+        }
+
+        function openQuestionOverlay(index) {
+          const step = gameData[index];
+          questionPrompt.textContent = step.prompt;
+          optionsContainer.innerHTML = "";
+
+          step.options.forEach(option => {
+            const btn = document.createElement("div");
+            btn.className = "option-btn";
+            btn.innerHTML = `<div class="option-letter">${option.label}</div> <span>${option.text}</span>`;
+            
+            btn.addEventListener("click", () => {
+              lastAnswerWasCorrect = option.isCorrect;
+              showFeedback(option.isCorrect, option.feedback);
+            });
+            optionsContainer.appendChild(btn);
+          });
+
+          questionOverlay.classList.remove("hidden");
+        }
+
+        function showFeedback(isCorrect, message) {
+          const titleText = isCorrect ? "Correct!" : "Not Quite...";
+          feedbackTitle.innerHTML = `${isCorrect ? icons.correct : icons.incorrect} ${titleText}`;
+          feedbackText.textContent = message;
+          feedbackModal.className = isCorrect ? "correct-feedback" : "incorrect-feedback";
+          playSound(isCorrect ? dingSound : buzzSound);
+          feedbackModalOverlay.classList.remove("hidden");
+        }
+
+        function advanceFlowchart() {
+          const currentNode = document.getElementById(`node-${completedTasks}`);
+          const currentArrow = document.getElementById(`arrow-${completedTasks}`);
+          
+          currentNode.classList.remove("active");
+          currentNode.classList.add("completed");
+          if(currentArrow) currentArrow.classList.add("completed-arrow");
+
+          completedTasks++;
+          updateProgressBar();
+
+          if (completedTasks < totalTasks) {
+            const nextNode = document.getElementById(`node-${completedTasks}`);
+            const nextArrow = document.getElementById(`arrow-${completedTasks}`);
+            nextNode.classList.remove("locked");
+            nextNode.classList.add("active");
+            if(nextArrow) nextArrow.classList.add("active-arrow");
+            
+            nextNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else {
+            const finalNode = document.getElementById("node-final");
+            finalNode.classList.remove("locked");
+            finalNode.classList.add("completed");
+            finalNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            checkGameCompletion();
+          }
+        }
+
+        function updateProgressBar() {
+          const percentage = (completedTasks / totalTasks) * 100;
+          progressBar.style.width = `${percentage}%`;
+          progressText.textContent = `${completedTasks} / ${totalTasks}`;
+        }
+
+        function checkGameCompletion() {
+          setTimeout(() => {
+            const gameScreenEl = document.getElementById("game-screen");
+
+            html2canvas(gameScreenEl, {
+              scale: 2,
+              useCORS: true,
+              backgroundColor: "#fafbff",
+              onclone: (clonedDoc) => {
+                const clonedGameScreen = clonedDoc.getElementById("game-screen");
+                const hiddenOverlays = clonedDoc.querySelectorAll(".modal-overlay");
+                
+                hiddenOverlays.forEach(overlay => overlay.classList.add("hidden"));
+
+                if (clonedGameScreen) {
+                  clonedGameScreen.classList.remove("hidden");
+                  clonedGameScreen.style.position = "relative"; 
+                  clonedGameScreen.style.height = "auto"; 
+                  clonedGameScreen.style.overflow = "visible";
+                }
+
+                const elementsToExpand = clonedDoc.querySelectorAll(
+                  ".game-content, #game-board, .flowchart-board"
+                );
+                elementsToExpand.forEach((el) => {
+                  el.style.overflow = "visible";
+                  el.style.height = "auto";
+                  el.style.minHeight = "auto";
+                  el.style.maxHeight = "none";
+                  el.style.flex = "none"; 
+                });
+              },
+            })
+              .then((canvas) => {
+                const imgData = canvas.toDataURL("image/png");
+                document.querySelector(".completion-image").src = imgData;
+                completionOverlay.classList.remove("hidden");
+                playSound(completeAudio);
+              })
+              .catch((err) => {
+                console.error("Screenshot failed:", err);
+                completionOverlay.classList.remove("hidden");
+                playSound(completeAudio);
+              });
+          }, 800);
+        }
+
+        function playSound(sound) {
+          if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch((e) => console.error("Audio play failed:", e));
+          }
+        }
+
+        function stopAllAudio() {
+          [introAudio, completeAudio, dingSound, buzzSound].forEach((audio) => {
+            if (audio) {
+              audio.pause();
+              audio.currentTime = 0;
+            }
+          });
+        }
+
+        // --- Event Listeners Setup ---
+        startBtn.addEventListener("click", () => {
+          startScreen.classList.add("hidden");
+          gameScreen.classList.remove("hidden");
+          initializeGame();
+
+          activityDescriptionOverlay.classList.remove("hidden");
+          playSound(introAudio);
+
+          if (
+            typeof sendEvent !== "undefined" &&
+            typeof ActivityEvent !== "undefined"
+          ) {
+            sendEvent(ActivityEvent.START_ACTIVITY, {
+              activityName: "Activity 2: From Conflict to Calm",
+            });
+          }
+        });
+
+        continueBtn.addEventListener("click", () => {
+          stopAllAudio();
+          activityDescriptionOverlay.classList.add("hidden");
+        });
+
+        instructionsIcon.addEventListener("click", () =>
+          instructionsOverlay.classList.remove("hidden"),
+        );
+        closeInstructionsBtn.addEventListener("click", () =>
+          instructionsOverlay.classList.add("hidden"),
+        );
+
+        hintIcon.addEventListener("click", () =>
+          hintOverlay.classList.remove("hidden"),
+        );
+        closeHintBtn.addEventListener("click", () =>
+          hintOverlay.classList.add("hidden"),
+        );
+
+        nextQuestionBtn.addEventListener("click", () => {
+          feedbackModalOverlay.classList.add("hidden");
+          if (lastAnswerWasCorrect) {
+            questionOverlay.classList.add("hidden");
+            advanceFlowchart();
+          }
+        });
+
+        restartActivityBtn.addEventListener("click", () => {
+          stopAllAudio();
+          completionOverlay.classList.add("hidden");
+          initializeGame();
+        });
+
+        // Navigation Logics
+        prevActivityBtn.addEventListener("click", () => {
+          window.location.href = "../ACTIVITY1/index.html";
+          if (
+            typeof sendEvent !== "undefined" &&
+            typeof ActivityEvent !== "undefined"
+          ) {
+            sendEvent(ActivityEvent.END_ACTIVITY, {
+              activityName: "Activity 2: From Conflict to Calm",
+            });
+          }
+        });
+
+        nextActivityBtn.addEventListener("click", () => {
+          window.location.href = "../ACTIVITY3/index.html";
+          if (
+            typeof sendEvent !== "undefined" &&
+            typeof ActivityEvent !== "undefined"
+          ) {
+            sendEvent(ActivityEvent.END_ACTIVITY, {
+              activityName: "Activity 2: From Conflict to Calm",
+            });
+          }
+        });
+
+        [activityDescriptionOverlay, instructionsOverlay, hintOverlay].forEach(
+          (overlay) => {
+            overlay.addEventListener("click", (e) => {
+              if (e.target === overlay) {
+                overlay.classList.add("hidden");
+                if (overlay === activityDescriptionOverlay) stopAllAudio();
+              }
+            });
+          },
+        );
+      });
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

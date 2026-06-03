@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Gratitude & Trust Builder</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Gratitude & Trust Builder</h1>
+          <button class="start-button">Start Activity</button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Gratitude & Trust Builder</h1>
+            <div class="top-right-controls">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <span id="progress-text">0 / 7</span>
+
+              <div class="icon-btn instructions-icon" id="instructions-icon" title="Instructions">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="game-content" id="game-content-area">
+            <div id="drop-zones-container"></div>
+            <div id="drag-items-container"></div>
+          </div>
+
+          <div class="hint-icon" id="hint-icon" onclick="showHint()">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Activity Introduction</h2>
+            <p>
+              Let us power up your relationship skills! In this activity, you will explore two key ingredients that help relationships grow stronger, trust and appreciation. Trust helps people feel safe and rely on each other. Appreciation is how we show others that we value their help and kindness. You will see a list of actions on the screen. Your mission: drag each action from the bottom to the correct category above. Let us get sorting!
+            </p>
+            <button id="close-intro-btn">Continue</button>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Learner Instructions</h2>
+            <ol>
+              <li>Look at the two category bins at the top of the screen: Trust Building and Showing Appreciation.</li>
+              <li>Read each action card at the bottom carefully.</li>
+              <li>Drag and drop the card from the bottom into the bin where it best fits.</li>
+              <li>After each attempt, read the feedback to understand your choice.</li>
+              <li>Keep sorting until all actions are correctly matched.</li>
+            </ol>
+            <button id="close-instructions-btn">Got it!</button>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Here is a hint</h2>
+            <p></p>
+            <button onclick="closeModal('hint-overlay')">Got it!</button>
+          </div>
+        </div>
+
+        <div id="feedback-modal-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header">
+              <h2 id="feedback-title"></h2>
+            </div>
+            <p id="feedback-modal-text"></p>
+            <button id="next-question-button" class="feedback-btn">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <h2 class="completion-title-banner">Activity Conclusion</h2>
+          <div class="completion-modal">
+            <img
+              id="completion-image"
+              src="images/complete.jpg"
+              alt="Completion celebration"
+              onerror="this.src='https://placehold.co/400x200/5d04b2/ffffff?text=Complete!'; this.onerror=null;"
+            />
+            </div>
+            <div class="completion-buttons">
+              <button class="completion-btn" id="previous-activity-btn">
+                Previous Activity
+              </button>
+              <button class="completion-btn" id="restart-activity-btn">
+                Restart Activity
+              </button>
+              <button class="completion-btn" id="next-activity-btn">
+                Next Activity
+              </button>
+            </div>
+      
+        </div>
+
+        <div id="takeaways-overlay" class="overlay hidden">
+          <h2 class="takeaways-main-header">Lesson Complete</h2>
+          <div class="modal">
+            <div class="takeaways-header">
+              <h3>Key Takeaways</h3>
+            </div>
+            <table id="takeaways-table">
+              <thead>
+                <tr>
+                  <th>Cause / Root</th>
+                  <th>Real-Life Effect</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Summary</td>
+                  <td>Trust and appreciation are core parts of building relationships.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button class="end-lesson-btn" id="end-lesson-btn">
+            Brain Power Checkpoint
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="complete-audio" src="audio/outro.mp3" preload="auto"></audio>
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="buzz-sound" src="audio/buzz.mp3" preload="auto"></audio>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const startScreen = document.getElementById("start-screen");
+        const gameScreen = document.getElementById("game-screen");
+        const startBtn = document.querySelector(".start-button");
+        const progressBar = document.getElementById("progress-bar");
+        const progressText = document.getElementById("progress-text");
+        const dragItemsContainer = document.getElementById("drag-items-container");
+        const dropZonesContainer = document.getElementById("drop-zones-container");
+        
+        const activityIntroOverlay = document.getElementById("activity-intro-overlay");
+        const instructionsOverlay = document.getElementById("instructions-overlay");
+        const hintOverlay = document.getElementById("hint-overlay");
+        const feedbackModalOverlay = document.getElementById("feedback-modal-overlay");
+        const completionOverlay = document.getElementById("completion-overlay");
+        const takeawaysOverlay = document.getElementById("takeaways-overlay");
+        
+        const closeIntroBtn = document.getElementById("close-intro-btn");
+        const instructionsIcon = document.getElementById("instructions-icon");
+        const closeInstructionsBtn = document.getElementById("close-instructions-btn");
+        const hintIcon = document.getElementById("hint-icon");
+        const nextQuestionBtn = document.getElementById("next-question-button");
+        const restartActivityBtn = document.getElementById("restart-activity-btn");
+        const nextActivityBtn = document.getElementById("next-activity-btn");
+        const endLessonBtn = document.getElementById("end-lesson-btn");
+        
+        const feedbackHeader = feedbackModalOverlay.querySelector(".feedback-header");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackText = document.getElementById("feedback-modal-text");
+        
+        const introAudio = document.getElementById("intro-audio");
+        const completeAudio = document.getElementById("complete-audio");
+        const dingSound = document.getElementById("ding-sound");
+        const buzzSound = document.getElementById("buzz-sound");
+
+        const icons = {
+          correct: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+          incorrect: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`,
+        };
+
+        const gameData = [
+          {
+            id: "item1",
+            draggableText: "Kept a secret",
+            matchGroup: "trust",
+            feedback: {
+              correct: "Perfect! Keeping a secret shows you are trustworthy and respectful of someone’s privacy.",
+              incorrect: "Think about how this action makes someone feel safe sharing personal things with you. Which category does that belong to?"
+            }
+          },
+          {
+            id: "item2",
+            draggableText: "Said “thank you” for help",
+            matchGroup: "appreciation",
+            feedback: {
+              correct: "Well done! Saying ‘thank you’ is a simple but powerful way to express appreciation.",
+              incorrect: "Does this action prove that someone can depend on you, or does it acknowledge their kindness? Choose the category that fits best."
+            }
+          },
+          {
+            id: "item3",
+            draggableText: "Showed up on time",
+            matchGroup: "trust",
+            feedback: {
+              correct: "Exactly! Being on time shows that you are dependable, an important part of trust.",
+              incorrect: "Arriving on time sends a message that others can rely on you. Which category focuses on reliability?"
+            }
+          },
+          {
+            id: "item4",
+            draggableText: "Listened without interrupting",
+            matchGroup: "trust",
+            feedback: {
+              correct: "Right again! Listening respectfully shows maturity and builds trust.",
+              incorrect: "This action makes others feel respected and safe to share their thoughts. Which category values that kind of reliability?"
+            }
+          },
+          {
+            id: "item5",
+            draggableText: "Gave credit for an idea",
+            matchGroup: "appreciation",
+            feedback: {
+              correct: "Great job! Giving credit is a kind way to recognise someone’s contribution.",
+              incorrect: "Does this action make others feel valued for what they’ve done, or does it prove they can rely on you? Place it where it fits best."
+            }
+          },
+          {
+            id: "item6",
+            draggableText: "Applauded a classmate’s achievement",
+            matchGroup: "appreciation",
+            feedback: {
+              correct: "Yes! Applauding someone recognises their effort and celebrates their success, this is appreciation in action.",
+              incorrect: "Clapping for someone is about celebrating them, not proving reliability. Which category values recognition?"
+            }
+          },
+          {
+            id: "item7",
+            draggableText: "Returned a borrowed item in good condition",
+            matchGroup: "trust",
+            feedback: {
+              correct: "Absolutely! Returning something as promised shows reliability and respect, core parts of trust.",
+              incorrect: "Think, when you give something back in good condition, does that show gratitude or that you can be relied upon?"
+            }
+          }
+        ];
+
+        const hintMessage =
+          "Think about whether the action proves someone is reliable (Trust) or shows you value them and their actions (Appreciation).";
+
+        let completedTasks = 0;
+        const totalTasks = gameData.length;
+        let draggedItem = null;
+        let touchClone = null;
+
+        function shuffleArray(array) {
+          for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+          }
+        }
+
+        function initializeGame() {
+          completedTasks = 0;
+          updateProgressBar();
+          loadItems();
+        }
+
+        function loadItems() {
+          dragItemsContainer.innerHTML = "";
+          dropZonesContainer.innerHTML = "";
+          
+          let challenges = [...gameData];
+          shuffleArray(challenges);
+
+          challenges.forEach((item) => {
+            const dragItem = document.createElement("div");
+            dragItem.className = `drag-item`;
+            dragItem.draggable = true;
+            dragItem.dataset.id = item.id;
+            dragItem.dataset.matchGroup = item.matchGroup;
+            dragItem.innerHTML = item.draggableText;
+            addDragListeners(dragItem);
+            dragItemsContainer.appendChild(dragItem);
+          });
+
+          const categories = [
+            { id: "trust", title: "Trust Building" },
+            { id: "appreciation", title: "Showing Appreciation" }
+          ];
+
+          categories.forEach((cat) => {
+            const dropZone = document.createElement("div");
+            dropZone.className = "drop-zone";
+            dropZone.dataset.acceptsGroup = cat.id;
+            dropZone.innerHTML = `
+                <div class="solution-text">
+                  <span class="zone-label">${cat.title}</span>
+                </div>
+                <div class="element-name-placeholder"></div>
+            `;
+            addDropListeners(dropZone);
+            dropZonesContainer.appendChild(dropZone);
+          });
+        }
+
+        function addDragListeners(item) {
+          item.addEventListener("dragstart", (e) => {
+            draggedItem = item;
+            setTimeout(() => item.classList.add("dragging"), 0);
+          });
+          item.addEventListener("dragend", () => {
+            item.classList.remove("dragging");
+            draggedItem = null;
+          });
+
+          let offsetX, offsetY;
+          item.addEventListener("touchstart", (e) => {
+            if (e.cancelable) e.preventDefault();
+            draggedItem = item;
+            const touch = e.touches[0];
+            const rect = item.getBoundingClientRect();
+            offsetX = touch.clientX - rect.left;
+            offsetY = touch.clientY - rect.top;
+            touchClone = item.cloneNode(true);
+            touchClone.classList.add("touch-clone");
+            touchClone.style.width = `${rect.width}px`;
+            touchClone.style.height = `${rect.height}px`;
+            touchClone.style.left = `${touch.clientX - offsetX}px`;
+            touchClone.style.top = `${touch.clientY - offsetY}px`;
+            document.body.appendChild(touchClone);
+            item.classList.add("dragging");
+          }, { passive: false });
+
+          item.addEventListener("touchmove", (e) => {
+            if (!touchClone) return;
+            if (e.cancelable) e.preventDefault();
+            const touch = e.touches[0];
+            touchClone.style.left = `${touch.clientX - offsetX}px`;
+            touchClone.style.top = `${touch.clientY - offsetY}px`;
+            let elementUnderTouch = document.elementFromPoint(touch.clientX, touch.clientY);
+            let dropZoneUnderTouch = elementUnderTouch ? elementUnderTouch.closest(".drop-zone") : null;
+            document.querySelectorAll(".drop-zone").forEach((zone) => {
+              zone.classList.toggle("drag-over", zone === dropZoneUnderTouch);
+            });
+          }, { passive: false });
+
+          item.addEventListener("touchend", (e) => {
+            if (!draggedItem) return;
+            const touch = e.changedTouches[0];
+            let dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+            let dropZone = dropTarget ? dropTarget.closest(".drop-zone") : null;
+            if (dropZone) handleDrop(dropZone);
+            if (touchClone) touchClone.remove();
+            touchClone = null;
+            if (draggedItem) draggedItem.classList.remove("dragging");
+            draggedItem = null;
+            document.querySelectorAll(".drop-zone").forEach((zone) => zone.classList.remove("drag-over"));
+          });
+        }
+
+        function addDropListeners(zone) {
+          zone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            zone.classList.add("drag-over");
+          });
+          zone.addEventListener("dragleave", () => zone.classList.remove("drag-over"));
+          zone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            zone.classList.remove("drag-over");
+            handleDrop(zone);
+          });
+        }
+
+        function handleDrop(zone) {
+          if (!draggedItem) return;
+          
+          const isCorrect = draggedItem.dataset.matchGroup === zone.dataset.acceptsGroup;
+          const itemData = gameData.find(i => i.id === draggedItem.dataset.id);
+          
+          if (isCorrect) {
+            completedTasks++;
+            updateProgressBar();
+            const placeholder = zone.querySelector(".element-name-placeholder");
+            placeholder.appendChild(draggedItem);
+            draggedItem.draggable = false;
+            draggedItem.classList.add("dropped-item");
+            
+            showFeedback(true, itemData.feedback.correct);
+          } else {
+            showFeedback(false, itemData.feedback.incorrect);
+          }
+        }
+
+        function updateProgressBar() {
+          const percentage = (completedTasks / totalTasks) * 100;
+          progressBar.style.width = `${percentage}%`;
+          progressText.textContent = `${completedTasks} / ${totalTasks}`;
+        }
+
+        function showFeedback(isCorrect, message) {
+          const titleText = isCorrect ? "Correct!" : "Not Quite...";
+          feedbackTitle.innerHTML = ` ${isCorrect ? icons.correct : icons.incorrect} ${titleText}`;
+          feedbackText.textContent = message;
+          feedbackHeader.className = isCorrect ? "feedback-header correct" : "feedback-header incorrect";
+          nextQuestionBtn.className = isCorrect ? "feedback-btn correct" : "feedback-btn incorrect";
+          feedbackModalOverlay.className = isCorrect ? "overlay correct-feedback" : "overlay incorrect-feedback";
+          playSound(isCorrect ? dingSound : buzzSound);
+          feedbackModalOverlay.classList.remove("hidden");
+        }
+
+        function playSound(sound) {
+          if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch((e) => console.error("Audio play failed:", e));
+          }
+        }
+
+        function stopAllAudio() {
+          [introAudio, completeAudio, dingSound, buzzSound].forEach((audio) => {
+            if (audio) {
+              audio.pause();
+              audio.currentTime = 0;
+            }
+          });
+        }
+
+        startBtn.addEventListener("click", () => {
+          startScreen.classList.add("hidden");
+          gameScreen.classList.remove("hidden");
+          activityIntroOverlay.classList.remove("hidden");
+          playSound(introAudio);
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.START_ACTIVITY, { activityName: "Activity 3: Gratitude & Trust Builder" });
+          }
+        });
+
+        closeIntroBtn.addEventListener("click", () => {
+          stopAllAudio();
+          activityIntroOverlay.classList.add("hidden");
+          initializeGame();
+        });
+
+        instructionsIcon.addEventListener("click", () => instructionsOverlay.classList.remove("hidden"));
+        closeInstructionsBtn.addEventListener("click", () => instructionsOverlay.classList.add("hidden"));
+
+        window.showHint = () => {
+          document.querySelector("#hint-overlay p").innerHTML = hintMessage;
+          hintOverlay.classList.remove("hidden");
+        };
+
+        window.closeModal = (id) => {
+          document.getElementById(id).classList.add("hidden");
+        };
+
+        hintIcon.addEventListener("click", () => window.showHint());
+
+        nextQuestionBtn.addEventListener("click", () => {
+          feedbackModalOverlay.classList.add("hidden");
+          if (completedTasks === totalTasks) {
+            setTimeout(() => {
+              gameScreen.classList.add("hidden");
+              completionOverlay.classList.remove("hidden");
+              playSound(completeAudio);
+            }, 400);
+          }
+        });
+
+        restartActivityBtn.addEventListener("click", () => {
+          stopAllAudio();
+          completionOverlay.classList.add("hidden");
+          gameScreen.classList.remove("hidden");
+          initializeGame();
+        });
+
+        document.getElementById("previous-activity-btn").addEventListener("click", () => {
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.END_ACTIVITY, { activityName: "Activity 3: Gratitude & Trust Builder" });
+          }
+          window.location.href = "../ACTIVITY2/index.html";
+        });
+
+        nextActivityBtn.addEventListener("click", () => {
+          completionOverlay.classList.add("hidden");
+          stopAllAudio();
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.END_ACTIVITY, {
+              activityName: "Activity 3: Gratitude & Trust Builder",
+            });
+          }
+          window.location.href = "../ACTIVITY4/index.html";
+        });
+
+        endLessonBtn.addEventListener("click", () => {
+          if (typeof sendEvent !== "undefined" && typeof LessonEvent !== "undefined") {
+            sendEvent(LessonEvent.END_LESSON, {
+              lessonName: "Gratitude & Trust Builder",
+            });
+          }
+        });
+
+      });
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

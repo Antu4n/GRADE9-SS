@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity 3: Spot the Barrier in Action</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="../js/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Spot the Barrier in Action</h1>
+          <button class="start-button" onclick="showActivityIntro()">
+            Start Activity
+          </button>
+        </div>
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Spot the Barrier in Action</h1>
+            <div class="top-right-controls">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <span id="progress-text">0 / 8</span>
+              <div class="instructions-icon" onclick="showInstructions()">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <h2 class="scenario-title" id="scenario-title"></h2>
+
+          <div class="scenario-content">
+            <div class="scenario-container" id="scenario-container">
+              <img
+                id="scenario-image"
+                src=""
+                alt="Scenario Dialogue"
+                class="scenario-image"
+              />
+              <div class="scenario-details">
+                <p class="scenario-story" id="scenario-story-text"></p>
+                <div class="question-section">
+                  <p class="scenario-question" id="scenario-question-text">Which behaviour is the barrier?</p>
+                  <div class="options-container" id="options-container"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hint-icon" id="hint-icon" onclick="showHint()">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <div class="completion-title-banner">Activity Conclusion</div>
+          <div class="modal">
+            <img
+              id="completion-image"
+              src="images/complete.jpg"
+              alt="Activity Complete"
+              onerror="this.style.display = 'none'"
+            />
+          </div>
+          <div class="completion-buttons">
+            <button
+              class="completion-btn btn-prev"
+              onclick="goToPreviousActivity()"
+            >
+              Previous Activity
+            </button>
+            <button class="completion-btn btn-restart" onclick="restartGame()">
+              Restart Activity
+            </button>
+            <button
+              class="completion-btn btn-next"
+              id="keyTakeawaysBtn"
+              onclick="showTakeaways()"
+            >
+              Key Takeaways
+            </button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="overlay takeaways-overlay hidden">
+          <div class="takeaways-container-wrapper">
+            <h2 class="takeaways-main-title">Lesson Complete</h2>
+            <div class="takeaways-card">
+              <h3>Key Takeaways</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Aspect</th>
+                    <th>Detail</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Jealousy & Gossip</td>
+                    <td>Barriers include jealousy, gossip, and poor communication.</td>
+                  </tr>
+                  <tr>
+                    <td>Misunderstandings</td>
+                    <td>Misunderstandings and poor communication hinder connection.</td>
+                  </tr>
+                  <tr>
+                    <td>Lack of Empathy</td>
+                    <td>Lack of empathy makes it hard to relate to others.</td>
+                  </tr>
+                  <tr>
+                    <td>Unfairness & Disrespect</td>
+                    <td>Unfairness and lack of respect create resentment.</td>
+                  </tr>
+                  <tr>
+                    <td>Unresolved Conflicts</td>
+                    <td>Unresolved conflicts can damage relationships over time.</td>
+                  </tr>
+                  <tr>
+                    <td>Awareness & Prevention</td>
+                    <td>Being aware of barriers helps us manage and prevent conflict.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <button
+              class="end-lesson-btn"
+              id="btn-end-lesson"
+              onclick="endLesson()"
+            >
+              Brain Power Checkpoint
+            </button>
+          </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Activity Introduction</h2>
+            <p>
+              It is time to put your barrier-spotting skills to the test! In each scenario, you will see a real-life situation from school, home, or the community. Your mission is to spot the behaviour that acts as a barrier to healthy relationships. Read carefully, think about how the people might feel, and choose wisely. Let us begin!
+            </p>
+            <button onclick="closeModal('activity-intro-overlay')">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Learner Instructions</h2>
+            <ol>
+              <li>Read the scenario carefully and imagine yourself in that situation.</li>
+              <li>Think about how the people might feel in the scene.</li>
+              <li>Select the behaviour that acts as a barrier to building a healthy relationship.</li>
+              <li>After your choice, read the feedback to understand why it is correct or incorrect.</li>
+              <li>Continue through all the scenarios to sharpen your barrier-spotting skills.</li>
+            </ol>
+            <button onclick="closeModal('instructions-overlay')">
+              Got it!
+            </button>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Here is a Hint</h2>
+            <p style="text-align: left"></p>
+            <button onclick="closeModal('hint-overlay')">Got it!</button>
+          </div>
+        </div>
+
+        <div id="feedback-correct-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header correct">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <h2>Correct</h2>
+            </div>
+            <p id="correct-feedback-text"></p>
+            <button
+              class="feedback-btn correct"
+              onclick="closeModal('feedback-correct-overlay')"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="feedback-incorrect-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header incorrect">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+              </svg>
+              <h2>Try Again</h2>
+            </div>
+            <p id="incorrect-feedback-text"></p>
+            <button class="feedback-btn incorrect" onclick="handleTryAgain()">
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const activityData = {
+        scenarios: [
+          {
+            title: "Scenario 1 – Group Project",
+            story: '"You are working on a group assignment. One student keeps talking over everyone and refuses to listen to other ideas."',
+            question: "Which behaviour is the barrier?",
+            image: "images/scenario1.jpg",
+            options: [
+              {
+                text: "Apologising after a mistake",
+                feedback: "Apologising repairs relationships, it is not a barrier.",
+                isCorrect: false,
+              },
+              {
+                text: "Speaking rudely and not listening to others",
+                feedback: "Exactly! Speaking rudely and ignoring others’ ideas shows disrespect and damages teamwork.",
+                isCorrect: true,
+              },
+              {
+                text: "Helping another group with their research",
+                feedback: "Helping others builds collaboration, not conflict.",
+                isCorrect: false,
+              }
+            ],
+            hint: "A barrier is any action that breaks trust, shows disrespect, or causes someone to feel excluded."
+          },
+          {
+            title: "Scenario 2 – Break Time",
+            story: '"During break, a student whispers to friends about another classmate, making them laugh at that person."',
+            question: "Which action is the barrier?",
+            image: "images/scenario2.jpg",
+            options: [
+              {
+                text: "Listening quietly to a classmate",
+                feedback: "Listening builds trust, not a barrier.",
+                isCorrect: false,
+              },
+              {
+                text: "Spreading rumours",
+                feedback: "Right! Spreading rumours breaks trust and creates tension, it is a major barrier.",
+                isCorrect: true,
+              },
+              {
+                text: "Saying sorry after hurting someone’s feelings",
+                feedback: "Apologising repairs harm, not causes it.",
+                isCorrect: false,
+              }
+            ],
+            hint: "A barrier is any action that breaks trust, shows disrespect, or causes someone to feel excluded."
+          },
+          {
+            title: "Scenario 3 – Classroom Discussion",
+            story: '"The teacher asks for opinions on a topic. One student shares their thoughts, and another replies by saying, \'That is a stupid idea.\'"',
+            question: "Which behaviour is the barrier?",
+            image: "images/scenario3.jpg",
+            options: [
+              {
+                text: "Disrespecting someone’s opinion",
+                feedback: "Yes! Disrespect shuts down communication and can hurt feelings.",
+                isCorrect: true,
+              },
+              {
+                text: "Offering your own opinion politely",
+                feedback: "Polite opinions encourage dialogue, not block it.",
+                isCorrect: false,
+              },
+              {
+                text: "Agreeing with someone respectfully",
+                feedback: "Agreement builds harmony, it is not a barrier.",
+                isCorrect: false,
+              }
+            ],
+            hint: "A barrier is any action that breaks trust, shows disrespect, or causes someone to feel excluded."
+          },
+          {
+            title: "Scenario 4 – A Friend is Upset",
+            story: '"You notice your friend sitting alone looking sad, but you choose to walk past without saying anything."',
+            question: "Which behaviour is the barrier?",
+            image: "images/scenario4.jpg",
+            options: [
+              {
+                text: "Ignoring someone who’s upset",
+                feedback: "That is right! Ignoring someone shows a lack of empathy and can make them feel unwanted.",
+                isCorrect: true,
+              },
+              {
+                text: "Asking if they are okay",
+                feedback: "Checking on someone is caring, not a barrier.",
+                isCorrect: false,
+              },
+              {
+                text: "Offering to sit with them",
+                feedback: "Offering to sit with them promotes inclusion, not exclusion.",
+                isCorrect: false,
+              }
+            ],
+            hint: "A barrier is any action that breaks trust, shows disrespect, or causes someone to feel excluded."
+          },
+          {
+            title: "Scenario 5 – Friendship Trouble",
+            story: '"Your friend asks why you did not tell them about a party. You lie and say you did not know about it, even though you did."',
+            question: "Which behaviour is the barrier?",
+            image: "images/scenario5.jpg",
+            options: [
+              {
+                text: "Lying to a friend",
+                feedback: "Correct! Lying damages honesty and breaks trust.",
+                isCorrect: true,
+              },
+              {
+                text: "Sharing your honest feelings",
+                feedback: "Honest sharing strengthens friendship, not a barrier.",
+                isCorrect: false,
+              },
+              {
+                text: "Saying thank you for an invite",
+                feedback: "Thanking someone builds connection, not conflict.",
+                isCorrect: false,
+              }
+            ],
+            hint: "A barrier is any action that breaks trust, shows disrespect, or causes someone to feel excluded."
+          },
+          {
+            title: "Scenario 6 – Playground Game",
+            story: '"A group of learners is playing a game. When another learner asks to join, they say, \'No, we do not want you to play with us.\'"',
+            question: "Which behaviour is the barrier?",
+            image: "images/scenario6.jpg",
+            options: [
+              {
+                text: "Excluding someone from a game",
+                feedback: "Yes! Exclusion makes people feel unwanted and breaks group unity.",
+                isCorrect: true,
+              },
+              {
+                text: "Welcoming someone into the group",
+                feedback: "Welcoming others promotes inclusion, it is not a barrier.",
+                isCorrect: false,
+              },
+              {
+                text: "Taking turns fairly",
+                feedback: "Fair play strengthens relationships, not weakens them.",
+                isCorrect: false,
+              }
+            ],
+            hint: "A barrier is any action that breaks trust, shows disrespect, or causes someone to feel excluded."
+          },
+          {
+            title: "Scenario 7 – At Home",
+            story: '"Your sibling accidentally knocks over your water bottle. You shout at them and call them names in anger."',
+            question: "Which behaviour is the barrier?",
+            image: "images/scenario7.jpg",
+            options: [
+              {
+                text: "Name-calling and shouting",
+                feedback: "Yes! Name-calling is disrespectful and damages trust between people.",
+                isCorrect: true,
+              },
+              {
+                text: "Talking calmly about what happened",
+                feedback: "Calm discussion is respectful, not a barrier.",
+                isCorrect: false,
+              },
+              {
+                text: "Helping them clean up the spill",
+                feedback: "Helping shows care, it is the opposite of a barrier.",
+                isCorrect: false,
+              }
+            ],
+            hint: "A barrier is any action that breaks trust, shows disrespect, or causes someone to feel excluded."
+          },
+          {
+            title: "Scenario 8 – Community Meeting",
+            story: '"During a neighbourhood meeting, one person refuses to let others speak and insists their idea is the only right one."',
+            question: "Which behaviour is the barrier?",
+            image: "images/scenario8.jpg",
+            options: [
+              {
+                text: "Listening to all opinions respectfully",
+                feedback: "Respectful listening helps build trust, it is not a barrier.",
+                isCorrect: false,
+              },
+              {
+                text: "Refusing to let others speak",
+                feedback: "Right! Blocking others from speaking shows disrespect and damages cooperation.",
+                isCorrect: true,
+              },
+              {
+                text: "Taking notes for the group",
+                feedback: "Helping by taking notes is a positive action, not a barrier.",
+                isCorrect: false,
+              }
+            ],
+            hint: "A barrier is any action that breaks trust, shows disrespect, or causes someone to feel excluded."
+          }
+        ],
+      };
+
+      let currentScenarioIndex = 0;
+      const totalScenarios = activityData.scenarios.length;
+      let selectedOptionIndex = null;
+      let currentShuffledOptions = [];
+      let introAudio, dingAudio, buzzAudio, outroAudio;
+
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+
+      function initAudio() {
+        try {
+          introAudio = new Audio("audio/intro.mp3");
+          dingAudio = new Audio("audio/ding.mp3");
+          buzzAudio = new Audio("audio/buzz.mp3");
+          outroAudio = new Audio("audio/outro.mp3");
+        } catch (e) {
+          console.warn("Audio could not be loaded.");
+          const mockAudio = { play: () => {}, pause: () => {}, currentTime: 0 };
+          introAudio = dingAudio = buzzAudio = outroAudio = mockAudio;
+        }
+      }
+
+      function playSound(audio) {
+        if (audio) {
+          audio.currentTime = 0;
+          audio.play().catch((e) => {});
+        }
+      }
+      function stopSound(audio) {
+        if (audio) {
+          audio.pause();
+        }
+      }
+
+      function initGame() {
+        loadScenario();
+      }
+
+      function loadScenario() {
+        selectedOptionIndex = null;
+        const scenario = activityData.scenarios[currentScenarioIndex];
+
+        document.getElementById("scenario-title").textContent = scenario.title;
+        document.getElementById("scenario-story-text").innerHTML = scenario.story;
+        document.getElementById("scenario-question-text").textContent = scenario.question;
+        document.getElementById("scenario-image").src = scenario.image;
+
+        const optionsContainer = document.getElementById("options-container");
+        optionsContainer.innerHTML = "";
+
+        const labels = ["A", "B", "C", "D"];
+
+        // Shuffle options so they appear in a random order each load
+        const shuffled = [...scenario.options];
+        shuffleArray(shuffled);
+        currentShuffledOptions = shuffled;
+
+        shuffled.forEach((option, index) => {
+          const button = document.createElement("button");
+          button.className = "option-button";
+          button.innerHTML = `<span class="option-text">${labels[index]}) ${option.text}</span>`;
+          button.onclick = () => selectOption(index);
+          optionsContainer.appendChild(button);
+        });
+
+        updateProgress();
+      }
+
+      function selectOption(index) {
+        if (selectedOptionIndex !== null) return;
+        selectedOptionIndex = index;
+        const scenario = activityData.scenarios[currentScenarioIndex];
+        const buttons = document
+          .getElementById("options-container")
+          .querySelectorAll(".option-button");
+
+        buttons.forEach((btn) => (btn.disabled = true));
+
+        const chosenOption = currentShuffledOptions[index];
+        const isCorrect = chosenOption.isCorrect;
+
+        if (isCorrect) {
+          buttons[index].classList.add("correct");
+          playSound(dingAudio);
+          setTimeout(() => {
+            showFeedbackPopup("correct", chosenOption.feedback);
+          }, 500);
+        } else {
+          buttons[index].classList.add("incorrect");
+          playSound(buzzAudio);
+          setTimeout(() => {
+            showFeedbackPopup("incorrect", chosenOption.feedback);
+          }, 500);
+        }
+      }
+
+      function handleTryAgain() {
+        document
+          .getElementById("feedback-incorrect-overlay")
+          .classList.add("hidden");
+        const buttons = document
+          .getElementById("options-container")
+          .querySelectorAll(".option-button");
+        buttons.forEach((btn) => {
+          btn.disabled = false;
+          btn.classList.remove("incorrect");
+        });
+        selectedOptionIndex = null;
+      }
+
+      function goToNextScenario() {
+        const container = document.getElementById("scenario-container");
+        if (currentScenarioIndex >= totalScenarios - 1) {
+          endActivity();
+          return;
+        }
+
+        container.classList.add("fade-out");
+        setTimeout(() => {
+          currentScenarioIndex++;
+          loadScenario();
+          container.classList.remove("fade-out");
+        }, 300);
+      }
+
+      function updateProgress() {
+        const progress = currentScenarioIndex;
+        document.getElementById("progress-bar").style.width = `${
+          (progress / totalScenarios) * 100
+        }%`;
+        document.getElementById("progress-text").textContent =
+          `${progress} / ${totalScenarios}`;
+      }
+
+      function showFeedbackPopup(type, message) {
+        document.getElementById(`${type}-feedback-text`).innerHTML = message;
+        document
+          .getElementById(`feedback-${type}-overlay`)
+          .classList.remove("hidden");
+      }
+
+      function showActivityIntro() {
+        document.getElementById("start-screen").classList.add("hidden");
+        document.getElementById("game-screen").classList.remove("hidden");
+        document
+          .getElementById("activity-intro-overlay")
+          .classList.remove("hidden");
+        playSound(introAudio);
+        if (
+          typeof sendEvent !== "undefined" &&
+          typeof ActivityEvent !== "undefined"
+        ) {
+          sendEvent(ActivityEvent.START_ACTIVITY, {
+            activityName: "Spot the Barrier in Action",
+          });
+        }
+      }
+
+      function showInstructions() {
+        document
+          .getElementById("instructions-overlay")
+          .classList.remove("hidden");
+      }
+
+      function showHint() {
+        const hintText = activityData.scenarios[currentScenarioIndex].hint;
+        const defaultHint =
+          "A barrier is any action that breaks trust, shows disrespect, or causes someone to feel excluded.";
+        document.querySelector("#hint-overlay p").textContent =
+          hintText || defaultHint;
+        document.getElementById("hint-overlay").classList.remove("hidden");
+      }
+
+      function closeModal(id) {
+        document.getElementById(id).classList.add("hidden");
+        if (id === "activity-intro-overlay") {
+          stopSound(introAudio);
+          initGame();
+        }
+        if (id === "feedback-correct-overlay") {
+          goToNextScenario();
+        }
+      }
+
+      function endActivity() {
+        document.getElementById("progress-bar").style.width = `100%`;
+        document.getElementById("progress-text").textContent =
+          `${totalScenarios} / ${totalScenarios}`;
+
+        setTimeout(() => {
+          const gameWrapperEl = document.getElementById("game-wrapper");
+
+          html2canvas(gameWrapperEl, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: "#fafbff",
+            onclone: (clonedDoc) => {
+              const clonedGameScreen = clonedDoc.getElementById("game-screen");
+              const modals = clonedDoc.querySelectorAll(".overlay");
+              modals.forEach((m) => (m.style.display = "none"));
+
+              if (clonedGameScreen) {
+                clonedGameScreen.classList.remove("hidden");
+                clonedGameScreen.style.position = "relative";
+                clonedGameScreen.style.height =
+                  gameWrapperEl.scrollHeight + "px";
+                clonedGameScreen.style.overflow = "visible";
+              }
+
+              const elementsToExpand = clonedDoc.querySelectorAll(
+                ".scenario-content, #scenario-container",
+              );
+              elementsToExpand.forEach((el) => {
+                el.style.opacity = "1";
+                el.style.transform = "none";
+                el.style.overflow = "visible";
+                el.style.maxHeight = "none";
+              });
+            },
+          })
+            .then((canvas) => {
+              const imgData = canvas.toDataURL("image/png");
+              document.getElementById("completion-image").src = imgData;
+
+              document.getElementById("game-screen").classList.add("hidden");
+              document
+                .getElementById("completion-overlay")
+                .classList.remove("hidden");
+              playSound(outroAudio);
+            })
+            .catch((err) => {
+              console.error("Screenshot failed:", err);
+              document.getElementById("game-screen").classList.add("hidden");
+              document
+                .getElementById("completion-overlay")
+                .classList.remove("hidden");
+              playSound(outroAudio);
+            });
+        }, 500);
+      }
+
+      function restartGame() {
+        stopSound(outroAudio);
+        document.getElementById("completion-overlay").classList.add("hidden");
+        currentScenarioIndex = 0;
+        document.getElementById("game-screen").classList.remove("hidden");
+        document
+          .getElementById("scenario-container")
+          .classList.remove("fade-out");
+        loadScenario();
+      }
+
+      function goToPreviousActivity() {
+        window.location.href = "../ACTIVITY2/index.html";
+        if (
+          typeof sendEvent !== "undefined" &&
+          typeof ActivityEvent !== "undefined"
+        ) {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: "Spot the Barrier in Action",
+          });
+        }
+      }
+
+      function showTakeaways() {
+        stopSound(outroAudio);
+        document.getElementById("completion-overlay").classList.add("hidden");
+        document.getElementById("takeaways-overlay").classList.remove("hidden");
+        if (
+          typeof sendEvent !== "undefined" &&
+          typeof ActivityEvent !== "undefined"
+        ) {
+            sendEvent(ActivityEvent.END_ACTIVITY, {
+              activityName: "Spot the Barrier in Action",
+            });
+        }
+      }
+
+      function endLesson() {
+        if (
+          typeof sendEvent !== "undefined" &&
+          typeof LessonEvent !== "undefined"
+        ) {
+          sendEvent(LessonEvent.END_LESSON, {
+            lessonName:
+              "Explore Barriers to Harmonious Relationships",
+          });
+        }
+      }
+
+      window.onload = () => {
+        initAudio();
+      };
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

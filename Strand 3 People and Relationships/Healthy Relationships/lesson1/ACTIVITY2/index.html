@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Healthy or Not?</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Healthy or Not?</h1>
+          <button
+            class="start-button"
+            onclick="
+              startGame();
+              sendEvent(ActivityEvent.START_ACTIVITY, {
+                activityName: 'Healthy or Not?',
+              });
+            "
+          >
+            Start Activity
+          </button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Healthy or Not?</h1>
+            <div class="progress-wrapper">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <div id="progress-text">0 / 6</div>
+              <div class="instructions-icon" onclick="showGameInstructions()">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="lab-game-area" id="lab-game-area"></div>
+          <div class="hint-icon" onclick="showHint()">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="activity-description-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Activity Introduction</h2>
+            <div class="intro-content">
+              <p>
+                Let us sharpen your social skills with a fun challenge! On the
+                screen, you will see a lively school scene filled with different
+                interactions. Some learners are showing excellent relationship
+                skills while others might be acting in ways that cause problems.
+                Your mission is to tap on each part of the picture and decide
+                whether what you see is part of a healthy relationship or not.
+              </p>
+            </div>
+            <button
+              class="modal-close-btn"
+              onclick="closeActivityDescription()"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="game-instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Learner Instructions</h2>
+            <ul>
+              <li>Look carefully at the illustrated school scene.</li>
+              <li>
+                Click or tap on each character interaction to reveal an
+                explanation.
+              </li>
+              <li>Read why the behaviour is healthy or unhealthy.</li>
+              <li>Explore all the hotspots to complete the challenge.</li>
+            </ul>
+            <button class="modal-close-btn" onclick="closeGameInstructions()">
+              Got It!
+            </button>
+          </div>
+        </div>
+
+        <div id="scenario-overlay" class="overlay hidden">
+          <div class="scenario-modal">
+            <div class="scenario-content">
+              <h2 id="scenario-title"></h2>
+              <div id="scenario-info"></div>
+              <button
+                id="scenario-close-btn"
+                class="modal-close-btn"
+                onclick="closeScenario()"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="summary-overlay" class="overlay hidden">
+          <div class="modal summary-modal-lg">
+            <h2 class="modal-title">Exploration Summary</h2>
+            <div class="table-responsive">
+              <table class="summary-table">
+                <thead>
+                  <tr>
+                    <th>Interaction</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Helping a peer pick up books</td>
+                    <td>Healthy</td>
+                  </tr>
+                  <tr>
+                    <td>Sharing a book</td>
+                    <td>Healthy</td>
+                  </tr>
+                  <tr>
+                    <td>Greeting a classmate politely</td>
+                    <td>Healthy</td>
+                  </tr>
+                  <tr>
+                    <td>Teasing or mocking a classmate</td>
+                    <td>Unhealthy</td>
+                  </tr>
+                  <tr>
+                    <td>Excluding someone from play</td>
+                    <td>Unhealthy</td>
+                  </tr>
+                  <tr>
+                    <td>Spreading a rumour</td>
+                    <td>Unhealthy</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <button class="modal-close-btn" onclick="closeSummary()">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2 class="modal-title">Here is a hint</h2>
+            <p id="hint-text"></p>
+            <button class="modal-close-btn" onclick="closeHint()">
+              Got It!
+            </button>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <h2 class="completion-title-banner">Activity Conclusion</h2>
+          <div class="modal">
+            <img
+              id="completion-image"
+              src="images/complete.jpg"
+              alt="Completion celebration"
+              onerror="
+                this.src =
+                  'https://placehold.co/400x300/7c3aed/ffffff?text=Excellent+Work!';
+                this.onerror = null;
+              "
+            />
+          </div>
+          <div class="completion-buttons">
+            <button
+              class="completion-btn"
+              id="previous-activity-btn"
+              onclick="previousActivity()"
+            >
+              Previous Activity
+            </button>
+            <button
+              class="completion-btn"
+              id="restart-activity-btn"
+              onclick="restartGame()"
+            >
+              Restart Activity
+            </button>
+            <button
+              class="completion-btn"
+              id="next-activity-btn"
+              onclick="nextActivity()"
+            >
+              Next Activity
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <audio id="ding-sound" src="audio/ding.mp3" preload="auto"></audio>
+    <audio id="intro-audio" src="audio/intro.mp3" preload="auto"></audio>
+    <audio id="outro-audio" src="audio/outro.mp3" preload="auto"></audio>
+
+    <script>
+      // --- DATA ---
+      const activityData = [
+        {
+          id: "greeting",
+          title: "Greeting a classmate politely",
+          factor: "Healthy",
+          explanation:
+            "A warm greeting sets a positive tone for the day. It makes people feel seen, respected, and welcomed into the group.",
+          hint: "Look for two learners shaking hands on the left side of the scene.",
+          hasLabel: false,
+          coords: {
+            top: "40%",
+            left: "15%",
+            width: "4.5rem",
+            height: "4.5rem",
+          },
+        },
+        {
+          id: "helping",
+          title: "Helping a peer pick up books",
+          factor: "Healthy",
+          explanation:
+            "Helping someone when they are in need is an act of kindness. It builds trust, shows you care about others’ well-being, and encourages teamwork in your community.",
+          hint: "Look for a learner helping someone gather dropped books on the bottom left.",
+          hasLabel: false,
+          coords: {
+            top: "80%",
+            left: "18%",
+            width: "4.5rem",
+            height: "4.5rem",
+          },
+        },
+        {
+          id: "sharing",
+          title: "Sharing a book",
+          factor: "Healthy",
+          explanation:
+            "Sharing is a sign of fairness and respect. It shows you are willing to work together and that you value the needs of others, not just your own.",
+          hint: "Look for two learners sitting on the bench sharing reading material.",
+          hasLabel: false,
+          coords: {
+            top: "75%",
+            left: "50%",
+            width: "4.5rem",
+            height: "4.5rem",
+          },
+        },
+        {
+          id: "rumour",
+          title: "Spreading a rumour",
+          factor: "Unhealthy",
+          explanation:
+            "Rumours harm reputations and break trust. Once trust is broken, relationships can be hard to repair.",
+          hint: "Look for two learners whispering to each other in the background on the left.",
+          hasLabel: false,
+          coords: {
+            top: "45%",
+            left: "35%",
+            width: "4.5rem",
+            height: "4.5rem",
+          },
+        },
+        {
+          id: "teasing",
+          title: "Teasing or mocking a classmate",
+          factor: "Unhealthy",
+          explanation:
+            "Mocking others damages their confidence and creates distance instead of connection. Respectful words help people feel safe and valued.",
+          hint: "Look for a learner pointing and laughing at someone on the right side.",
+          hasLabel: false,
+          coords: {
+            top: "55%",
+            left: "65%",
+            width: "4.5rem",
+            height: "4.5rem",
+          },
+        },
+        {
+          id: "excluding",
+          title: "Excluding someone from play",
+          factor: "Unhealthy",
+          explanation:
+            "Exclusion hurts feelings and weakens the group’s bond. True friendship includes making space for everyone to join in and feel part of the team.",
+          hint: "Look for a group of learners leaving someone out in the background right.",
+          hasLabel: false,
+          coords: {
+            top: "45%",
+            left: "80%",
+            width: "4.5rem",
+            height: "4.5rem",
+          },
+        },
+      ];
+
+      const TOTAL_ACTIVITIES = activityData.length;
+      const TARGET_ACTIVITIES = TOTAL_ACTIVITIES;
+
+      // --- STATE ---
+      let completedActivities = new Set();
+      let activeActivity = null;
+      let isActivityComplete = false;
+
+      // --- DOM ELEMENTS ---
+      const startScreen = document.getElementById("start-screen");
+      const gameScreen = document.getElementById("game-screen");
+      const labGameArea = document.getElementById("lab-game-area");
+      const progressBar = document.getElementById("progress-bar");
+      const progressText = document.getElementById("progress-text");
+      const overlays = {
+        activityDescription: document.getElementById(
+          "activity-description-overlay",
+        ),
+        gameInstructions: document.getElementById("game-instructions-overlay"),
+        scenario: document.getElementById("scenario-overlay"),
+        hint: document.getElementById("hint-overlay"),
+        summary: document.getElementById("summary-overlay"),
+        completion: document.getElementById("completion-overlay"),
+      };
+
+      const sounds = {
+        ding: document.getElementById("ding-sound"),
+        intro: document.getElementById("intro-audio"),
+        outro: document.getElementById("outro-audio"),
+      };
+
+      // --- INITIALIZATION ---
+      document.addEventListener("DOMContentLoaded", initializeGame);
+
+      function initializeGame() {
+        labGameArea.innerHTML =
+          '<svg id="line-canvas" width="100%" height="100%" style="position:absolute; top:0; left:0; pointer-events:none; z-index: 1;"></svg>';
+        const svgCanvas = document.getElementById("line-canvas");
+
+        activityData.forEach((item, index) => {
+          if (item.hasLabel) {
+            const dot = document.createElement("div");
+            dot.className = "map-dot";
+            dot.id = `dot-${item.id}`;
+            Object.assign(dot.style, item.dotCoords);
+            labGameArea.appendChild(dot);
+
+            const hotspot = document.createElement("div");
+            hotspot.className = "hotspot label-hotspot active";
+            hotspot.id = item.id;
+            hotspot.dataset.index = index;
+            hotspot.innerHTML = `<span>${item.title}</span>`;
+            Object.assign(hotspot.style, item.labelCoords);
+            labGameArea.appendChild(hotspot);
+
+            const line = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "line",
+            );
+            line.id = `line-${item.id}`;
+            line.setAttribute("x1", item.dotCoords.left);
+            line.setAttribute("y1", item.dotCoords.top);
+            line.setAttribute("x2", item.labelCoords.left);
+            line.setAttribute("y2", item.labelCoords.top);
+            line.classList.add("svg-connection-line");
+            svgCanvas.appendChild(line);
+          } else {
+            const hotspot = document.createElement("div");
+            hotspot.className = "hotspot active";
+            hotspot.id = item.id;
+            hotspot.dataset.index = index;
+            Object.assign(hotspot.style, item.coords);
+            labGameArea.appendChild(hotspot);
+          }
+        });
+        updateHotspotStates();
+        updateProgress();
+        labGameArea.addEventListener("click", handleHotspotClick);
+        if (typeof adjustSvgLinesForSmallScreens === "function")
+          adjustSvgLinesForSmallScreens();
+      }
+
+      // --- GAME FLOW ---
+      function startGame() {
+        startScreen.classList.add("hidden");
+        gameScreen.classList.remove("hidden");
+        setTimeout(() => {
+          overlays.activityDescription.classList.remove("hidden");
+          if (sounds.intro) playSound(sounds.intro);
+        }, 500);
+      }
+
+      function closeActivityDescription() {
+        overlays.activityDescription.classList.add("hidden");
+        if (sounds.intro) sounds.intro.pause();
+      }
+
+      function handleHotspotClick(event) {
+        const clickedHotspot = event.target.closest(".hotspot");
+        if (!clickedHotspot || clickedHotspot.classList.contains("completed"))
+          return;
+
+        activeActivity = activityData[parseInt(clickedHotspot.dataset.index)];
+        showScenarioInfo(activeActivity);
+      }
+
+      function showScenarioInfo(activity) {
+        const scenarioTitle = document.getElementById("scenario-title");
+        const infoContainer = document.getElementById("scenario-info");
+        const closeButton = document.getElementById("scenario-close-btn");
+
+        scenarioTitle.textContent = activity.title;
+
+        infoContainer.innerHTML = "";
+        scenarioTitle.classList.remove("fade-in-up");
+        scenarioTitle.style.opacity = 0;
+
+        // Create Structural Layout (Text Only - Image removed)
+        const layoutDiv = document.createElement("div");
+        layoutDiv.className = "scenario-layout fade-in-up";
+
+        const textWrapper = document.createElement("div");
+        textWrapper.className = "scenario-text-wrapper";
+
+        const contentDetails = [
+          { title: "Status:", text: activity.factor },
+          { title: "Explanation:", text: activity.explanation },
+        ];
+
+        contentDetails.forEach((detail) => {
+          const itemDiv = document.createElement("div");
+          itemDiv.className = "info-item";
+          itemDiv.innerHTML = `<h3>${detail.title}</h3><p>${detail.text}</p>`;
+          textWrapper.appendChild(itemDiv);
+        });
+
+        layoutDiv.appendChild(textWrapper);
+        infoContainer.appendChild(layoutDiv);
+
+        closeButton.style.visibility = "hidden";
+        closeButton.style.opacity = "0";
+
+        overlays.scenario.classList.remove("hidden");
+
+        setTimeout(() => {
+          scenarioTitle.classList.add("fade-in-up");
+          layoutDiv.classList.add("fade-in-up");
+        }, 100);
+
+        setTimeout(() => {
+          closeButton.style.visibility = "visible";
+          closeButton.style.opacity = "1";
+        }, 800);
+      }
+
+      function closeScenario() {
+        overlays.scenario.classList.add("hidden");
+
+        if (activeActivity && !completedActivities.has(activeActivity.id)) {
+          playCompletionDing();
+          completedActivities.add(activeActivity.id);
+          updateProgress();
+          updateHotspotStates();
+        }
+
+        activeActivity = null;
+
+        if (
+          completedActivities.size >= TARGET_ACTIVITIES &&
+          !isActivityComplete
+        ) {
+          isActivityComplete = true;
+          setTimeout(() => {
+            if (sounds.outro) playSound(sounds.outro);
+            overlays.completion.classList.remove("hidden");
+          }, 300);
+        }
+      }
+
+      function closeSummary() {
+        overlays.summary.classList.add("hidden");
+        isActivityComplete = true;
+        setTimeout(() => {
+          if (sounds.outro) playSound(sounds.outro);
+          overlays.completion.classList.remove("hidden");
+        }, 500);
+      }
+
+      function nextActivity() {
+        if (typeof sendEvent === "function") {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: "Healthy or Not?",
+          });
+        }
+        window.location.href = "../ACTIVITY3/index.html";
+      }
+
+      function previousActivity() {
+        if (typeof sendEvent === "function") {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: "Healthy or Not?",
+          });
+        }
+        window.location.href = "../ACTIVITY1/index.html";
+      }
+
+      function restartGame() {
+        if (sounds.outro) sounds.outro.pause();
+        completedActivities.clear();
+        activeActivity = null;
+        isActivityComplete = false;
+        overlays.completion.classList.add("hidden");
+        overlays.summary.classList.add("hidden");
+        updateHotspotStates();
+        updateProgress();
+      }
+
+      // --- UI & FEEDBACK ---
+      function updateProgress() {
+        let displayCount = Math.min(
+          completedActivities.size,
+          TARGET_ACTIVITIES,
+        );
+        const progress = (displayCount / TARGET_ACTIVITIES) * 100;
+        progressBar.style.width = `${progress}%`;
+        progressText.textContent = `${displayCount} / ${TARGET_ACTIVITIES}`;
+      }
+
+      function updateHotspotStates() {
+        document.querySelectorAll(".hotspot").forEach((hotspot) => {
+          const activityId = hotspot.id;
+          hotspot.classList.remove("completed", "active");
+          const line = document.getElementById(`line-${activityId}`);
+          const dot = document.getElementById(`dot-${activityId}`);
+
+          if (completedActivities.has(activityId)) {
+            hotspot.classList.add("completed");
+            if (line) line.classList.add("completed-line");
+            if (dot) dot.classList.add("completed-dot");
+          } else {
+            hotspot.classList.add("active");
+            if (line) line.classList.remove("completed-line");
+            if (dot) dot.classList.remove("completed-dot");
+          }
+        });
+      }
+
+      // --- MODAL CONTROLS ---
+      function showGameInstructions() {
+        overlays.gameInstructions.classList.remove("hidden");
+      }
+      function closeGameInstructions() {
+        overlays.gameInstructions.classList.add("hidden");
+      }
+
+      function showHint() {
+        const nextUncompleted = activityData.find(
+          (a) => !completedActivities.has(a.id),
+        );
+        const hintTarget = activeActivity || nextUncompleted;
+
+        if (hintTarget) {
+          document.getElementById("hint-text").textContent = hintTarget.hint;
+          overlays.hint.classList.remove("hidden");
+        }
+      }
+      function closeHint() {
+        overlays.hint.classList.add("hidden");
+      }
+
+      // --- UTILITIES ---
+      function playSound(audioEl) {
+        if (audioEl) {
+          audioEl.currentTime = 0;
+          audioEl.play().catch((e) => console.error("Audio play failed:", e));
+        }
+      }
+
+      function playCompletionDing() {
+        playSound(sounds.ding);
+      }
+
+      function adjustSvgLinesForSmallScreens() {}
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>

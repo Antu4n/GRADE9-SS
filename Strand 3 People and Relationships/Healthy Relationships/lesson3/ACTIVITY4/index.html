@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity 4: Relationship Strategy Check-In Quiz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="../js/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="game-container">
+        <div id="start-screen" class="screen">
+          <h1>Relationship Strategy Check-In</h1>
+          <button class="start-button" onclick="showActivityIntro()">
+            Start Activity
+          </button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+          <div class="game-top-section">
+            <h1 id="game-title">Relationship Strategy Check-In</h1>
+            <div class="top-right-controls">
+              <div id="progress-container">
+                <div id="progress-bar"></div>
+              </div>
+              <span id="progress-text">0 / 5</span>
+              <div class="instructions-icon" onclick="showInstructions()">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <h2 class="scenario-title" id="scenario-title"></h2>
+
+          <div class="scenario-content">
+            <div class="scenario-container" id="scenario-container">
+              <div class="scenario-details">
+                <p class="scenario-story" id="scenario-story-text"></p>
+                <div class="question-section">
+                  <div class="options-container" id="options-container"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hint-icon" id="hint-icon" onclick="showHint()">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="completion-overlay" class="overlay hidden">
+          <div class="completion-title-banner">Activity Conclusion</div>
+          <div class="modal">
+            <img
+              id="completion-image"
+              src="images/complete.jpg"
+              alt="Activity Complete"
+              onerror="this.style.display = 'none'"
+            />
+          </div>
+          <div class="completion-buttons">
+            <button
+              class="completion-btn btn-prev"
+              onclick="goToPreviousActivity()"
+            >
+              Previous Activity
+            </button>
+            <button class="completion-btn btn-restart" onclick="restartGame()">
+              Restart Activity
+            </button>
+            <button
+              class="completion-btn btn-next"
+              id="keyTakeawaysBtn"
+              onclick="showTakeaways()"
+            >
+              Key Takeaways
+            </button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="overlay takeaways-overlay hidden">
+          <div class="takeaways-container-wrapper">
+            <h2 class="takeaways-main-title">Lesson Complete</h2>
+            <div class="takeaways-card">
+              <h3>Key Takeaways</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Skill</th>
+                    <th>Application</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Communication</td>
+                    <td>
+                      Use effective communication to prevent and solve misunderstandings.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Conflict Resolution</td>
+                    <td>
+                      Negotiate and resolve conflicts peacefully.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Assertiveness</td>
+                    <td>
+                      Be assertive to express needs and respect boundaries.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Empathy</td>
+                    <td>
+                      Practice empathy to understand and support others.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Diversity</td>
+                    <td>
+                      Embrace diversity to build inclusive communities.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Strategy</td>
+                    <td>
+                      Strategies make relationships stronger even after challenges.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <button
+              class="end-lesson-btn"
+              id="btn-end-lesson"
+              onclick="endLesson()"
+            >
+              Brain Power Checkpoint
+            </button>
+          </div>
+        </div>
+
+        <div id="activity-intro-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Activity Introduction</h2>
+            <p>
+              You have learnt about the strategies that help overcome barriers and build strong relationships. Now it is time to check your understanding! Choose the best answer for each question, and do not worry, if you miss one, you will get a helpful hint to try again. Let us go!
+            </p>
+            <button onclick="closeModal('activity-intro-overlay')">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="instructions-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Learner Instructions</h2>
+            <ol>
+              <li>Read each question carefully.</li>
+              <li>Think about the relationship strategies you have learned.</li>
+              <li>Select the answer that best fits the scenario.</li>
+              <li>If your answer is incorrect, use the feedback to rethink your choice and try again.</li>
+              <li>Continue until you have answered all the questions correctly.</li>
+            </ol>
+            <button onclick="closeModal('instructions-overlay')">
+              Got it!
+            </button>
+          </div>
+        </div>
+
+        <div id="hint-overlay" class="overlay hidden">
+          <div class="modal">
+            <h2>Here is a Hint</h2>
+            <p style="text-align: left"></p>
+            <button onclick="closeModal('hint-overlay')">Got it!</button>
+          </div>
+        </div>
+
+        <div id="feedback-correct-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header correct">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <h2>Correct</h2>
+            </div>
+            <p id="correct-feedback-text"></p>
+            <button
+              class="feedback-btn correct"
+              onclick="closeModal('feedback-correct-overlay')"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <div id="feedback-incorrect-overlay" class="overlay hidden">
+          <div class="modal feedback-modal">
+            <div class="feedback-header incorrect">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+              </svg>
+              <h2>Try Again</h2>
+            </div>
+            <p id="incorrect-feedback-text"></p>
+            <button class="feedback-btn incorrect" onclick="handleTryAgain()">
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const activityData = {
+        scenarios: [
+          {
+            title: "Question 1",
+            story:
+              '<strong>Prompt:</strong> What is a key part of being assertive?',
+            options: [
+              {
+                text: "Being passive and quiet",
+                feedback:
+                  "Hmm… being passive means you are not sharing your views at all. Try thinking about how to speak up respectfully.",
+                isCorrect: false,
+              },
+              {
+                text: "Being aggressive and loud",
+                feedback:
+                  "That is aggression, not assertiveness. Being loud and forceful often pushes people away.",
+                isCorrect: false,
+              },
+              {
+                text: "Expressing your views clearly and respectfully",
+                feedback:
+                  "Exactly! Being assertive means standing up for yourself in a calm, respectful way, without being rude or staying silent.",
+                isCorrect: true,
+              },
+              {
+                text: "Always giving in to others",
+                feedback:
+                  "Always giving in might avoid conflict, but it does not let you express your needs. Assertiveness balances both.",
+                isCorrect: false,
+              },
+            ],
+            hint: "Think about finding a balance between staying silent and being overly forceful.",
+          },
+          {
+            title: "Question 2",
+            story:
+              '<strong>Prompt:</strong> How does embracing diversity help relationships?',
+            options: [
+              {
+                text: "By making everyone the same",
+                feedback:
+                  "Nope! Diversity is about differences, not sameness.",
+                isCorrect: false,
+              },
+              {
+                text: "By creating more conflicts",
+                feedback:
+                  "Actually, diversity helps reduce conflict when people are open-minded and respectful.",
+                isCorrect: false,
+              },
+              {
+                text: "By respecting differences and promoting unity",
+                feedback:
+                  "Right on! When we embrace diversity, we recognize each person’s unique background and that brings communities together.",
+                isCorrect: true,
+              },
+              {
+                text: "By ignoring cultural backgrounds",
+                feedback:
+                  "Ignoring differences is not embracing them. Try again!",
+                isCorrect: false,
+              },
+            ],
+            hint: "Embracing something means accepting it fully and finding strength in it.",
+          },
+          {
+            title: "Question 3",
+            story:
+              '<strong>Prompt:</strong> Which of the following shows respect in a disagreement?',
+            options: [
+              {
+                text: "Interrupting to win the argument",
+                feedback:
+                  "Interrupting shuts down communication. Try again, what shows you value their opinion?",
+                isCorrect: false,
+              },
+              {
+                text: "Shouting to prove your point",
+                feedback:
+                  "Shouting often increases tension instead of solving the issue.",
+                isCorrect: false,
+              },
+              {
+                text: "Listening and responding calmly",
+                feedback:
+                  "Correct! Respect in a disagreement means listening carefully and speaking kindly.",
+                isCorrect: true,
+              },
+              {
+                text: "Ignoring the other person’s opinion",
+                feedback:
+                  "Ignoring someone’s view is disrespectful. Try a more understanding option.",
+                isCorrect: false,
+              },
+            ],
+            hint: "Think about how you would want someone to treat you when you share your point of view.",
+          },
+          {
+            title: "Question 4",
+            story:
+              '<strong>Prompt:</strong> What does honesty help build in a relationship?',
+            options: [
+              {
+                text: "Fear",
+                feedback:
+                  "Fear weakens relationships, not strengthens them.",
+                isCorrect: false,
+              },
+              {
+                text: "Confusion",
+                feedback:
+                  "Confusion often happens when people are not honest.",
+                isCorrect: false,
+              },
+              {
+                text: "Trust",
+                feedback:
+                  "Well done! Honesty builds trust, when people tell the truth, others feel safe with them.",
+                isCorrect: true,
+              },
+              {
+                text: "Silence",
+                feedback:
+                  "Silence does not mean honesty. Open and truthful communication builds trust.",
+                isCorrect: false,
+              },
+            ],
+            hint: "When you consistently tell the truth, how do others start to feel about relying on you?",
+          },
+          {
+            title: "Question 5",
+            story:
+              '<strong>Prompt:</strong> What is a sign of good teamwork?',
+            options: [
+              {
+                text: "Blaming others when something goes wrong",
+                feedback:
+                  "Blaming others creates conflict and breaks teamwork.",
+                isCorrect: false,
+              },
+              {
+                text: "Working together and supporting each other",
+                feedback:
+                  "Exactly! Teamwork is all about cooperation, sharing tasks, and helping one another.",
+                isCorrect: true,
+              },
+              {
+                text: "Doing everything by yourself",
+                feedback:
+                  "Teamwork means sharing responsibility, not doing it alone.",
+                isCorrect: false,
+              },
+              {
+                text: "Refusing to take turns",
+                feedback:
+                  "Refusing to take turns causes unfairness and frustration.",
+                isCorrect: false,
+              },
+            ],
+            hint: "Teamwork is about how well a group can function as a supportive unit.",
+          }
+        ],
+      };
+
+      let currentScenarioIndex = 0;
+      const totalScenarios = activityData.scenarios.length;
+      let selectedOptionIndex = null;
+      let currentShuffledOptions = [];
+      let introAudio, dingAudio, buzzAudio, outroAudio;
+
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+
+      function initAudio() {
+        try {
+          introAudio = new Audio("audio/intro.mp3");
+          dingAudio = new Audio("audio/ding.mp3");
+          buzzAudio = new Audio("audio/buzz.mp3");
+          outroAudio = new Audio("audio/outro.mp3");
+        } catch (e) {
+          console.warn("Audio could not be loaded.");
+          const mockAudio = { play: () => {}, pause: () => {}, currentTime: 0 };
+          introAudio = dingAudio = buzzAudio = outroAudio = mockAudio;
+        }
+      }
+
+      function playSound(audio) {
+        if (audio) {
+          audio.currentTime = 0;
+          audio.play().catch((e) => {});
+        }
+      }
+      function stopSound(audio) {
+        if (audio) {
+          audio.pause();
+        }
+      }
+
+      function initGame() {
+        loadScenario();
+      }
+
+      function loadScenario() {
+        selectedOptionIndex = null;
+        const scenario = activityData.scenarios[currentScenarioIndex];
+
+        document.getElementById("scenario-title").textContent = scenario.title;
+        document.getElementById("scenario-story-text").innerHTML =
+          scenario.story;
+
+        const optionsContainer = document.getElementById("options-container");
+        optionsContainer.innerHTML = "";
+
+        const labels = ["A", "B", "C", "D"];
+
+        // Shuffle options so they appear in a random order each load
+        const shuffled = [...scenario.options];
+        shuffleArray(shuffled);
+        currentShuffledOptions = shuffled;
+
+        shuffled.forEach((option, index) => {
+          const button = document.createElement("button");
+          button.className = "option-button";
+          button.innerHTML = `<span class="option-label-badge">${labels[index]}</span><span class="option-text">${option.text}</span>`;
+          button.onclick = () => selectOption(index);
+          optionsContainer.appendChild(button);
+        });
+
+        updateProgress();
+      }
+
+      function selectOption(index) {
+        if (selectedOptionIndex !== null) return;
+        selectedOptionIndex = index;
+        const scenario = activityData.scenarios[currentScenarioIndex];
+        const buttons = document
+          .getElementById("options-container")
+          .querySelectorAll(".option-button");
+
+        buttons.forEach((btn) => (btn.disabled = true));
+
+        const chosenOption = currentShuffledOptions[index];
+        const isCorrect = chosenOption.isCorrect;
+
+        if (isCorrect) {
+          buttons[index].classList.add("correct");
+          playSound(dingAudio);
+          setTimeout(() => {
+            showFeedbackPopup("correct", chosenOption.feedback);
+          }, 500);
+        } else {
+          buttons[index].classList.add("incorrect");
+          playSound(buzzAudio);
+          setTimeout(() => {
+            showFeedbackPopup("incorrect", chosenOption.feedback);
+          }, 500);
+        }
+      }
+
+      function handleTryAgain() {
+        document
+          .getElementById("feedback-incorrect-overlay")
+          .classList.add("hidden");
+        const buttons = document
+          .getElementById("options-container")
+          .querySelectorAll(".option-button");
+        buttons.forEach((btn) => {
+          btn.disabled = false;
+          btn.classList.remove("incorrect");
+        });
+        selectedOptionIndex = null;
+      }
+
+      function goToNextScenario() {
+        const container = document.getElementById("scenario-container");
+        // If this is the last scenario, end activity immediately
+        if (currentScenarioIndex >= totalScenarios - 1) {
+          endActivity();
+          return;
+        }
+
+        // Otherwise play the fade-out animation then load next
+        container.classList.add("fade-out");
+        setTimeout(() => {
+          currentScenarioIndex++;
+          loadScenario();
+          container.classList.remove("fade-out");
+        }, 300);
+      }
+
+      function updateProgress() {
+        const progress = currentScenarioIndex;
+        document.getElementById("progress-bar").style.width = `${
+          (progress / totalScenarios) * 100
+        }%`;
+        document.getElementById("progress-text").textContent =
+          `${progress} / ${totalScenarios}`;
+      }
+
+      function showFeedbackPopup(type, message) {
+        document.getElementById(`${type}-feedback-text`).innerHTML = message;
+        document
+          .getElementById(`feedback-${type}-overlay`)
+          .classList.remove("hidden");
+      }
+
+      function showActivityIntro() {
+        document.getElementById("start-screen").classList.add("hidden");
+        document.getElementById("game-screen").classList.remove("hidden");
+        document
+          .getElementById("activity-intro-overlay")
+          .classList.remove("hidden");
+        playSound(introAudio);
+        if (
+          typeof sendEvent !== "undefined" &&
+          typeof ActivityEvent !== "undefined"
+        ) {
+          sendEvent(ActivityEvent.START_ACTIVITY, {
+            activityName: "Relationship Strategy Check-In",
+          });
+        }
+      }
+
+      function showInstructions() {
+        document
+          .getElementById("instructions-overlay")
+          .classList.remove("hidden");
+      }
+
+      function showHint() {
+        const hintText = activityData.scenarios[currentScenarioIndex].hint;
+        const defaultHint =
+          "Think about the healthy relationship strategies discussed earlier.";
+        document.querySelector("#hint-overlay p").textContent =
+          hintText || defaultHint;
+        document.getElementById("hint-overlay").classList.remove("hidden");
+      }
+
+      function closeModal(id) {
+        document.getElementById(id).classList.add("hidden");
+        if (id === "activity-intro-overlay") {
+          stopSound(introAudio);
+          initGame();
+        }
+        if (id === "feedback-correct-overlay") {
+          goToNextScenario();
+        }
+      }
+
+      function endActivity() {
+        document.getElementById("progress-bar").style.width = `100%`;
+        document.getElementById("progress-text").textContent =
+          `${totalScenarios} / ${totalScenarios}`;
+
+        setTimeout(() => {
+          const gameWrapperEl = document.getElementById("game-wrapper");
+
+          html2canvas(gameWrapperEl, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: "#fafbff",
+            onclone: (clonedDoc) => {
+              const clonedGameScreen = clonedDoc.getElementById("game-screen");
+              const modals = clonedDoc.querySelectorAll(".overlay");
+              modals.forEach((m) => (m.style.display = "none"));
+
+              if (clonedGameScreen) {
+                clonedGameScreen.classList.remove("hidden");
+                clonedGameScreen.style.position = "relative";
+                clonedGameScreen.style.height =
+                  gameWrapperEl.scrollHeight + "px";
+                clonedGameScreen.style.overflow = "visible";
+              }
+
+              const elementsToExpand = clonedDoc.querySelectorAll(
+                ".scenario-content, #scenario-container",
+              );
+              elementsToExpand.forEach((el) => {
+                el.style.opacity = "1";
+                el.style.transform = "none";
+                el.style.overflow = "visible";
+                el.style.maxHeight = "none";
+              });
+            },
+          })
+            .then((canvas) => {
+              const imgData = canvas.toDataURL("image/png");
+              document.getElementById("completion-image").src = imgData;
+
+              document.getElementById("game-screen").classList.add("hidden");
+              document
+                .getElementById("completion-overlay")
+                .classList.remove("hidden");
+              playSound(outroAudio);
+            })
+            .catch((err) => {
+              console.error("Screenshot failed:", err);
+              document.getElementById("game-screen").classList.add("hidden");
+              document
+                .getElementById("completion-overlay")
+                .classList.remove("hidden");
+              playSound(outroAudio);
+            });
+        }, 500);
+      }
+
+      function restartGame() {
+        stopSound(outroAudio);
+        document.getElementById("completion-overlay").classList.add("hidden");
+        currentScenarioIndex = 0;
+        document.getElementById("game-screen").classList.remove("hidden");
+        document
+          .getElementById("scenario-container")
+          .classList.remove("fade-out");
+        loadScenario();
+      }
+
+      function goToPreviousActivity() {
+        window.location.href = "../ACTIVITY3/index.html";
+        if (
+          typeof sendEvent !== "undefined" &&
+          typeof ActivityEvent !== "undefined"
+        ) {
+          sendEvent(ActivityEvent.END_ACTIVITY, {
+            activityName: "Relationship Strategy Check-In",
+          });
+        }
+      }
+
+      function showTakeaways() {
+        stopSound(outroAudio);
+        document.getElementById("completion-overlay").classList.add("hidden");
+        document.getElementById("takeaways-overlay").classList.remove("hidden");
+        sendEvent(ActivityEvent.END_ACTIVITY, {
+          activityName: "Relationship Strategy Check-In",
+        });
+      }
+
+      function endLesson() {
+        if (
+          typeof sendEvent !== "undefined" &&
+          typeof LessonEvent !== "undefined"
+        ) {
+          sendEvent(LessonEvent.END_LESSON, {
+            lessonName:
+              "Relationship Strategies",
+          });
+        }
+      }
+
+      window.onload = () => {
+        initAudio();
+      };
+    </script>
+    <script src="../eventSender.js"></script>
+  </body>
+</html>
