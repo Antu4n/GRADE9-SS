@@ -6,25 +6,26 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no"
     />
-    <title>Strategy Toolkit Builder</title>
+    <title>Activity 2: Community Web</title>
     <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
     <div id="game-wrapper">
       <div id="game-container">
+        
         <div id="start-screen" class="screen">
-          <h1>Strategy Toolkit Builder</h1>
+          <h1>Activity 2: Community Web</h1>
           <button class="start-button">Start Activity</button>
         </div>
 
         <div id="game-screen" class="screen hidden">
           <div class="game-top-section">
-            <h1 id="game-title">Strategy Toolkit Builder</h1>
+            <h1 id="game-title">Healthy Relationships</h1>
             <div class="top-right-controls">
               <div id="progress-container">
                 <div id="progress-bar"></div>
               </div>
-              <span id="progress-text">0 / 7</span>
+              <span id="progress-text">0 / 12</span>
 
               <div class="icon-btn instructions-icon" id="instructions-icon" title="Instructions">
                 <svg viewBox="0 0 24 24">
@@ -38,7 +39,7 @@
             <div id="drag-items-container"></div>
           </div>
 
-          <div class="hint-icon" id="hint-icon" onclick="showHint()">
+          <div class="hint-icon" id="hint-icon">
             <svg viewBox="0 0 24 24">
               <path
                 d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
@@ -51,7 +52,7 @@
           <div class="modal">
             <h2>Activity Introduction</h2>
             <p>
-              Let us gear up with your very own strategy toolkit! On one side, you will see common barriers that cause problems in relationships. On the other hand, you will find powerful strategies that help solve those problems. Your challenge is to drag the best strategy to match each barrier. Think of it like solving a puzzle.
+              Relationships are like threads in a web. When they are strong and respectful, they connect every part of our community. In this activity, you will match examples of healthy relationship behaviours to the part of the community where they fit best. From family to nation, let us see how kindness, respect, and teamwork create strong and united communities.
             </p>
             <button id="close-intro-btn">Continue</button>
           </div>
@@ -61,11 +62,12 @@
           <div class="modal">
             <h2>Learner Instructions</h2>
             <ol>
-              <li>Look at the list of barriers on the left side of your screen.</li>
-              <li>Read each barrier carefully and think about what problem it causes in a relationship.</li>
-              <li>Drag the strategy card from the right side that best solves the problem.</li>
-              <li>Check the feedback after each match to see why it is correct or how to improve your choice.</li>
-              <li>Keep matching until all barriers have the right strategies in place.</li>
+              <li>Look at the community web diagram with Healthy Relationships in the centre and four outer circles: Family, School, Neighbourhood, Nation.</li>
+              <li>Read each behaviour label carefully.</li>
+              <li>Drag the label to the community level where it best fits.</li>
+              <li>If your choice is correct, you will see an explanation.</li>
+              <li>If it is not correct, read the hint in the feedback and try again.</li>
+              <li>Match all labels to complete your web.</li>
             </ol>
             <button id="close-instructions-btn">Got it!</button>
           </div>
@@ -93,22 +95,59 @@
 
         <div id="completion-overlay" class="overlay hidden">
           <h2 class="completion-title-banner">Activity Conclusion</h2>
-          <div class="completion-modal">
+          <div class="modal">
             <img
               id="completion-image"
               src="images/complete.jpg"
               alt="Completion celebration"
-              onerror="this.src='https://placehold.co/400x200/5d04b2/ffffff?text=Complete!'; this.onerror=null;"
+              onerror="this.src='https://placehold.co/400x300/5d04b2/ffffff?text=Fantastic+Job!'; this.onerror=null;"
             />
+          </div>
+          <div class="completion-buttons">
+            <button class="completion-btn" id="previous-activity-btn">
+              Previous Activity
+            </button>
+            <button class="completion-btn" id="restart-activity-btn">
+              Restart Activity
+            </button>
+            <button class="completion-btn" id="next-activity-btn">
+              Next Activity
+            </button>
+          </div>
+        </div>
+
+        <div id="takeaways-overlay" class="overlay hidden">
+          <h2 class="takeaways-main-header">Lesson Complete</h2>
+          <div class="modal">
+            <div class="takeaways-header">
+              <h3>Key Takeaways</h3>
             </div>
-            <div class="completion-buttons">
-              <button class="completion-btn" id="restart-activity-btn">
-                Restart Activity
-              </button>
-              <button class="completion-btn" id="next-activity-btn">
-                Next Activity
-              </button>
-            </div>
+            <table id="takeaways-table">
+              <thead>
+                <tr>
+                  <th>Concept</th>
+                  <th>Detail</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Indigenous Knowledge Systems</td>
+                  <td>Traditional practices and wisdom passed down through generations.</td>
+                </tr>
+                <tr>
+                  <td>Major Types</td>
+                  <td>Include Medicine, Agriculture, Religion, Climate prediction, Education, Technology, Environmental Conservation, Arts, and Astronomy.</td>
+                </tr>
+                <tr>
+                  <td>Importance</td>
+                  <td>These systems are crucial for understanding cultural identity and heritage.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button class="end-lesson-btn" id="end-lesson-btn">
+            Brain Power Checkpoint
+          </button>
         </div>
 
       </div>
@@ -122,8 +161,8 @@
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const startScreen = document.getElementById("start-screen");
-        const gameScreen = document.getElementById("game-screen");
         const startBtn = document.querySelector(".start-button");
+        const gameScreen = document.getElementById("game-screen");
         const progressBar = document.getElementById("progress-bar");
         const progressText = document.getElementById("progress-text");
         const dragItemsContainer = document.getElementById("drag-items-container");
@@ -134,6 +173,7 @@
         const hintOverlay = document.getElementById("hint-overlay");
         const feedbackModalOverlay = document.getElementById("feedback-modal-overlay");
         const completionOverlay = document.getElementById("completion-overlay");
+        const takeawaysOverlay = document.getElementById("takeaways-overlay");
         
         const closeIntroBtn = document.getElementById("close-intro-btn");
         const instructionsIcon = document.getElementById("instructions-icon");
@@ -142,6 +182,7 @@
         const nextQuestionBtn = document.getElementById("next-question-button");
         const restartActivityBtn = document.getElementById("restart-activity-btn");
         const nextActivityBtn = document.getElementById("next-activity-btn");
+        const endLessonBtn = document.getElementById("end-lesson-btn");
         
         const feedbackHeader = feedbackModalOverlay.querySelector(".feedback-header");
         const feedbackTitle = document.getElementById("feedback-title");
@@ -158,83 +199,35 @@
         };
 
         const gameData = [
-          {
-            id: "comm",
-            draggableText: "Listen actively and speak clearly",
-            matchGroup: "comm",
-            effectText: "Poor Communication",
-            feedback: {
-              correct: "Perfect match! Listening and speaking clearly are the first steps to fixing poor communication.",
-              incorrect: "Try again. If people do not understand each other, what skill helps them share their thoughts better?"
-            }
-          },
-          {
-            id: "conflict",
-            draggableText: "Negotiate and find a peaceful solution",
-            matchGroup: "conflict",
-            effectText: "Conflict",
-            feedback: {
-              correct: "Well done! Peaceful negotiation helps settle disagreements without fights.",
-              incorrect: "Not quite. What do people need to do when they disagree?"
-            }
-          },
-          {
-            id: "empathy",
-            draggableText: "Put yourself in their shoes",
-            matchGroup: "empathy",
-            effectText: "Lack of Empathy",
-            feedback: {
-              correct: "Exactly! Empathy starts with seeing things from someone else’s point of view.",
-              incorrect: "Almost! Think: what helps you truly understand someone’s feelings?"
-            }
-          },
-          {
-            id: "discrim",
-            draggableText: "Respect differences and include everyone",
-            matchGroup: "discrim",
-            effectText: "Discrimination",
-            feedback: {
-              correct: "Great job! Respecting and including others helps break down unfair treatment and builds equality.",
-              incorrect: "Close, but what strategy helps fight unfair treatment based on someone’s identity?"
-            }
-          },
-          {
-            id: "trust",
-            draggableText: "Keep promises and be honest",
-            matchGroup: "trust",
-            effectText: "Lack of Trust",
-            feedback: {
-              correct: "Exactly! Trust grows when you are truthful and keep your promises.",
-              incorrect: "Not quite. Which strategy would make someone feel they can rely on you?"
-            }
-          },
-          {
-            id: "misunderstand",
-            draggableText: "Ask questions to clarify before reacting",
-            matchGroup: "misunderstand",
-            effectText: "Misunderstanding",
-            feedback: {
-              correct: "Perfect! Asking questions helps clear confusion and prevents unnecessary conflict.",
-              incorrect: "Try again. What action helps you understand the full story before making a judgment?"
-            }
-          },
-          {
-            id: "workload",
-            draggableText: "Share responsibilities equally",
-            matchGroup: "workload",
-            effectText: "Unfair Workload in Group Tasks",
-            feedback: {
-              correct: "Right! Sharing tasks fairly makes everyone feel valued and prevents resentment.",
-              incorrect: "Almost. Which action ensures everyone in the group contributes equally?"
-            }
-          }
+          { zoneId: "family", challenge: "Sharing responsibilities and caring for one another", feedback: { correct: "Exactly! Sharing responsibilities builds trust and keeps family life balanced.", incorrect: "Think about who you live with daily and who depends on you for help at home." } },
+          { zoneId: "family", challenge: "Supporting each other during difficult times", feedback: { correct: "Yes! Families grow stronger when members help each other through challenges.", incorrect: "Consider which group provides emotional comfort and strength in tough moments." } },
+          { zoneId: "family", challenge: "Celebrating important milestones together", feedback: { correct: "Well done! Marking milestones strengthens family bonds and creates happy memories.", incorrect: "Which group do you usually celebrate birthdays, graduations, or special events with?" } },
+          { zoneId: "school", challenge: "Working together respectfully in class and during group activities", feedback: { correct: "Correct! Cooperation in class helps everyone learn and succeed.", incorrect: "Think about where you do projects, share ideas, and practise teamwork with peers." } },
+          { zoneId: "school", challenge: "Encouraging classmates and celebrating their successes", feedback: { correct: "Yes! Celebrating others’ achievements builds a positive school environment.", incorrect: "Where do you often clap, cheer, or give praise to others when they succeed?" } },
+          { zoneId: "school", challenge: "Following school rules to create a safe environment", feedback: { correct: "Exactly! Respecting rules keeps school safe and fair for everyone.", incorrect: "Which place has teachers and students working together to maintain order and safety?" } },
+          { zoneId: "neighbourhood", challenge: "Helping neighbours and solving problems peacefully", feedback: { correct: "Right! Support and peaceful problem-solving strengthen neighbourhood trust.", incorrect: "Think about who lives near you but not in your household, this behaviour fits there." } },
+          { zoneId: "neighbourhood", challenge: "Organising community clean-ups and events", feedback: { correct: "Yes! Working together to improve your surroundings builds pride and unity in the neighbourhood.", incorrect: "Where would local events and shared clean-up efforts usually take place?" } },
+          { zoneId: "neighbourhood", challenge: "Welcoming new residents warmly", feedback: { correct: "Correct! Welcoming newcomers builds inclusivity and trust in the neighbourhood.", incorrect: "Which community area benefits from making new people feel at home?" } },
+          { zoneId: "nation", challenge: "Promoting peace, fairness, and unity among all citizens", feedback: { correct: "Exactly! Treating everyone with fairness and respect helps the whole nation thrive.", incorrect: "This action is about the well-being of the whole country, not just smaller groups." } },
+          { zoneId: "nation", challenge: "Respecting laws and contributing to national projects", feedback: { correct: "Correct! Following laws and supporting national efforts keeps the country strong and organised.", incorrect: "Which level involves shared rules and projects for the entire country?" } },
+          { zoneId: "nation", challenge: "Celebrating national culture and diversity", feedback: { correct: "Yes! Celebrating diversity strengthens unity and national pride.", incorrect: "Where do cultural festivals and celebrations unite people from all regions?" } }
         ];
 
-        const hintMessage =
-          "Match the problem to the solution that directly addresses it. For example, poor communication needs clear listening and speaking, not ignoring the issue.";
+        const dropZonesData = [
+          { id: "family", title: "Family", page: 1 },
+          { id: "school", title: "School", page: 1 },
+          { id: "neighbourhood", title: "Neighbourhood", page: 2 },
+          { id: "nation", title: "Nation", page: 2 }
+        ];
 
-        let completedTasks = 0;
+        const hintMessage = "Think about where this behaviour mostly happens: home, school, nearby area, or the whole country.";
+
+        let completedTasksTotal = 0;
         const totalTasks = gameData.length;
+        let currentPage = 1;
+        let itemsMatchedOnCurrentPage = 0;
+        let totalItemsOnCurrentPage = 0;
+
         let draggedItem = null;
         let touchClone = null;
 
@@ -246,60 +239,61 @@
         }
 
         function initializeGame() {
-          completedTasks = 0;
+          completedTasksTotal = 0;
           updateProgressBar();
-          loadItems();
+          loadPage(1);
         }
 
-        function loadItems() {
-          dragItemsContainer.innerHTML = "";
+        function loadPage(page) {
+          currentPage = page;
+          itemsMatchedOnCurrentPage = 0;
           dropZonesContainer.innerHTML = "";
-          
-          let challenges = [...gameData];
-          shuffleArray(challenges);
+          dragItemsContainer.innerHTML = "";
 
-          const cardColors = ["governance", "calamities", "education", "agriculture"];
-
-          challenges.forEach((item, index) => {
-            const dragItem = document.createElement("div");
-            dragItem.className = `drag-item card-${cardColors[index % 4]}`;
-            dragItem.draggable = true;
-            dragItem.dataset.id = item.id;
-            dragItem.dataset.matchGroup = item.matchGroup;
-            dragItem.innerHTML = item.draggableText;
-            addDragListeners(dragItem);
-            dragItemsContainer.appendChild(dragItem);
-          });
-
-          gameData.forEach((item) => {
+          const currentZones = dropZonesData.filter(z => z.page === page);
+          currentZones.forEach((zoneObj) => {
             const dropZone = document.createElement("div");
-            dropZone.className = "drop-zone";
-            dropZone.dataset.acceptsGroup = item.matchGroup;
-            dropZone.dataset.correctFeedback = item.feedback.correct;
-            dropZone.dataset.incorrectFeedback = item.feedback.incorrect;
+            dropZone.className = "drop-zone multiple-zone";
+            dropZone.dataset.id = zoneObj.id;
             dropZone.innerHTML = `
-                <div class="solution-text">
-                  <span class="zone-label">${item.effectText}</span>
-                </div>
+                <div class="solution-text"><strong>${zoneObj.title}</strong></div>
                 <div class="element-name-placeholder"></div>
             `;
             addDropListeners(dropZone);
             dropZonesContainer.appendChild(dropZone);
           });
+
+          let currentChallenges = gameData.filter(d => currentZones.some(z => z.id === d.zoneId));
+          totalItemsOnCurrentPage = currentChallenges.length;
+          shuffleArray(currentChallenges);
+
+          currentChallenges.forEach((item) => {
+            const dragItem = document.createElement("div");
+            dragItem.className = "drag-item";
+            dragItem.draggable = true;
+            dragItem.dataset.accepts = item.zoneId;
+            dragItem.dataset.correctFeedback = item.feedback.correct;
+            dragItem.dataset.incorrectFeedback = item.feedback.incorrect;
+            dragItem.textContent = item.challenge;
+            addDragListeners(dragItem);
+            dragItemsContainer.appendChild(dragItem);
+          });
         }
 
         function addDragListeners(item) {
           item.addEventListener("dragstart", (e) => {
+            if (item.classList.contains("inactive")) { e.preventDefault(); return; }
             draggedItem = item;
             setTimeout(() => item.classList.add("dragging"), 0);
           });
           item.addEventListener("dragend", () => {
-            item.classList.remove("dragging");
+            if (draggedItem) draggedItem.classList.remove("dragging");
             draggedItem = null;
           });
 
           let offsetX, offsetY;
           item.addEventListener("touchstart", (e) => {
+            if (item.classList.contains("inactive")) return;
             if (e.cancelable) e.preventDefault();
             draggedItem = item;
             const touch = e.touches[0];
@@ -325,7 +319,7 @@
             let elementUnderTouch = document.elementFromPoint(touch.clientX, touch.clientY);
             let dropZoneUnderTouch = elementUnderTouch ? elementUnderTouch.closest(".drop-zone") : null;
             document.querySelectorAll(".drop-zone").forEach((zone) => {
-              zone.classList.toggle("drag-over", zone === dropZoneUnderTouch && !zone.classList.contains("matched"));
+              zone.classList.toggle("drag-over", zone === dropZoneUnderTouch);
             });
           }, { passive: false });
 
@@ -346,7 +340,7 @@
         function addDropListeners(zone) {
           zone.addEventListener("dragover", (e) => {
             e.preventDefault();
-            if (!zone.classList.contains("matched")) zone.classList.add("drag-over");
+            zone.classList.add("drag-over");
           });
           zone.addEventListener("dragleave", () => zone.classList.remove("drag-over"));
           zone.addEventListener("drop", (e) => {
@@ -357,27 +351,29 @@
         }
 
         function handleDrop(zone) {
-          if (!draggedItem || zone.classList.contains("matched")) return;
-          
-          const isCorrect = draggedItem.dataset.matchGroup === zone.dataset.acceptsGroup;
+          if (!draggedItem) return;
+          const isCorrect = draggedItem.dataset.accepts === zone.dataset.id;
           
           if (isCorrect) {
-            completedTasks++;
+            completedTasksTotal++;
+            itemsMatchedOnCurrentPage++;
             updateProgressBar();
+            
             const placeholder = zone.querySelector(".element-name-placeholder");
             placeholder.appendChild(draggedItem);
-            zone.classList.add("matched");
+            draggedItem.classList.add("inactive", "matched-item");
             draggedItem.draggable = false;
-            showFeedback(true, zone.dataset.correctFeedback);
+
+            showFeedback(true, draggedItem.dataset.correctFeedback);
           } else {
-            showFeedback(false, zone.dataset.incorrectFeedback);
+            showFeedback(false, draggedItem.dataset.incorrectFeedback);
           }
         }
 
         function updateProgressBar() {
-          const percentage = (completedTasks / totalTasks) * 100;
+          const percentage = (completedTasksTotal / totalTasks) * 100;
           progressBar.style.width = `${percentage}%`;
-          progressText.textContent = `${completedTasks} / ${totalTasks}`;
+          progressText.textContent = `${completedTasksTotal} / ${totalTasks}`;
         }
 
         function showFeedback(isCorrect, message) {
@@ -387,14 +383,16 @@
           feedbackHeader.className = isCorrect ? "feedback-header correct" : "feedback-header incorrect";
           nextQuestionBtn.className = isCorrect ? "feedback-btn correct" : "feedback-btn incorrect";
           feedbackModalOverlay.className = isCorrect ? "overlay correct-feedback" : "overlay incorrect-feedback";
-          playSound(isCorrect ? dingSound : buzzSound);
+
+          const soundToPlay = isCorrect ? dingSound : buzzSound;
+          playSound(soundToPlay);
           feedbackModalOverlay.classList.remove("hidden");
         }
 
         function playSound(sound) {
           if (sound) {
             sound.currentTime = 0;
-            sound.play().catch((e) => console.error("Audio play failed:", e));
+            sound.play().catch((e) => console.log("Audio play blocked by browser policies:", e));
           }
         }
 
@@ -412,15 +410,17 @@
           gameScreen.classList.remove("hidden");
           activityIntroOverlay.classList.remove("hidden");
           playSound(introAudio);
+          
           if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
-            sendEvent(ActivityEvent.START_ACTIVITY, { activityName: "Activity 1: Strategy Toolkit Builder" });
+            sendEvent(ActivityEvent.START_ACTIVITY, { activityName: "Activity 2: Community Web – How Healthy Relationships Hold Us Together" });
           }
         });
+
+        initializeGame();
 
         closeIntroBtn.addEventListener("click", () => {
           stopAllAudio();
           activityIntroOverlay.classList.add("hidden");
-          initializeGame();
         });
 
         instructionsIcon.addEventListener("click", () => instructionsOverlay.classList.remove("hidden"));
@@ -435,17 +435,24 @@
           document.getElementById(id).classList.add("hidden");
         };
 
-        hintIcon.addEventListener("click", () => window.showHint());
+        hintIcon.addEventListener("click", () => {
+          if (!introAudio.paused && !introAudio.ended) return;
+          window.showHint();
+        });
 
-        // Restored manual continue button logic
         nextQuestionBtn.addEventListener("click", () => {
           feedbackModalOverlay.classList.add("hidden");
-          if (completedTasks === totalTasks) {
-            setTimeout(() => {
-              gameScreen.classList.add("hidden");
-              completionOverlay.classList.remove("hidden");
-              playSound(completeAudio);
-            }, 500);
+          
+          if (itemsMatchedOnCurrentPage === totalItemsOnCurrentPage) {
+            if (currentPage === 1) {
+              loadPage(2);
+            } else {
+              setTimeout(() => {
+                gameScreen.classList.add("hidden");
+                completionOverlay.classList.remove("hidden");
+                playSound(completeAudio);
+              }, 400);
+            }
           }
         });
 
@@ -456,15 +463,27 @@
           initializeGame();
         });
 
-        nextActivityBtn.addEventListener("click", () => {
+        document.getElementById("previous-activity-btn").addEventListener("click", () => {
           if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
-            sendEvent(ActivityEvent.END_ACTIVITY, {
-              activityName: "Activity 1: Strategy Toolkit Builder",
-            });
+            sendEvent(ActivityEvent.END_ACTIVITY, { activityName: "Activity 2: Community Web – How Healthy Relationships Hold Us Together" });
           }
-          window.location.href = "../ACTIVITY2/index.html";
+          window.location.href = "../ACTIVITY1/index.html";
         });
 
+        nextActivityBtn.addEventListener("click", () => {
+          if (typeof sendEvent !== "undefined" && typeof ActivityEvent !== "undefined") {
+            sendEvent(ActivityEvent.END_ACTIVITY, { activityName: "Activity 2: Community Web – How Healthy Relationships Hold Us Together" });
+          }
+          window.location.href = "../ACTIVITY3/index.html";
+        });
+
+        endLessonBtn.addEventListener("click", () => {
+          if (typeof sendEvent !== "undefined" && typeof LessonEvent !== "undefined") {
+            sendEvent(LessonEvent.END_LESSON, {
+              lessonName: "Activity 2: Community Web – How Healthy Relationships Hold Us Together",
+            });
+          }
+        });
       });
     </script>
     <script src="../eventSender.js"></script>

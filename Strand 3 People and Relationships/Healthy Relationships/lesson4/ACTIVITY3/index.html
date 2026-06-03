@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Activity 4: Relationship Strategy Check-In Quiz</title>
+    <title>Activity 3: Scenario Quiz – How Healthy Relationships Shape Strong Communities</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -16,8 +16,9 @@
   <body>
     <div id="game-wrapper">
       <div id="game-container">
+        
         <div id="start-screen" class="screen">
-          <h1>Relationship Strategy Check-In</h1>
+          <h1>Activity 3: Scenario Quiz</h1>
           <button class="start-button" onclick="showActivityIntro()">
             Start Activity
           </button>
@@ -25,12 +26,12 @@
 
         <div id="game-screen" class="screen hidden">
           <div class="game-top-section">
-            <h1 id="game-title">Relationship Strategy Check-In</h1>
+            <h1 id="game-title">Activity 3: Scenario Quiz</h1>
             <div class="top-right-controls">
               <div id="progress-container">
                 <div id="progress-bar"></div>
               </div>
-              <span id="progress-text">0 / 5</span>
+              <span id="progress-text">0 / 6</span>
               <div class="instructions-icon" onclick="showInstructions()">
                 <svg viewBox="0 0 24 24">
                   <path
@@ -45,11 +46,16 @@
 
           <div class="scenario-content">
             <div class="scenario-container" id="scenario-container">
+              <img
+                id="scenario-image"
+                src=""
+                alt="Scenario Dialogue"
+                class="scenario-image"
+              />
               <div class="scenario-details">
-                <div class="prompt-box">
-                  <p class="scenario-story" id="scenario-story-text"></p>
-                </div>
+                <p class="scenario-story" id="scenario-story-text"></p>
                 <div class="question-section">
+                  <p class="scenario-question">What is the most respectful and trust-building choice?</p>
                   <div class="options-container" id="options-container"></div>
                 </div>
               </div>
@@ -103,46 +109,30 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Skill</th>
-                    <th>Application</th>
+                    <th>Aspect</th>
+                    <th>Detail</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Communication</td>
-                    <td>
-                      Use effective communication to prevent and solve misunderstandings.
-                    </td>
+                    <td>Social & Economic Development</td>
+                    <td>Healthy relationships drive social and economic development.</td>
                   </tr>
                   <tr>
-                    <td>Conflict Resolution</td>
-                    <td>
-                      Negotiate and resolve conflicts peacefully.
-                    </td>
+                    <td>Resilience</td>
+                    <td>They build resilience and strong support networks.</td>
                   </tr>
                   <tr>
-                    <td>Assertiveness</td>
-                    <td>
-                      Be assertive to express needs and respect boundaries.
-                    </td>
+                    <td>Peace & Unity</td>
+                    <td>They foster peace, unity, and harmony.</td>
                   </tr>
                   <tr>
-                    <td>Empathy</td>
-                    <td>
-                      Practice empathy to understand and support others.
-                    </td>
+                    <td>Mental Well-being</td>
+                    <td>They reduce stress and contribute to mental well-being.</td>
                   </tr>
                   <tr>
-                    <td>Diversity</td>
-                    <td>
-                      Embrace diversity to build inclusive communities.
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Strategy</td>
-                    <td>
-                      Strategies make relationships stronger even after challenges.
-                    </td>
+                    <td>Community Initiatives</td>
+                    <td>They are essential for successful community initiatives.</td>
                   </tr>
                 </tbody>
               </table>
@@ -161,7 +151,7 @@
           <div class="modal">
             <h2>Activity Introduction</h2>
             <p>
-              You have learnt about the strategies that help overcome barriers and build strong relationships. Now it is time to check your understanding! Choose the best answer for each question, and do not worry, if you miss one, you will get a helpful hint to try again. Let us go!
+              You have seen how healthy relationships strengthen families, schools, neighbourhoods, and even nations. Now it is time to put your skills to the test. You will be given real-life scenarios. For each one, choose the action that best shows how to build strong and positive connections. Let us see how you would make a difference in your community.
             </p>
             <button onclick="closeModal('activity-intro-overlay')">
               Continue
@@ -173,11 +163,11 @@
           <div class="modal">
             <h2>Learner Instructions</h2>
             <ol>
-              <li>Read each question carefully.</li>
-              <li>Think about the relationship strategies you have learned.</li>
-              <li>Select the answer that best fits the scenario.</li>
-              <li>If your answer is incorrect, use the feedback to rethink your choice and try again.</li>
-              <li>Continue until you have answered all the questions correctly.</li>
+              <li>Read each scenario carefully.</li>
+              <li>Think about which choice will strengthen relationships and improve the situation.</li>
+              <li>Click your answer.</li>
+              <li>If correct, you will see an explanation of why it works.</li>
+              <li>If incorrect, read the feedback and try again.</li>
             </ol>
             <button onclick="closeModal('instructions-overlay')">
               Got it!
@@ -251,164 +241,172 @@
       const activityData = {
         scenarios: [
           {
-            title: "Question 1",
-            story:
-              '<strong>Prompt:</strong> What is a key part of being assertive?',
+            title: "Scenario 1: Community Clean-Up",
+            story: '"Your neighbourhood is planning a clean-up day, but some people say they are too busy. What would help encourage more participation?"',
+            image: "images/scenario1.jpg",
             options: [
               {
-                text: "Being passive and quiet",
-                feedback:
-                  "Hmm… being passive means you are not sharing your views at all. Try thinking about how to speak up respectfully.",
+                text: "Complain loudly about those who do not join.",
+                feedback: "Not quite. Think about which action brings people together and makes them feel valued.",
                 isCorrect: false,
               },
               {
-                text: "Being aggressive and loud",
-                feedback:
-                  "That is aggression, not assertiveness. Being loud and forceful often pushes people away.",
-                isCorrect: false,
-              },
-              {
-                text: "Expressing your views clearly and respectfully",
-                feedback:
-                  "Exactly! Being assertive means standing up for yourself in a calm, respectful way, without being rude or staying silent.",
+                text: "Invite neighbours personally and explain why it matters.",
+                feedback: "Exactly! Personal invitations and positive explanations help people feel included and motivated.",
                 isCorrect: true,
               },
               {
-                text: "Always giving in to others",
-                feedback:
-                  "Always giving in might avoid conflict, but it does not let you express your needs. Assertiveness balances both.",
+                text: "Work alone and say nothing.",
+                feedback: "Not quite. Think about which action brings people together and makes them feel valued.",
                 isCorrect: false,
               },
+              {
+                text: "Post negative comments about them online.",
+                feedback: "Not quite. Think about which action brings people together and makes them feel valued.",
+                isCorrect: false,
+              }
             ],
-            hint: "Think about finding a balance between staying silent and being overly forceful.",
+            hint: "Always choose the action that shows kindness, respect, fairness, and cooperation."
           },
           {
-            title: "Question 2",
-            story:
-              '<strong>Prompt:</strong> How does embracing diversity help relationships?',
+            title: "Scenario 2: New Classmate",
+            story: '"A new learner has joined your school and sits alone during lunch. What should you do?"',
+            image: "images/scenario2.jpg",
             options: [
               {
-                text: "By making everyone the same",
-                feedback:
-                  "Nope! Diversity is about differences, not sameness.",
-                isCorrect: false,
-              },
-              {
-                text: "By creating more conflicts",
-                feedback:
-                  "Actually, diversity helps reduce conflict when people are open-minded and respectful.",
-                isCorrect: false,
-              },
-              {
-                text: "By respecting differences and promoting unity",
-                feedback:
-                  "Right on! When we embrace diversity, we recognize each person’s unique background and that brings communities together.",
+                text: "Invite them to join your group.",
+                feedback: "Well done! Inviting them shows inclusion and helps them feel welcome.",
                 isCorrect: true,
               },
               {
-                text: "By ignoring cultural backgrounds",
-                feedback:
-                  "Ignoring differences is not embracing them. Try again!",
+                text: "Wait for them to approach you.",
+                feedback: "Try again. Healthy relationships grow when people feel welcomed and included.",
                 isCorrect: false,
               },
+              {
+                text: "Talk about them to others.",
+                feedback: "Try again. Healthy relationships grow when people feel welcomed and included.",
+                isCorrect: false,
+              },
+              {
+                text: "Ignore them because you already have friends.",
+                feedback: "Try again. Healthy relationships grow when people feel welcomed and included.",
+                isCorrect: false,
+              }
             ],
-            hint: "Embracing something means accepting it fully and finding strength in it.",
+            hint: "Always choose the action that shows kindness, respect, fairness, and cooperation."
           },
           {
-            title: "Question 3",
-            story:
-              '<strong>Prompt:</strong> Which of the following shows respect in a disagreement?',
+            title: "Scenario 3: Family Disagreement",
+            story: '"Two family members are arguing about chores. What could you suggest to help?"',
+            image: "images/scenario3.jpg",
             options: [
               {
-                text: "Interrupting to win the argument",
-                feedback:
-                  "Interrupting shuts down communication. Try again, what shows you value their opinion?",
-                isCorrect: false,
-              },
-              {
-                text: "Shouting to prove your point",
-                feedback:
-                  "Shouting often increases tension instead of solving the issue.",
-                isCorrect: false,
-              },
-              {
-                text: "Listening and responding calmly",
-                feedback:
-                  "Correct! Respect in a disagreement means listening carefully and speaking kindly.",
+                text: "Encourage them to divide tasks fairly.",
+                feedback: "Correct! Fairly sharing responsibilities reduces conflict and builds trust.",
                 isCorrect: true,
               },
               {
-                text: "Ignoring the other person’s opinion",
-                feedback:
-                  "Ignoring someone’s view is disrespectful. Try a more understanding option.",
+                text: "Tell one person to do everything.",
+                feedback: "Think about what helps both sides feel respected and keeps the peace.",
                 isCorrect: false,
               },
+              {
+                text: "Ignore the argument.",
+                feedback: "Think about what helps both sides feel respected and keeps the peace.",
+                isCorrect: false,
+              },
+              {
+                text: "Take sides and criticise one person.",
+                feedback: "Think about what helps both sides feel respected and keeps the peace.",
+                isCorrect: false,
+              }
             ],
-            hint: "Think about how you would want someone to treat you when you share your point of view.",
+            hint: "Always choose the action that shows kindness, respect, fairness, and cooperation."
           },
           {
-            title: "Question 4",
-            story:
-              '<strong>Prompt:</strong> What does honesty help build in a relationship?',
+            title: "Scenario 4: Sports Team Loss",
+            story: '"Your school football team loses an important match, and some players start blaming others. What is the best response?"',
+            image: "images/scenario4.jpg",
             options: [
               {
-                text: "Fear",
-                feedback:
-                  "Fear weakens relationships, not strengthens them.",
-                isCorrect: false,
-              },
-              {
-                text: "Confusion",
-                feedback:
-                  "Confusion often happens when people are not honest.",
-                isCorrect: false,
-              },
-              {
-                text: "Trust",
-                feedback:
-                  "Well done! Honesty builds trust, when people tell the truth, others feel safe with them.",
+                text: "Remind everyone it was a team effort and focus on improving together.",
+                feedback: "Yes! Focusing on unity and improvement strengthens the team and avoids future conflict.",
                 isCorrect: true,
               },
               {
-                text: "Silence",
-                feedback:
-                  "Silence does not mean honesty. Open and truthful communication builds trust.",
+                text: "Agree with the blaming.",
+                feedback: "Think about what builds encouragement and teamwork, not division.",
                 isCorrect: false,
               },
+              {
+                text: "Stay silent and leave.",
+                feedback: "Think about what builds encouragement and teamwork, not division.",
+                isCorrect: false,
+              },
+              {
+                text: "Make fun of the players who made mistakes.",
+                feedback: "Think about what builds encouragement and teamwork, not division.",
+                isCorrect: false,
+              }
             ],
-            hint: "When you consistently tell the truth, how do others start to feel about relying on you?",
+            hint: "Always choose the action that shows kindness, respect, fairness, and cooperation."
           },
           {
-            title: "Question 5",
-            story:
-              '<strong>Prompt:</strong> What is a sign of good teamwork?',
+            title: "Scenario 5: Community Disagreement",
+            story: '"In a neighbourhood meeting, two people strongly disagree about a new park project. What would help solve the problem?"',
+            image: "images/scenario5.jpg",
             options: [
               {
-                text: "Blaming others when something goes wrong",
-                feedback:
-                  "Blaming others creates conflict and breaks teamwork.",
-                isCorrect: false,
-              },
-              {
-                text: "Working together and supporting each other",
-                feedback:
-                  "Exactly! Teamwork is all about cooperation, sharing tasks, and helping one another.",
+                text: "Let them both share their ideas and look for common ground.",
+                feedback: "Exactly! Listening to both sides and finding a compromise keeps relationships respectful.",
                 isCorrect: true,
               },
               {
-                text: "Doing everything by yourself",
-                feedback:
-                  "Teamwork means sharing responsibility, not doing it alone.",
+                text: "Tell one person to stop talking.",
+                feedback: "Not quite. Which choice gives everyone a voice and works toward a fair solution?",
                 isCorrect: false,
               },
               {
-                text: "Refusing to take turns",
-                feedback:
-                  "Refusing to take turns causes unfairness and frustration.",
+                text: "Take one side immediately.",
+                feedback: "Not quite. Which choice gives everyone a voice and works toward a fair solution?",
                 isCorrect: false,
               },
+              {
+                text: "End the meeting without a decision.",
+                feedback: "Not quite. Which choice gives everyone a voice and works toward a fair solution?",
+                isCorrect: false,
+              }
             ],
-            hint: "Teamwork is about how well a group can function as a supportive unit.",
+            hint: "Always choose the action that shows kindness, respect, fairness, and cooperation."
+          },
+          {
+            title: "Scenario 6: Online Misunderstanding",
+            story: '"A classmate posts a message online that others think is rude, but you believe it was misunderstood. What should you do?"',
+            image: "images/scenario6.jpg",
+            options: [
+              {
+                text: "Ask them about it and suggest they explain or apologise.",
+                feedback: "Great choice! Open communication helps clear misunderstandings and restore trust.",
+                isCorrect: true,
+              },
+              {
+                text: "Share the post with others to laugh about it.",
+                feedback: "Try again. The best option solves the misunderstanding and rebuilds the connection.",
+                isCorrect: false,
+              },
+              {
+                text: "Block them without speaking to them.",
+                feedback: "Try again. The best option solves the misunderstanding and rebuilds the connection.",
+                isCorrect: false,
+              },
+              {
+                text: "Ignore it and hope it goes away.",
+                feedback: "Try again. The best option solves the misunderstanding and rebuilds the connection.",
+                isCorrect: false,
+              }
+            ],
+            hint: "Always choose the action that shows kindness, respect, fairness, and cooperation."
           }
         ],
       };
@@ -462,13 +460,13 @@
         document.getElementById("scenario-title").textContent = scenario.title;
         document.getElementById("scenario-story-text").innerHTML =
           scenario.story;
+        document.getElementById("scenario-image").src = scenario.image;
 
         const optionsContainer = document.getElementById("options-container");
         optionsContainer.innerHTML = "";
 
         const labels = ["A", "B", "C", "D"];
 
-        // Shuffle options so they appear in a random order each load
         const shuffled = [...scenario.options];
         shuffleArray(shuffled);
         currentShuffledOptions = shuffled;
@@ -476,7 +474,6 @@
         shuffled.forEach((option, index) => {
           const button = document.createElement("button");
           button.className = "option-button";
-          // Inject "A)", "B)" format straight into the text instead of a floating badge
           button.innerHTML = `<span class="option-text">${labels[index]}) ${option.text}</span>`;
           button.onclick = () => selectOption(index);
           optionsContainer.appendChild(button);
@@ -529,13 +526,11 @@
 
       function goToNextScenario() {
         const container = document.getElementById("scenario-container");
-        // If this is the last scenario, end activity immediately
         if (currentScenarioIndex >= totalScenarios - 1) {
           endActivity();
           return;
         }
 
-        // Otherwise play the fade-out animation then load next
         container.classList.add("fade-out");
         setTimeout(() => {
           currentScenarioIndex++;
@@ -572,7 +567,7 @@
           typeof ActivityEvent !== "undefined"
         ) {
           sendEvent(ActivityEvent.START_ACTIVITY, {
-            activityName: "Relationship Strategy Check-In",
+            activityName: "Activity 3: Scenario Quiz",
           });
         }
       }
@@ -586,7 +581,7 @@
       function showHint() {
         const hintText = activityData.scenarios[currentScenarioIndex].hint;
         const defaultHint =
-          "Think about the healthy relationship strategies discussed earlier.";
+          "Always choose the action that shows kindness, respect, fairness, and cooperation.";
         document.querySelector("#hint-overlay p").textContent =
           hintText || defaultHint;
         document.getElementById("hint-overlay").classList.remove("hidden");
@@ -604,6 +599,10 @@
       }
 
       function endActivity() {
+        document.getElementById("progress-bar").style.width = `100%`;
+        document.getElementById("progress-text").textContent =
+          `${totalScenarios} / ${totalScenarios}`;
+
         setTimeout(() => {
           const gameWrapperEl = document.getElementById("game-wrapper");
 
@@ -668,13 +667,13 @@
       }
 
       function goToPreviousActivity() {
-        window.location.href = "../ACTIVITY3/index.html";
+        window.location.href = "../ACTIVITY2/index.html";
         if (
           typeof sendEvent !== "undefined" &&
           typeof ActivityEvent !== "undefined"
         ) {
           sendEvent(ActivityEvent.END_ACTIVITY, {
-            activityName: "Relationship Strategy Check-In",
+            activityName: "Activity 3: Scenario Quiz",
           });
         }
       }
@@ -683,9 +682,14 @@
         stopSound(outroAudio);
         document.getElementById("completion-overlay").classList.add("hidden");
         document.getElementById("takeaways-overlay").classList.remove("hidden");
-        sendEvent(ActivityEvent.END_ACTIVITY, {
-          activityName: "Relationship Strategy Check-In",
-        });
+        if (
+          typeof sendEvent !== "undefined" &&
+          typeof ActivityEvent !== "undefined"
+        ) {
+            sendEvent(ActivityEvent.END_ACTIVITY, {
+              activityName: "Activity 3: Scenario Quiz",
+            });
+        }
       }
 
       function endLesson() {
@@ -695,7 +699,7 @@
         ) {
           sendEvent(LessonEvent.END_LESSON, {
             lessonName:
-              "Design Strategies to Overcome Barriers to Healthy Relationships",
+              "Appreciate the Need for Healthy Relationships in the Community",
           });
         }
       }

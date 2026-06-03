@@ -50,9 +50,9 @@
         </div>
 
         <div id="question-overlay" class="modal-overlay hidden" style="z-index: 2000;">
-          <div class="modal-content" style="border-top: 5px solid var(--primary-color);">
+          <div class="modal-content question-modal-content">
             <div class="modal-body">
-              <div id="question-prompt" class="modal-title" style="font-size: 1.5rem;"></div>
+              <div id="question-prompt" class="modal-title"></div>
               <div id="options-container" class="options-grid"></div>
             </div>
           </div>
@@ -133,9 +133,6 @@
         <div id="completion-overlay" class="modal-overlay hidden">
           <div id="completion-title">Activity Conclusion</div>
           <div class="modal-content completion-modal-content">
-            <p style="color: white; font-size: 1.2rem; text-align: center; max-width: 800px; margin-bottom: 1rem; line-height: 1.5;">
-              You have just built a peaceful path to resolving conflict. By staying calm, listening carefully, sharing your feelings, and finding fair solutions, you have shown real maturity and empathy. Keep using these steps every day to turn disagreements into opportunities for growth and understanding.
-            </p>
             <img
               src=""
               alt="Completion configuration"
@@ -210,10 +207,9 @@
           incorrect: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`,
         };
 
-        // --- Game Data ---
+        // --- Game Data (Emojis Removed) ---
         const gameData = [
           {
-            icon: "🟡",
             nodeText: "Conflict Arises",
             prompt: "What should you do first?",
             options: [
@@ -223,7 +219,6 @@
             ]
           },
           {
-            icon: "🔵",
             nodeText: "Listen Actively",
             prompt: "What comes next?",
             options: [
@@ -233,7 +228,6 @@
             ]
           },
           {
-            icon: "🔷",
             nodeText: "Express Yourself Respectfully",
             prompt: "Now it is your turn. What should you do?",
             options: [
@@ -243,7 +237,6 @@
             ]
           },
           {
-            icon: "🔶",
             nodeText: "Find a Compromise",
             prompt: "How should you resolve the issue?",
             options: [
@@ -253,7 +246,6 @@
             ]
           },
           {
-            icon: "🟣",
             nodeText: "Seek Help if Needed",
             prompt: "What if the conflict continues?",
             options: [
@@ -284,7 +276,12 @@
             const node = document.createElement("div");
             node.className = `flowchart-node ${index === 0 ? "active" : "locked"}`;
             node.id = `node-${index}`;
-            node.innerHTML = `<span style="font-size: 1.5rem;">${step.icon}</span> ${step.nodeText}`;
+            
+            // Replaced Emojis with Number Badges
+            node.innerHTML = `
+              <div class="node-badge">${index + 1}</div> 
+              <span class="node-text">${step.nodeText}</span>
+            `;
             
             node.addEventListener("click", () => {
               if (node.classList.contains("active")) {
@@ -300,11 +297,18 @@
             flowchartBoard.appendChild(arrow);
           });
 
-          // Final Resolution Node
+          // Final Resolution Node with SVG check instead of Emoji
           const finalNode = document.createElement("div");
           finalNode.className = "flowchart-node locked";
           finalNode.id = "node-final";
-          finalNode.innerHTML = `<span style="font-size: 1.5rem;">✅</span> Resolution Achieved!`;
+          finalNode.innerHTML = `
+            <div class="node-badge final-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <span class="node-text">Resolution Achieved!</span>
+          `;
           flowchartBoard.appendChild(finalNode);
         }
 

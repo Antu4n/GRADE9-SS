@@ -15,7 +15,14 @@
   <body>
     <div id="game-wrapper">
       <div id="game-container">
-        <div id="game-screen" class="screen">
+        <div id="start-screen" class="screen">
+          <h1>Community Conflict</h1>
+          <button class="start-button" onclick="showActivityIntro()">
+            Start Activity
+          </button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
           <div class="game-top-section">
             <h1 id="game-title">Roleplay Simulation</h1>
             <div class="top-right-controls">
@@ -65,9 +72,6 @@
         <div id="completion-overlay" class="overlay hidden">
           <div class="completion-title-banner">Activity Conclusion</div>
           <div class="modal">
-            <p style="margin-bottom: 1.5rem; font-size: 1.3rem;">
-              Great job navigating these tricky situations! You have seen how empathy, respect, and honesty can help resolve conflict and bring people together. But you have also seen what happens when we ignore problems or make harmful choices. Now you know: every response matters. Keep practicing peaceful conflict resolution in your daily life, you are becoming a true community peacemaker!
-            </p>
             <img
               id="completion-image"
               src="images/complete.jpg"
@@ -83,7 +87,7 @@
               Previous Activity
             </button>
             <button class="completion-btn btn-restart" onclick="restartGame()">
-              Replay
+              Restart Activity
             </button>
             <button
               class="completion-btn btn-next"
@@ -149,7 +153,13 @@
               <h2>Correct!</h2>
             </div>
             <p id="correct-feedback-text"></p>
-            </div>
+            <button
+              class="feedback-btn correct"
+              onclick="closeModal('feedback-correct-overlay')"
+            >
+              Continue
+            </button>
+          </div>
         </div>
 
         <div id="feedback-incorrect-overlay" class="overlay hidden">
@@ -184,20 +194,20 @@
         scenarios: [
           {
             title: "Scenario 1: Group Work Tension",
-            story: "<strong>Setup:</strong> During a science group project, Jared complains that Benson is not doing enough work. Benson feels accused and becomes defensive.<br><br><strong>Prompt:</strong> As a classmate watching this unfold, what should you do?",
+            story: "<strong>Prompt:</strong> As a classmate watching this unfold, what should you do?",
             image: "images/scenario1.jpg",
             options: [
               {
                 text: "Take Jared’s side and say, “Yeah, Benson never helps!”",
-                feedback: "Try again. Taking sides can make one person feel attacked. That increases the conflict."
+                feedback: "“Try again. Taking sides can make one person feel attacked. That increases the conflict.”"
               },
               {
                 text: "Tell them both to calm down and encourage a fair discussion.",
-                feedback: "Nice choice! Encouraging a calm, fair discussion helps both sides feel heard and promotes teamwork."
+                feedback: "“Nice choice! Encouraging a calm, fair discussion helps both sides feel heard and promotes teamwork.”"
               },
               {
                 text: "Walk away and ignore the argument.",
-                feedback: "Ignoring the problem does not make it go away. It might even get worse. What could help both people feel supported and heard?"
+                feedback: "“Ignoring the problem does not make it go away. It might even get worse. What could help both people feel supported and heard?”"
               }
             ],
             correctIndex: 1,
@@ -205,20 +215,20 @@
           },
           {
             title: "Scenario 2: Teased at Recess",
-            story: "<strong>Setup:</strong> Mary is being teased by two other learners for the way she speaks. She looks hurt and walks away.<br><br><strong>Prompt:</strong> What should you do?",
+            story: "<strong>Prompt:</strong> What should you do?",
             image: "images/scenario2.jpg",
             options: [
               {
                 text: "Join the teasing so you are not left out.",
-                feedback: "That is not right! Joining in on teasing hurts others and breaks trust."
+                feedback: "“That is not right! Joining in on teasing hurts others and breaks trust.”"
               },
               {
                 text: "Say, “That is not okay,” and invite Mary to play.",
-                feedback: "Excellent! Standing up for others and including them shows empathy and respect."
+                feedback: "“Excellent! Standing up for others and including them shows empathy and respect.”"
               },
               {
                 text: "Stay silent and do nothing.",
-                feedback: "Try again. Being silent may feel easier, but it can allow the harm to continue."
+                feedback: "“Try again. Being silent may feel easier, but it can allow the harm to continue.”"
               }
             ],
             correctIndex: 1,
@@ -226,20 +236,20 @@
           },
           {
             title: "Scenario 3: Borrowed Without Asking",
-            story: "<strong>Setup:</strong> Laban borrowed Leah’s storybook without asking. Leah is upset when she finds it missing.<br><br><strong>Prompt:</strong> You are a friend to both. What do you suggest?",
+            story: "<strong>Prompt:</strong> You are a friend to both. What do you suggest?",
             image: "images/scenario3.jpg",
             options: [
               {
                 text: "Tell Laban to just give it back secretly.",
-                feedback: "Returning it without talking will not fix the broken trust. Try again"
+                feedback: "“Returning it without talking will not fix the broken trust. Try again”"
               },
               {
                 text: "Encourage Laban to return it and apologize.",
-                feedback: "That is a respectful and honest solution. Apologizing helps rebuild trust."
+                feedback: "“That is a respectful and honest solution. Apologizing helps rebuild trust.”"
               },
               {
                 text: "Say it is not your problem.",
-                feedback: "Being neutral might seem easier, but real friends help solve problems."
+                feedback: "“Being neutral might seem easier, but real friends help solve problems.”"
               }
             ],
             correctIndex: 1,
@@ -247,20 +257,20 @@
           },
           {
             title: "Scenario 4: The Forgotten Invitation",
-            story: "<strong>Setup:</strong> A group of classmates is planning a surprise party for Brian, but they accidentally forget to invite Ahmed. Ahmed finds out and looks visibly hurt.<br><br><strong>Prompt:</strong> What should you do as a member of the group?",
+            story: "<strong>Prompt:</strong> What should you do as a member of the group?",
             image: "images/scenario4.jpg",
             options: [
               {
                 text: "Pretend it was planned without him on purpose.",
-                feedback: "Try again. Saying it was on purpose only causes more hurt and creates distance."
+                feedback: "“Try again. Saying it was on purpose only causes more hurt and creates distance.”"
               },
               {
                 text: "Apologize to Ahmed and invite him to join the planning.",
-                feedback: "Well done! Apologizing and making it right shows inclusion and empathy."
+                feedback: "“Well done! Apologizing and making it right shows inclusion and empathy.”"
               },
               {
                 text: "Tell him he’s just being too sensitive.",
-                feedback: "Not quite. Dismissing someone’s feelings weakens trust and empathy."
+                feedback: "“Not quite. Dismissing someone’s feelings weakens trust and empathy.”"
               }
             ],
             correctIndex: 1,
@@ -268,20 +278,20 @@
           },
           {
             title: "Scenario 5: The Misunderstood Text",
-            story: "<strong>Setup:</strong> Wanjiku sends a message to her class WhatsApp group, but her message is misunderstood as rude. Some classmates start ignoring her.<br><br><strong>Prompt:</strong> You know Wanjiku well and believe she did not mean to offend. What should you do?",
+            story: "<strong>Prompt:</strong> You know Wanjiku well and believe she did not mean to offend. What should you do?",
             image: "images/scenario5.jpg",
             options: [
               {
                 text: "Gossip about what she said to others.",
-                feedback: "Spreading gossip worsens the situation and breaks trust."
+                feedback: "“Spreading gossip worsens the situation and breaks trust.”"
               },
               {
                 text: "Ask her about it and encourage her to explain and apologize if needed.",
-                feedback: "Excellent choice! Encouraging open communication clears misunderstandings and promotes forgiveness."
+                feedback: "“Excellent choice! Encouraging open communication clears misunderstandings and promotes forgiveness.”"
               },
               {
                 text: "Block her from the group to stop more problems.",
-                feedback: "Blocking someone without talking to them can lead to bigger conflicts. Think of a peaceful way to resolve a misunderstanding."
+                feedback: "“Blocking someone without talking to them can lead to bigger conflicts. Think of a peaceful way to resolve a misunderstanding.”"
               }
             ],
             correctIndex: 1,
@@ -311,12 +321,9 @@
       function playSound(audio) {
         if (audio) {
           audio.currentTime = 0;
-          audio.play().catch((e) => {
-              console.warn("Autoplay blocked by browser. Interaction required first.");
-          });
+          audio.play().catch((e) => {});
         }
       }
-      
       function stopSound(audio) {
         if (audio) {
           audio.pause();
@@ -381,10 +388,6 @@
           playSound(dingAudio);
           setTimeout(() => {
             showFeedbackPopup("correct", scenario.options[index].feedback);
-            // Auto-advance to next scenario automatically
-            setTimeout(() => {
-                closeModal('feedback-correct-overlay');
-            }, 3000); 
           }, 500);
         } else {
           if (chosenButton) chosenButton.classList.add("incorrect");
@@ -440,6 +443,8 @@
       }
 
       function showActivityIntro() {
+        document.getElementById("start-screen").classList.add("hidden");
+        document.getElementById("game-screen").classList.remove("hidden");
         document
           .getElementById("activity-intro-overlay")
           .classList.remove("hidden");
@@ -457,7 +462,8 @@
 
       function showHint() {
         const hintText = activityData.scenarios[currentScenarioIndex].hint;
-        const defaultHint = "Think carefully about how to respond respectfully.";
+        const defaultHint =
+          "Think carefully about how to respond respectfully.";
         document.querySelector("#hint-overlay p").textContent =
           hintText || defaultHint;
         document.getElementById("hint-overlay").classList.remove("hidden");
@@ -483,6 +489,9 @@
           .getElementById("completion-overlay")
           .classList.remove("hidden");
         playSound(outroAudio);
+        
+        // Ensure the conclusion text is logged correctly if you decide to append it dynamically
+        console.log("Activity Conclusion: Great job navigating these tricky situations! You have seen how empathy, respect, and honesty can help resolve conflict and bring people together. But you have also seen what happens when we ignore problems or make harmful choices. Now you know: every response matters. Keep practicing peaceful conflict resolution in your daily life, you are becoming a true community peacemaker!");
       }
 
       function restartGame() {
@@ -512,7 +521,6 @@
 
       window.onload = () => {
         initAudio();
-        showActivityIntro();
       };
     </script>
     <script src="../eventSender.js"></script>
