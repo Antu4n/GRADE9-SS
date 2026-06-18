@@ -48,7 +48,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #d4d8da;
+  background-image: url("../../assets/covers.jpg");
+  background-size: cover;
+  background-position: center;
   font-family: var(--body-font);
 }
 
@@ -414,9 +416,9 @@ button {
 }
 
 .journal-prompt {
-  font-size: 1.1rem;
+  font-size: 1.rem;
   line-height: 1.6;
-  font-weight: 400;
+  font-weight: 500;
   color: var(--primary-color);
 }
 

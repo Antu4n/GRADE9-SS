@@ -752,7 +752,6 @@ body {
   border: 3px solid #fbb03b;
   border-radius: 15px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  margin-top: 0.5rem;
 }
 
 #completion-text {
@@ -771,6 +770,7 @@ body {
   justify-content: space-between;
   gap: 1.5rem;
   width: 100%;
+  margin-bottom: 1rem;
 }
 
 .completion-btn {
@@ -880,6 +880,12 @@ body {
   }
 }
 
+@media(max-width:991px) and (max-height:345px){
+  
+    #completion-image {
+        width: 53%;
+    }
+}
 @media (max-width: 768px) {
   html {
     font-size: 3.3vmin;

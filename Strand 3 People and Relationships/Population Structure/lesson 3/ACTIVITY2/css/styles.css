@@ -3,9 +3,6 @@
   font-family: "fredoka";
   src: url("../../assets/Fredoka-VariableFont_wdth\,wght.ttf") format("truetype");
 }
-::-webkit-scrollbar {
-  display: none;
-}
 /* Root Variables */
 :root {
   --primary-color: #5d04b2;
@@ -144,7 +141,7 @@ button {
 .country-options {
   display: flex;
   gap: 2rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
   justify-content: center;
 }
 .country-card {
@@ -213,8 +210,8 @@ button {
 
 /* Header / Top Bar */
 .game-top-section {
-  width: 100%; background-color: #5d04b2; padding: 0.75rem 1.05rem; display: flex;
-  justify-content: space-between; align-items: center; color: #fff; z-index: 5000;
+  width: 100%; background-color: #5d04b2; padding: 0.5rem .95rem; display: flex;
+  justify-content: space-between; align-items: center; color: #fff; z-index: 2000;
   box-shadow: 0 0.1rem 0.5rem rgba(0, 0, 0, 0.2); flex-shrink: 0; transition: transform 0.4s ease;
 }
 .game-top-section.hidden {
@@ -372,6 +369,12 @@ button {
   text-align: center; width: 90%; max-width: 50rem; animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative; box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.3), 0 0 0 100vmax rgba(0, 0, 0, 0.1);
 }
+.country-modal{
+  padding: 1rem;
+}
+.country-modal h2{
+  font-size: 2rem;
+}
 
 .modal .modal-title { font-size: 2.5rem; font-weight: 600; margin-bottom: .5rem; color: var(--primary-color); }
 .modal p { font-size: 1.3rem; line-height: 1.4; color: var(--text-color-dark, #333); text-align: left;}
@@ -457,9 +460,11 @@ button {
 
 /* ===== TAKEAWAYS OVERLAY ===== */
 #takeaways-overlay {
+  position: absolute; inset: 0; z-index: 6000; display: flex; pointer-events: auto;
   background-image: url("../images/gamebg.jpg"); background-size: cover; background-position: center;
   flex-direction: column; justify-content: center; align-items: center; gap: 1rem;
 }
+#takeaways-overlay.hidden { display: none; }
 .takeaways-main-header {
   font-family: var(--header-font); color: white; font-size: 2.5rem; position: absolute;
   top: 1%; text-align: center; width: 100%; text-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3);
@@ -511,10 +516,17 @@ button {
   #takeaways-overlay .modal { padding: 0.5rem; }
   .feedback-modal { height: auto; width: 95%; }
   #data-scale-overlay .data-modal, #data-scale-screen .data-modal {
-    max-height: 81vh;
-    padding: 1.5rem;
+    max-height: 86vh;
   }
-
+  #data-scale-screen{
+    padding: 0;
+  }
+  #data-scale-overlay .data-modal, #data-scale-screen .data-modal{
+      padding: 1rem;
+  }
+  #data-scale-screen .data-modal h2{
+    font-size: 2rem;
+  }
 }
 @media (max-width: 768px) {
   html{

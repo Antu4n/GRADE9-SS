@@ -393,9 +393,9 @@
           tooltipHeight,
           placedTooltipBounds,
         ) {
-          const separationGap = 16;
+          const separationGap = 4;
 
-          for (let attempts = 0; attempts < 12; attempts++) {
+          for (let attempts = 0; attempts < 30; attempts++) {
             const overlappingTooltip = placedTooltipBounds.find((placedBounds) =>
               boxesOverlap(bounds, placedBounds),
             );
@@ -404,11 +404,18 @@
               break;
             }
 
-            const shiftX = bounds.x >= overlappingTooltip.x ? separationGap : -separationGap;
-            const shiftY = bounds.y >= overlappingTooltip.y ? separationGap : -separationGap;
+            // Compute overlap depth on each axis and resolve on the smaller axis
+            const overlapX = Math.min(bounds.right, overlappingTooltip.right) - Math.max(bounds.left, overlappingTooltip.left);
+            const overlapY = Math.min(bounds.bottom, overlappingTooltip.bottom) - Math.max(bounds.top, overlappingTooltip.top);
 
-            bounds.x += shiftX;
-            bounds.y += shiftY;
+            if (overlapX < overlapY) {
+              const shiftX = bounds.x >= overlappingTooltip.x ? (overlapX + separationGap) : -(overlapX + separationGap);
+              bounds.x += shiftX;
+            } else {
+              const shiftY = bounds.y >= overlappingTooltip.y ? (overlapY + separationGap) : -(overlapY + separationGap);
+              bounds.y += shiftY;
+            }
+
             clampTooltipToCanvas(bounds, tooltipWidth, tooltipHeight);
           }
         }
@@ -418,16 +425,22 @@
           const midAngle =
             index * anglePerSegment + anglePerSegment / 2 - Math.PI / 2;
 
-          const tooltipRadius = radius * 2.0;
-          const tooltipAngle = midAngle;
-          let tooltipX = centerX + tooltipRadius * Math.cos(tooltipAngle);
-          let tooltipY = centerY + tooltipRadius * Math.sin(tooltipAngle);
+          const isMobile = W <= 991;
 
-          const tooltipWidth = W * 0.35;
-          const tooltipPadding = 12;
+          // On mobile, place tooltips just outside the wheel edge with a small gap
+          const tooltipOffset = isMobile ? radius * 1.25 : radius * 2.0;
+          const tooltipAngle = midAngle;
+          let tooltipX = centerX + tooltipOffset * Math.cos(tooltipAngle);
+          let tooltipY = centerY + tooltipOffset * Math.sin(tooltipAngle);
+
+          // Narrower cards on mobile so they don't cover the wheel
+          const tooltipWidth = isMobile ? Math.min(W * 0.8, 240) : W * 0.45;
+          const tooltipPadding = isMobile ? 8 : 12;
 
           let fontSize;
-          if (W <= 1024) {
+          if (isMobile) {
+            fontSize = Math.min(H * 0.044, 15);
+          } else if (W <= 1024) {
             fontSize = H * 0.045;
           } else {
             fontSize = H * 0.03;
@@ -468,6 +481,12 @@
           };
 
           clampTooltipToCanvas(tooltipBounds, tooltipWidth, tooltipHeight);
+
+          // On mobile, push tooltip away from wheel center to avoid covering it
+          if (isMobile) {
+            pushTooltipOutsideWheel(tooltipBounds, tooltipWidth, tooltipHeight);
+          }
+
           separateTooltipFromOthers(
             tooltipBounds,
             tooltipWidth,
@@ -475,16 +494,19 @@
             placedTooltipBounds,
           );
 
+          // Final clamp after separation
+          clampTooltipToCanvas(tooltipBounds, tooltipWidth, tooltipHeight);
+
           placedTooltipBounds.push({ ...tooltipBounds });
 
-          ctx.fillStyle = "rgba(0, 0, 0, 0.85)";
+          ctx.fillStyle = "rgba(30, 30, 80, 0.92)";
           ctx.beginPath();
           ctx.roundRect(
             tooltipBounds.left,
             tooltipBounds.top,
             tooltipWidth,
             tooltipHeight,
-            8,
+            6,
           );
           ctx.fill();
 
@@ -500,6 +522,35 @@
             lineHeight,
           );
           ctx.restore();
+        }
+
+        function pushTooltipOutsideWheel(bounds, tooltipWidth, tooltipHeight) {
+          // Ensure the tooltip rectangle does not overlap the wheel circle
+          const wheelBuffer = 6;
+          for (let attempt = 0; attempt < 20; attempt++) {
+            // Update edges before checking
+            bounds.left = bounds.x - tooltipWidth / 2;
+            bounds.top = bounds.y - tooltipHeight / 2;
+            bounds.right = bounds.left + tooltipWidth;
+            bounds.bottom = bounds.top + tooltipHeight;
+
+            // Find closest point of tooltip rect to wheel center
+            const closestX = Math.max(bounds.left, Math.min(centerX, bounds.right));
+            const closestY = Math.max(bounds.top, Math.min(centerY, bounds.bottom));
+            const distToCenter = Math.sqrt(
+              (closestX - centerX) ** 2 + (closestY - centerY) ** 2
+            );
+            if (distToCenter >= radius + wheelBuffer) break;
+
+            // Push outward from center
+            const dx = bounds.x - centerX;
+            const dy = bounds.y - centerY;
+            const angle = Math.atan2(dy, dx);
+            const pushAmount = (radius + wheelBuffer - distToCenter) + 2;
+            bounds.x += Math.cos(angle) * pushAmount;
+            bounds.y += Math.sin(angle) * pushAmount;
+            clampTooltipToCanvas(bounds, tooltipWidth, tooltipHeight);
+          }
         }
 
         // --- Clicking Logic ---

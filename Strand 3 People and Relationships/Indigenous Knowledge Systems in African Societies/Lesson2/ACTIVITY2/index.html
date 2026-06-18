@@ -298,51 +298,141 @@
           }
         }
 
+        const PAGE_SIZES = [4, 3];
+        let currentPage = 0;
+        let pageData = [];
+        let pageCompletedTasks = 0;
+
         function initializeGame() {
           completedTasks = 0;
+          currentPage = 0;
           matchedPairs = [];
           linesSvg.innerHTML = "";
+
+          const shuffled = [...gameData];
+          shuffleArray(shuffled);
+          pageData = [
+            shuffled.slice(0, PAGE_SIZES[0]),
+            shuffled.slice(PAGE_SIZES[0])
+          ];
+
           updateProgressBar();
-          loadItems();
+          loadPage(0);
         }
 
-        function loadItems() {
-          const oldThenCards = thenColumn.querySelectorAll(".match-card");
-          const oldNowCards = nowColumn.querySelectorAll(".match-card");
-          oldThenCards.forEach(c => c.remove());
-          oldNowCards.forEach(c => c.remove());
-          
-          let thenItems = [...gameData];
-          let nowItems = [...gameData]; 
-          shuffleArray(nowItems); 
+        function loadPage(pageIndex, fromSlide = false) {
+          pageCompletedTasks = 0;
+          linesSvg.innerHTML = "";
+          matchedPairs = [];
 
-          thenItems.forEach((item) => {
-            const card = document.createElement("div");
-            card.className = "match-card then-card";
-            card.dataset.id = item.id;
-            card.innerHTML = `
-              <div class="card-text">${item.then}</div>
-              <div class="connection-dot then-dot" data-id="${item.id}" data-correct="${item.feedback.correct}" data-incorrect="${item.feedback.incorrect}"></div>
-            `;
-            thenColumn.appendChild(card);
-          });
+          const items = pageData[pageIndex];
+          const nowItems = [...items];
+          shuffleArray(nowItems);
 
-          nowItems.forEach((item) => {
-            const card = document.createElement("div");
-            card.className = "match-card now-card";
-            card.dataset.matchId = item.id;
-            card.innerHTML = `
-              <div class="connection-dot now-dot" data-match="${item.id}"></div>
-              <div class="card-text">${item.now}</div>
-            `;
-            nowColumn.appendChild(card);
-          });
+          const matchingContainer = document.querySelector(".matching-container");
 
-          attachDrawingListeners();
+          if (fromSlide) {
+            const incoming = document.createElement("div");
+            incoming.className = "matching-container page-incoming";
+            incoming.innerHTML = `<svg class="lines-svg-temp"></svg>
+              <div class="cards-column then-column" id="then-column-temp">
+                <div class="column-title">Practices</div>
+              </div>
+              <div class="cards-column now-column" id="now-column-temp">
+                <div class="column-title">Benefits</div>
+              </div>`;
+
+            document.getElementById("game-content-area").appendChild(incoming);
+
+            const tempThen = incoming.querySelector("#then-column-temp");
+            const tempNow = incoming.querySelector("#now-column-temp");
+
+            items.forEach((item) => {
+              const card = document.createElement("div");
+              card.className = "match-card then-card";
+              card.dataset.id = item.id;
+              card.innerHTML = `
+                <div class="card-text">${item.then}</div>
+                <div class="connection-dot then-dot" data-id="${item.id}" data-correct="${item.feedback.correct}" data-incorrect="${item.feedback.incorrect}"></div>
+              `;
+              tempThen.appendChild(card);
+            });
+
+            nowItems.forEach((item) => {
+              const card = document.createElement("div");
+              card.className = "match-card now-card";
+              card.dataset.matchId = item.id;
+              card.innerHTML = `
+                <div class="connection-dot now-dot" data-match="${item.id}"></div>
+                <div class="card-text">${item.now}</div>
+              `;
+              tempNow.appendChild(card);
+            });
+
+            matchingContainer.classList.add("page-exiting");
+            incoming.classList.add("page-incoming");
+
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                matchingContainer.classList.add("page-exit-active");
+                incoming.classList.add("page-enter-active");
+              });
+            });
+
+            setTimeout(() => {
+              matchingContainer.remove();
+              incoming.id = "";
+              incoming.className = "matching-container";
+              incoming.querySelector(".lines-svg-temp").remove();
+
+              const newThen = incoming.querySelector("#then-column-temp");
+              const newNow = incoming.querySelector("#now-column-temp");
+              newThen.id = "then-column";
+              newNow.id = "now-column";
+
+              incoming.appendChild(linesSvg);
+              attachDrawingListeners();
+            }, 600);
+
+          } else {
+            const oldThenCards = thenColumn.querySelectorAll(".match-card");
+            const oldNowCards = nowColumn.querySelectorAll(".match-card");
+            oldThenCards.forEach(c => c.remove());
+            oldNowCards.forEach(c => c.remove());
+
+            items.forEach((item) => {
+              const card = document.createElement("div");
+              card.className = "match-card then-card";
+              card.dataset.id = item.id;
+              card.innerHTML = `
+                <div class="card-text">${item.then}</div>
+                <div class="connection-dot then-dot" data-id="${item.id}" data-correct="${item.feedback.correct}" data-incorrect="${item.feedback.incorrect}"></div>
+              `;
+              thenColumn.appendChild(card);
+            });
+
+            nowItems.forEach((item) => {
+              const card = document.createElement("div");
+              card.className = "match-card now-card";
+              card.dataset.matchId = item.id;
+              card.innerHTML = `
+                <div class="connection-dot now-dot" data-match="${item.id}"></div>
+                <div class="card-text">${item.now}</div>
+              `;
+              nowColumn.appendChild(card);
+            });
+
+            attachDrawingListeners();
+          }
+        }
+
+        function getLivesvg() {
+          return document.getElementById("lines-svg") || linesSvg;
         }
 
         function getSvgCoords(clientX, clientY) {
-          const svgRect = linesSvg.getBoundingClientRect();
+          const svg = getLivesvg();
+          const svgRect = svg.getBoundingClientRect();
           return {
             x: clientX - svgRect.left,
             y: clientY - svgRect.top
@@ -368,9 +458,11 @@
 
         function attachDrawingListeners() {
           const container = document.getElementById("game-content-area");
-          
+          container.removeEventListener("pointerdown", handlePointerDown);
           container.addEventListener("pointerdown", handlePointerDown);
+          window.removeEventListener("pointermove", handlePointerMove);
           window.addEventListener("pointermove", handlePointerMove, { passive: false });
+          window.removeEventListener("pointerup", handlePointerUp);
           window.addEventListener("pointerup", handlePointerUp);
         }
 
@@ -390,7 +482,7 @@
             currentLine = document.createElementNS("http://www.w3.org/2000/svg", "path");
             currentLine.setAttribute("d", createLoosePath(startPos.x, startPos.y, startPos.x, startPos.y));
             currentLine.setAttribute("class", "drawing-line");
-            linesSvg.appendChild(currentLine);
+            getLivesvg().appendChild(currentLine);
           }
         }
 
@@ -449,7 +541,7 @@
           const endPos = getDotCenter(endDot);
           currentLine.setAttribute("d", createLoosePath(startPos.x, startPos.y, endPos.x, endPos.y));
           currentLine.setAttribute("class", "matched-line");
-          
+
           startCard.classList.add("matched");
           endCard.classList.add("matched");
           startDot.classList.add("matched");
@@ -462,8 +554,17 @@
           });
 
           completedTasks++;
+          pageCompletedTasks++;
           updateProgressBar();
-          showFeedback(true, startDot.dataset.correct);
+
+          const pageSize = pageData[currentPage].length;
+          const isLastPage = currentPage >= pageData.length - 1;
+
+          if (pageCompletedTasks === pageSize && !isLastPage) {
+            showFeedback(true, startDot.dataset.correct, true);
+          } else {
+            showFeedback(true, startDot.dataset.correct);
+          }
         }
 
         function handleIncorrectMatch(startDot) {
@@ -485,7 +586,10 @@
           });
         });
 
-        function showFeedback(isCorrect, message) {
+        let pendingPageAdvance = false;
+
+        function showFeedback(isCorrect, message, pageComplete = false) {
+          pendingPageAdvance = pageComplete;
           const titleText = isCorrect ? "Correct!" : "Not Quite...";
           feedbackTitle.innerHTML = ` ${isCorrect ? icons.correct : icons.incorrect} ${titleText}`;
           feedbackText.textContent = message;
@@ -550,6 +654,10 @@
               completionOverlay.classList.remove("hidden");
               playSound(completeAudio);
             }, 500);
+          } else if (pendingPageAdvance) {
+            pendingPageAdvance = false;
+            currentPage++;
+            setTimeout(() => loadPage(currentPage, true), 300);
           }
         });
 

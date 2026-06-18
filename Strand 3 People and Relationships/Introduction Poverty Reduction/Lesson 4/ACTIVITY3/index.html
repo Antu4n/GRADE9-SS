@@ -234,7 +234,7 @@
 
       function initializeGame() {
         let gridHTML = `<div class="comparison-grid-wrapper"><div class="strategy-grid">`;
-        
+
         gridHTML += `<div class="grid-header-cell theme-header">Poverty Reduction Strategy</div>`;
         gridHTML += `<div class="grid-header-cell period-header">Expected Contribution</div>`;
 
@@ -245,35 +245,65 @@
                 <span class="summary-text" style="text-align: left; width: 100%;">${item.strategy}</span>
               </div>
             </div>`;
-          
+
           gridHTML += `
             <div class="grid-cell interactive-cell" id="cell-${item.id}">
-              <select class="strategy-dropdown" onchange="handleSelection(this, '${item.id}')">
-              </select>
+              <div class="custom-dropdown" id="dropdown-${item.id}" data-id="${item.id}" data-value="">
+                <div class="custom-dropdown-selected" onclick="toggleDropdown('${item.id}')">
+                  <span class="custom-dropdown-label">Select expected contribution...</span>
+                  <svg class="custom-dropdown-arrow" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                </div>
+                <div class="custom-dropdown-list" id="list-${item.id}"></div>
+              </div>
             </div>
           `;
         });
 
         gridHTML += `</div></div>`;
         labGameArea.innerHTML = gridHTML;
-        
+
+        document.addEventListener('click', closeAllDropdownsOnOutsideClick);
         updateDropdowns();
         updateProgress();
       }
 
+      function toggleDropdown(id) {
+        const dropdown = document.getElementById('dropdown-' + id);
+        if (dropdown.classList.contains('disabled')) return;
+        const isOpen = dropdown.classList.contains('open');
+        closeAllDropdowns();
+        if (!isOpen) dropdown.classList.add('open');
+      }
+
+      function closeAllDropdowns() {
+        document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
+      }
+
+      function closeAllDropdownsOnOutsideClick(e) {
+        if (!e.target.closest('.custom-dropdown')) closeAllDropdowns();
+      }
+
+      function selectOption(id, value) {
+        const dropdown = document.getElementById('dropdown-' + id);
+        dropdown.dataset.value = value;
+        dropdown.querySelector('.custom-dropdown-label').textContent = value;
+        dropdown.classList.remove('open');
+        handleSelection(id, value);
+      }
+
       function updateDropdowns() {
-        document.querySelectorAll('.strategy-dropdown').forEach(dropdown => {
-            if (!dropdown.disabled) {
-                const currentValue = dropdown.value;
-                let optionsHTML = `<option value="" disabled ${currentValue === "" ? "selected" : ""}>Select expected contribution...</option>`;
-                
-                dropdownOptions.forEach(opt => {
-                    if (!usedAnswers.has(opt) || opt === currentValue) {
-                        optionsHTML += `<option value="${opt}" ${opt === currentValue ? "selected" : ""}>${opt}</option>`;
-                    }
-                });
-                dropdown.innerHTML = optionsHTML;
-            }
+        document.querySelectorAll('.custom-dropdown').forEach(dropdown => {
+            if (dropdown.classList.contains('disabled')) return;
+            const id = dropdown.dataset.id;
+            const currentValue = dropdown.dataset.value;
+            const list = document.getElementById('list-' + id);
+            let listHTML = '';
+            dropdownOptions.forEach(opt => {
+                if (!usedAnswers.has(opt) || opt === currentValue) {
+                    listHTML += `<div class="custom-dropdown-option${opt === currentValue ? ' selected' : ''}" onclick="selectOption('${id}', ${JSON.stringify(opt)})">${opt}</div>`;
+                }
+            });
+            list.innerHTML = listHTML;
         });
       }
 
@@ -292,16 +322,16 @@
         if (sounds.intro) sounds.intro.pause();
       }
 
-      function handleSelection(selectElement, activityId) {
-        const selectedValue = selectElement.value;
+      function handleSelection(activityId, selectedValue) {
         const activity = activityData.find(a => a.id === activityId);
-        
+        const dropdown = document.getElementById('dropdown-' + activityId);
+
         if (selectedValue === activity.correctAnswer) {
             playSound(sounds.ding);
             showFeedback(true, activity);
-            selectElement.disabled = true;
-            selectElement.closest('.interactive-cell').classList.add('completed');
-            
+            dropdown.classList.add('disabled');
+            dropdown.closest('.interactive-cell').classList.add('completed');
+
             if (!completedActivities.has(activityId)) {
                 completedActivities.add(activityId);
                 usedAnswers.add(selectedValue);
@@ -311,7 +341,8 @@
         } else {
             playSound(sounds.buzz);
             showFeedback(false, activity);
-            selectElement.value = ""; 
+            dropdown.dataset.value = "";
+            dropdown.querySelector('.custom-dropdown-label').textContent = "Select expected contribution...";
         }
       }
 
@@ -356,9 +387,10 @@
         usedAnswers.clear();
         isActivityComplete = false;
         
-        document.querySelectorAll('.strategy-dropdown').forEach(dropdown => {
-          dropdown.disabled = false;
-          dropdown.value = "";
+        document.querySelectorAll('.custom-dropdown').forEach(dropdown => {
+          dropdown.classList.remove('disabled', 'open');
+          dropdown.dataset.value = "";
+          dropdown.querySelector('.custom-dropdown-label').textContent = "Select expected contribution...";
           dropdown.closest('.interactive-cell').classList.remove('completed');
         });
 

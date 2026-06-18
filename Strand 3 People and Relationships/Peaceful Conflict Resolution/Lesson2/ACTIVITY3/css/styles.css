@@ -556,7 +556,7 @@ body {
   border-radius: 1.5rem;
   display: flex;
   gap: 2.5rem;
-  align-items: flex-start;
+  align-items: center;
   width: 100%;
   max-width: 70rem;
   padding: 2.5rem;
@@ -607,7 +607,7 @@ body {
   font-family: var(--header-font);
   color: var(--primary-color);
   font-size: 1.2rem;
-  font-weight: 700;
+  font-weight: 600;
   margin-bottom: 1rem;
   width: 100%;
   text-align: left;
@@ -716,15 +716,15 @@ body {
     font-size: 3vmin;
   }
 
-  .scenario-story { font-size: 1.2rem; margin-bottom: 0rem; padding: 1rem; }
-  .scenario-question { font-size: 1.3rem; margin-bottom: 0.8rem; }
+  .scenario-story { font-size: 1.2rem; margin-bottom: 0.5rem; padding: 1rem; }
+  .scenario-question { font-size: 1.2rem; margin-bottom: 0.8rem; }
   .option-button { font-size: 1.2rem;}
   
   .completion-btn {
     padding: 0.5rem 1.5rem;
   }
   #completion-image {
-    width: 58%;
+    width: 72%;
   }
   .scenario-title {
     padding: 0.5rem;
@@ -742,7 +742,17 @@ body {
         max-width: 32rem; 
     }
     #completion-image {
-        width: 51%;
+        width: 67%;
+    }
+    html{
+      font-size: 3.5vmin;
+    }
+    .options-container{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+      .scenario-image {
+        max-width: 31%;
     }
 }
 @media (max-width: 768px) {
@@ -752,25 +762,18 @@ body {
   .completion-title-banner {
     font-size: 1.8rem;
   }
-  #completion-image {
-    max-width: 60%;
-  }
-  .completion-buttons {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-    position: static;
-  }
-  .completion-btn {
-    justify-self: center !important;
-    min-width: 120px;
-  }
-  .scenario-title {
+    .scenario-title {
     font-size: 1.8rem;
   }
   .scenario-content {
     padding: 1rem;
   }
+  .options-container{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
 }
+
 @media (max-width:991px) and (min-height:500px) {
     #completion-image {
         width: clamp(400px, 100%, 700px);
@@ -782,5 +785,9 @@ body {
     }
     .scenario-image {
         max-width: 45%;
+    }
+    .options-container{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
     }
 }

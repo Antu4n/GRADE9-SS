@@ -45,6 +45,10 @@
           <div class="lab-game-area" id="lab-game-area">
              </div>
           
+          <div id="continue-btn-wrapper" class="continue-btn-wrapper hidden">
+            <button class="continue-btn" onclick="showCompletion()">Continue</button>
+          </div>
+
           <div class="hint-icon" onclick="showHint()">
             <svg viewBox="0 0 24 24">
               <path
@@ -303,20 +307,15 @@
             if (completedActivities.size >= TOTAL_ACTIVITIES && !isActivityComplete) {
               isActivityComplete = true;
               setTimeout(() => {
-                overlays.completion.classList.remove("hidden");
-                if (sounds.outro) playSound(sounds.outro);
-              }, 800); // Delay to let the final flip animation finish
+                document.getElementById("continue-btn-wrapper").classList.remove("hidden");
+              }, 800);
             }
         }
       }
 
-      function nextActivity() {
-        window.location.href = "../ACTIVITY2/index.html";
-        if (typeof sendEvent === "function") {
-          sendEvent(ActivityEvent.NEXT_ACTIVITY, {
-            activityName: "Unlock the Power of Emotional Intelligence",
-          });
-        }
+      function showCompletion() {
+        overlays.completion.classList.remove("hidden");
+        if (sounds.outro) playSound(sounds.outro);
       }
 
       function restartGame() {
@@ -329,6 +328,7 @@
         });
 
         overlays.completion.classList.add("hidden");
+        document.getElementById("continue-btn-wrapper").classList.add("hidden");
         updateProgress();
       }
       

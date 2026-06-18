@@ -54,9 +54,6 @@
   src: url("../../assets/Fredoka-VariableFont_wdth\,wght.ttf")
     format("truetype");
 }
-::-webkit-scrollbar {
-  display: none;
-}
 /* Root Variables */
 :root {
   --primary-color: #5d04b2;
@@ -219,7 +216,7 @@ body {
 
 #game-title {
   font-size: 1.8rem;
-  font-weight: 800;
+  font-weight: 600;
   margin: 0;
   text-shadow: none;
 }
@@ -920,7 +917,7 @@ body::-webkit-scrollbar,
 
 @media (max-width: 991px) {
   html {
-    font-size: 3vmin;
+    font-size: 3.2vmin;
   }
 
      #game-wrapper {
@@ -979,8 +976,13 @@ body::-webkit-scrollbar,
     .completion-btn{
     padding: 0.45rem 1.5rem;
     }
+    .sequence-container, .steps-container{
+        padding: 1rem;
+    }
   .sequence-slot {
-    min-height: 4rem;}
+    min-height: 4rem;
+  
+  }
     .experiment-panel {
         padding: 0.5rem;
     }

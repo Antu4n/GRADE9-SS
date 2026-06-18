@@ -403,6 +403,7 @@
         });
 
         document.getElementById("btn-show-takeaways").addEventListener("click", () => {
+          if (typeof sendEvent === "function") sendEvent(ActivityEvent.END_ACTIVITY, { activityName: "Build the Pyramid" });
           overlays.takeaways.classList.remove("hidden");
         });
 

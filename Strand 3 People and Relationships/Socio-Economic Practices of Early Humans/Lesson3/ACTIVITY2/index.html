@@ -521,12 +521,26 @@
       });
 
       function adjustSvgLinesForSmallScreens() {
-        const mq = window.matchMedia("(max-width: 991px)");
+        const overrides = {
+          "sharp-edge": {
+            landscape991: { x1: "43%", y1: "45%", x2: "15%", y2: "45%" }
+          }
+        };
+
         function apply() {
+          const isLandscape991 = window.matchMedia("(max-width: 991px) and (max-height: 499px)").matches;
+
           activityData.forEach(item => {
             const line = document.getElementById(`line-${item.id}`);
-            if (line) {
-              // Ensure coordinates adapt correctly on resize
+            if (!line) return;
+
+            const ov = overrides[item.id];
+            if (ov && isLandscape991) {
+              line.setAttribute("x1", ov.landscape991.x1);
+              line.setAttribute("y1", ov.landscape991.y1);
+              line.setAttribute("x2", ov.landscape991.x2);
+              line.setAttribute("y2", ov.landscape991.y2);
+            } else {
               line.setAttribute("x1", item.dotCoords.left);
               line.setAttribute("y1", item.dotCoords.top);
               line.setAttribute("x2", item.dropCoords.left);

@@ -655,3 +655,8 @@ button {
     }
     
 }
+@media (width <=991px) and (height <= 499px) {
+   .map-dot#dot-sharp-edge{
+    left: 43%!important;
+   }
+}
